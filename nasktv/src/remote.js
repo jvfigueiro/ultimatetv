@@ -10,12 +10,12 @@ export class RemoteController {
       const keyCode = e.keyCode || 0;
       const key = e.key || '';
 
-      const isEnter = code === 'Enter' || code === 'NumpadEnter' || key === 'Enter' || keyCode === 13 || keyCode === 23 || keyCode === 66;
-      const isUp = code === 'ArrowUp' || code === 'Equal' || code === 'PageUp' || key === 'ArrowUp' || keyCode === 38 || keyCode === 19;
-      const isDown = code === 'ArrowDown' || code === 'Minus' || code === 'PageDown' || key === 'ArrowDown' || keyCode === 40 || keyCode === 20;
-      const isLeft = code === 'ArrowLeft' || key === 'ArrowLeft' || keyCode === 37 || keyCode === 21;
-      const isRight = code === 'ArrowRight' || key === 'ArrowRight' || keyCode === 39 || keyCode === 22;
-      const isBack = code === 'Escape' || code === 'Backspace' || key === 'Escape' || keyCode === 27 || keyCode === 8 || keyCode === 4;
+      const isEnter = code === 'Enter' || code === 'NumpadEnter' || key === 'Enter' || keyCode === 13 || keyCode === 23 || keyCode === 66 || keyCode === 29443;
+      const isUp = code === 'ArrowUp' || code === 'Equal' || code === 'PageUp' || key === 'ArrowUp' || keyCode === 38 || keyCode === 19 || keyCode === 29460;
+      const isDown = code === 'ArrowDown' || code === 'Minus' || code === 'PageDown' || key === 'ArrowDown' || keyCode === 40 || keyCode === 20 || keyCode === 29461;
+      const isLeft = code === 'ArrowLeft' || key === 'ArrowLeft' || keyCode === 37 || keyCode === 21 || keyCode === 29462;
+      const isRight = code === 'ArrowRight' || key === 'ArrowRight' || keyCode === 39 || keyCode === 22 || keyCode === 29463;
+      const isBack = code === 'Escape' || code === 'Backspace' || key === 'Escape' || keyCode === 27 || keyCode === 8 || keyCode === 4 || keyCode === 461 || keyCode === 147;
       const isInfo = code === 'KeyI' || keyCode === 73;
       const isList = code === 'KeyL' || code === 'KeyC' || keyCode === 76 || keyCode === 67;
       const isGuide = code === 'KeyG' || code === 'KeyE' || keyCode === 71 || keyCode === 69;
