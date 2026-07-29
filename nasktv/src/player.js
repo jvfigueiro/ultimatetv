@@ -17,7 +17,7 @@ export class TVPlayer {
     this.onStreamReady = onStreamReadyCallback;
 
     this.video.addEventListener('playing', () => {
-      console.log("[UltimateTV Player] Imagem gerada na GPU!");
+      console.log("[Player] Imagem gerada na GPU!");
       this.clearAllTimers();
       this.noSignalEl.classList.add('hidden');
       this.slowScreenEl.classList.add('hidden');
@@ -114,12 +114,12 @@ export class TVPlayer {
     this.slowScreenEl.classList.add('hidden');
 
     this.slowTimer = setTimeout(() => {
-      console.warn("[UltimateTV Player] Stream lento detectado (>4s)... Exibindo tela cheia de espera.");
+      console.warn("[Player] Stream lento detectado (>4s)... Exibindo tela cheia de espera.");
       this.slowScreenEl.classList.remove('hidden');
     }, slowMs);
 
     this.fatalTimer = setTimeout(() => {
-      this.triggerFatalError("Tempo limite excedido (18s). O canal não respondeu a tempo.");
+      this.triggerFatalError("Tempo limite excedido. O canal não respondeu a tempo.");
     }, fatalMs);
   }
 
@@ -129,10 +129,10 @@ export class TVPlayer {
   }
 
   triggerFatalError(msg) {
-    console.warn(`[UltimateTV Player] Erro Fatal DirecTV 771: ${msg}`);
+    console.warn(`[Player] Erro Fatal: ${msg}`);
     this.clearAllTimers();
     this.slowScreenEl.classList.add('hidden');
-    this.errorMsgEl.textContent = `${msg} Tente mudar de canal ou verifique seu servidor.`;
+    this.errorMsgEl.textContent = `${msg} Tente mudar de canal ou verifique o servidor.`;
     if (this.uaEl) this.uaEl.textContent = navigator.userAgent;
     this.noSignalEl.classList.remove('hidden');
   }

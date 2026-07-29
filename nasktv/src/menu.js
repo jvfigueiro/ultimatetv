@@ -89,7 +89,7 @@ export class OptionsMenu {
       if (this.aspectValEl) this.aspectValEl.textContent = newLabel.split(' ')[0];
     } else if (action === 'subtitle') {
       const state = this.callbacks.onToggleSubtitles();
-      if (this.subValEl) this.subValEl.textContent = state ? "CC: On" : "CC: Off";
+      if (this.subValEl) this.subValEl.textContent = state ? "Legenda On" : "Legenda Off";
     } else if (action === 'reload') {
       this.hide();
       this.callbacks.onReload();
