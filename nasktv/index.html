@@ -4,22 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>UltimateTV</title>
-    <script>
-      function applyTVScaling() {
-        // Pega a largura real que o Android liberou (ex: 960px ou 1280px)
-        const logicalWidth = window.innerWidth;
-        // Se a tela for menor que Full HD, calculamos o fator de redução
-        if (logicalWidth > 0 && logicalWidth < 1920) {
-          const scale = logicalWidth / 1920;
-          document.documentElement.style.setProperty('--tv-scale', scale);
-        } else {
-          document.documentElement.style.setProperty('--tv-scale', 1);
-        }
-      }
-      window.addEventListener('resize', applyTVScaling);
-      window.addEventListener('DOMContentLoaded', applyTVScaling);
-      applyTVScaling();
-    </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

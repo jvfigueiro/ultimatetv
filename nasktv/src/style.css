@@ -7,11 +7,7 @@
   outline: none;
 }
 
-/* Troca global para a Open Sans e Escala Mestra de UI */
-:root {
-  --tv-scale: 1;
-}
-
+/* Troca global para a Open Sans */
 body, html {
   width: 100vw;
   height: 100vh;
@@ -19,14 +15,6 @@ body, html {
   background-color: #000;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #fff;
-}
-
-/* O corpo da aplicação é um canvas virtual cravado em 1080p, que encolhe visualmente para caber na tela lógica sem destruir o layout */
-body {
-  width: 1920px !important;
-  height: 1080px !important;
-  transform: scale(var(--tv-scale));
-  transform-origin: top left;
 }
 
 /* =====================================================================
