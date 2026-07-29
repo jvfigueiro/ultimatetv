@@ -169,12 +169,12 @@ video::-webkit-media-controls-play-button {
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  width: 98%;
+  width: 96%;
   max-width: 1900px;
   background: linear-gradient(135deg, rgba(12, 16, 24, 0.82) 0%, rgba(8, 10, 16, 0.88) 100%);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  padding: 10px 20px;
+  padding: 14px 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   backdrop-filter: blur(8px);
@@ -197,8 +197,8 @@ video::-webkit-media-controls-play-button {
 
 /* Caixa da logo limpa, sem borda e sem fundo cinza */
 .osd-logo-container {
-  width: 60px;
-  height: 60px;
+  width: 75px;
+  height: 65px;
   background: transparent !important;
   border: none !important;
   display: flex;
@@ -228,7 +228,7 @@ video::-webkit-media-controls-play-button {
 }
 
 .title-wrapper {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #fff;
   white-space: nowrap;
@@ -264,32 +264,32 @@ video::-webkit-media-controls-play-button {
 }
 
 .clock-time {
-  font-size: 1.0rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #fff;
 }
 
 .clock-date {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #888;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 /* Linha 2: Metadados, Barra Inline e Badges */
 .osd-metadata {
   display: flex;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #cbd5e1;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   flex-wrap: wrap;
   gap: 8px;
 }
 
 .progress-container-inline {
-  width: 100px;
-  height: 4px;
+  width: 110px;
+  height: 5px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 2px;
   overflow: hidden;
@@ -329,10 +329,10 @@ video::-webkit-media-controls-play-button {
 
 /* Linha 3: Sinopse com corte inteligente de 2 linhas */
 .osd-synopsis {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: #94a3b8;
-  line-height: 1.2;
-  margin-bottom: 2px;
+  line-height: 1.3;
+  margin-bottom: 4px;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -342,7 +342,7 @@ video::-webkit-media-controls-play-button {
 
 /* Linha 4: Próximo Programa */
 .osd-footer {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #64748b;
   display: flex;
   align-items: center;
@@ -592,9 +592,9 @@ video::-webkit-media-controls-play-button {
   background: linear-gradient(135deg, rgba(16, 22, 35, 0.9) 0%, rgba(10, 14, 22, 0.95) 100%);
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 12px;
-  padding: 10px 20px;
-  margin-bottom: 12px;
-  min-height: 80px;
+  padding: 16px 24px;
+  margin-bottom: 14px;
+  min-height: 110px;
 }
 
 .guide-synopsis-box {
@@ -603,21 +603,21 @@ video::-webkit-media-controls-play-button {
 }
 
 .g-syn-title {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #fff;
   margin-bottom: 2px;
 }
 
 .g-syn-meta {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #3b82f6;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .g-syn-desc {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #94a3b8;
   line-height: 1.4;
   display: -webkit-box;
@@ -640,14 +640,14 @@ video::-webkit-media-controls-play-button {
 }
 
 .guide-clock {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: #fff;
   line-height: 1.1;
 }
 
 .guide-date {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: #94a3b8;
   font-weight: 600;
 }
@@ -673,22 +673,22 @@ video::-webkit-media-controls-play-button {
 }
 
 .guide-col-channel-header, .guide-cell-channel {
-  width: 140px;
+  width: 175px;
   flex-shrink: 0;
-  padding: 6px 10px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   font-weight: 700;
 }
 
 .guide-col-time-header, .guide-cell-prog {
-  width: 150px;
+  width: 165px;
   flex-shrink: 0;
-  padding: 6px 8px;
+  padding: 10px 12px;
   border-right: 1px solid rgba(255, 255, 255, 0.04);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
