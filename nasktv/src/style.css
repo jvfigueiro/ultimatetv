@@ -1,0 +1,1119 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+/* Troca global para a Open Sans */
+body, html {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #fff;
+}
+
+/* =====================================================================
+   SPLASH SCREEN DE INICIALIZAÇÃO (Boot da UltimateTV)
+===================================================================== */
+.splash-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle, #10141e 0%, #05070a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100; /* Fica acima de TUDO no sistema */
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.splash-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash-content {
+  text-align: center;
+}
+
+.splash-logo {
+  font-size: 4rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #fff;
+  margin-bottom: 24px;
+}
+
+.splash-logo span {
+  color: #3b82f6; /* Azul UltimateTV */
+}
+
+.splash-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  margin: 0 auto 20px auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.splash-status {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* =====================================================================
+   MODOS DE PROPORÇÃO DE TELA (ASPECT RATIO) E VÍDEO
+===================================================================== */
+#tv-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #050505;
+  transition: transform 0.2s ease;
+  object-fit: fill;
+}
+
+/* 1. Esticar (Padrão Operadora - Preenche 100% da tela ignorando bordas pretas) */
+#tv-screen.aspect-fill {
+  object-fit: fill;
+  transform: scale(1);
+}
+
+/* 2. Original / Ajustar (Mantém a proporção exata da emissora, pode deixar barras pretas) */
+#tv-screen.aspect-contain {
+  object-fit: contain;
+  transform: scale(1);
+}
+
+/* 3. Zoom / Cortar (Dá zoom para sumir com barras pretas laterais/superiores) */
+#tv-screen.aspect-cover {
+  object-fit: cover;
+  transform: scale(1);
+}
+
+/* 4. Super Zoom 4:3 para 16:9 (Força expansão horizontal para canais antigos SD) */
+#tv-screen.aspect-stretch-h {
+  object-fit: fill;
+  transform: scaleX(1.33);
+}
+
+/* Toast Indicador de Proporção */
+.aspect-toast {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  background: rgba(15, 20, 30, 0.95);
+  border: 1px solid #3b82f6;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  z-index: 50;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.aspect-toast.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+/* =====================================================================
+   OSD - TARJA SUPERIOR (Com animação cinematográfica de 1.5s)
+===================================================================== */
+.osd {
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 86%;
+  max-width: 1280px;
+  background: linear-gradient(135deg, rgba(12, 16, 24, 0.82) 0%, rgba(8, 10, 16, 0.88) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 20px 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+  /* RETARDO DE ANIMAÇÃO PARA 1.5 SEGUNDOS */
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.osd.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -24px);
+}
+
+/* Força alinhamento horizontal: Logo na esquerda, texto na direita! */
+.osd-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Caixa da logo limpa, sem borda e sem fundo cinza */
+.osd-logo-container {
+  width: 120px;
+  height: 100px;
+  background: transparent !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.osd-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.7));
+}
+
+.osd-content {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/* Linha 1: Título e Relógio */
+.osd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.title-wrapper {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 20px;
+}
+
+.channel-number {
+  color: #3b82f6; /* Azul UltimateTV */
+}
+
+.title-wrapper .dot {
+  margin: 0 8px;
+  color: #666;
+}
+
+.title-separator {
+  margin: 0 6px;
+  color: #aaa;
+}
+
+.program-title {
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+/* Relógio */
+.osd-clock-wrapper {
+  text-align: right;
+  line-height: 1.1;
+  flex-shrink: 0;
+}
+
+.clock-time {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.clock-date {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* Linha 2: Metadados, Barra Inline e Badges */
+.osd-metadata {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.progress-container-inline {
+  width: 120px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #3b82f6;
+  transition: width 0.5s linear;
+}
+
+.meta-dot {
+  color: #555;
+}
+
+.category-name {
+  color: #94a3b8;
+}
+
+.badges-wrapper {
+  display: flex;
+  gap: 6px;
+  margin-left: auto; /* Empurra as badges para o extremo direito */
+}
+
+.badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: 0.5px;
+}
+
+/* Linha 3: Sinopse com corte inteligente de 2 linhas */
+.osd-synopsis {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Linha 4: Próximo Programa */
+.osd-footer {
+  font-size: 0.9rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.next-time {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.next-label {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.next-program {
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =====================================================================
+   BARRA DE AÇÕES INFERIOR (Estilo Horizontal TiviMate - Blindada)
+===================================================================== */
+.bottom-menu {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 86%;
+  max-width: 1000px;
+  z-index: 999; /* Força ficar no topo absoluto de qualquer camada */
+  opacity: 1;
+  visibility: visible;
+  display: block;
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* O !important impede que o navegador ignore o ocultamento */
+.bottom-menu.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translate(-50%, 24px) !important;
+}
+
+.bottom-menu-bar {
+  background: rgba(10, 14, 22, 0.96);
+  border: 1px solid rgba(59, 130, 246, 0.4); /* Borda azul sutil para destaque no preto */
+  border-radius: 14px;
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95);
+  gap: 10px;
+}
+
+.bm-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
+  background: rgba(255, 255, 255, 0.04);
+  flex: 1;
+  text-align: center;
+}
+
+/* Foco D-Pad Agressivo para a TV */
+.bm-item:hover, .bm-item:focus, .bm-item.active {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: #3b82f6;
+  outline: none;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.bm-icon {
+  font-size: 1.6rem;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.bm-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+
+/* =====================================================================
+   GAVETA LATERAL: LISTA DE CANAIS (Leve e Sem Sombreado Pesado)
+===================================================================== */
+.sidebar-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 380px;
+  height: 100vh;
+  background: rgba(10, 12, 18, 0.98); /* Fundo sólido e leve */
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: none; /* Removido o sombreado pesado para poupar GPU */
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+  transition: transform 0.2s ease;
+  backdrop-filter: none; /* Removido o blur de fundo */
+}
+
+.sidebar-modal.hidden {
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h3 {
+  font-size: 1.3rem;
+  color: #3b82f6;
+  margin-bottom: 4px;
+}
+
+.sidebar-header .hint {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.sidebar-items {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 12px 10px;
+}
+
+/* Scrollbar Invisível na TV */
+.sidebar-items::-webkit-scrollbar, .guide-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.channel-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  margin-bottom: 6px;
+}
+
+/* Estado Ativo e Foco do Controle Remoto (D-Pad) */
+.channel-item:hover, .channel-item:focus, .channel-item.active {
+  background: rgba(59, 130, 246, 0.18);
+  border-color: rgba(59, 130, 246, 0.6);
+  outline: none;
+}
+
+.ch-num {
+  font-weight: 700;
+  color: #3b82f6;
+  font-size: 1.1rem;
+  width: 40px;
+}
+
+.ch-logo {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.ch-logo-placeholder {
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #555;
+}
+
+.ch-info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.ch-name {
+  font-weight: 700;
+  color: #fff;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ch-prog {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+/* =====================================================================
+   GUIA EPG (Estilo Matriz DirecTV)
+===================================================================== */
+.guide-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(8, 11, 18, 0.98);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 50px;
+}
+
+.guide-modal.hidden {
+  display: none !important;
+}
+
+.guide-top-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: linear-gradient(135deg, rgba(16, 22, 35, 0.9) 0%, rgba(10, 14, 22, 0.95) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  padding: 24px 30px;
+  margin-bottom: 20px;
+  min-height: 160px;
+}
+
+.guide-synopsis-box {
+  flex-grow: 1;
+  padding-right: 40px;
+}
+
+.g-syn-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.g-syn-meta {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #3b82f6;
+  margin-bottom: 10px;
+}
+
+.g-syn-desc {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.guide-brand-clock {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.brand-logo-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #3b82f6;
+  margin-bottom: 4px;
+}
+
+.guide-clock {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.guide-date {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.guide-matrix-container {
+  flex-grow: 1;
+  overflow: auto;
+  background: rgba(5, 7, 12, 0.9);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.guide-header-row, .guide-matrix-row {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.guide-header-row {
+  background: rgba(20, 25, 38, 0.95);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.guide-col-channel-header, .guide-cell-channel {
+  width: 220px;
+  flex-shrink: 0;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+}
+
+.guide-col-time-header, .guide-cell-prog {
+  width: 180px;
+  flex-shrink: 0;
+  padding: 12px 14px;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.guide-col-time-header {
+  color: #3b82f6;
+  font-weight: 700;
+  text-align: center;
+}
+
+.g-num {
+  color: #3b82f6;
+  width: 40px;
+}
+
+.g-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.g-name {
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.guide-cell-prog {
+  color: #cbd5e1;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+  transition: background 0.1s ease;
+}
+
+.guide-cell-prog.focused {
+  background: #3b82f6 !important;
+  color: #fff !important;
+  font-weight: 700;
+  outline: 2px solid #fff;
+}
+
+.guide-footer-bar {
+  padding-top: 14px;
+  font-size: 0.85rem;
+  color: #64748b;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* =====================================================================
+   AVISO DE LENTIDÃO DE STREAM (4 Segundos)
+===================================================================== */
+.slow-warning {
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(234, 179, 8, 0.95); /* Amarelo Alerta */
+  color: #000;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 10px 24px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  z-index: 35;
+  transition: opacity 0.3s ease;
+}
+
+.slow-warning.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* =====================================================================
+   TELA DE ERRO FATAL (Estilo DirecTV Error 771 - Sem Sinal)
+===================================================================== */
+.no-signal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 70% 30%, #0c192c 0%, #04080e 100%);
+  display: flex;
+  flex-direction: column;
+  z-index: 15; /* Atrás dos menus, mas na frente do vídeo preto */
+  padding: 40px 60px;
+}
+
+.no-signal.hidden {
+  display: none !important;
+}
+
+.dtv-error-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.dtv-header {
+  text-align: right;
+}
+
+.dtv-clock {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.dtv-date {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.dtv-body {
+  max-width: 750px;
+  margin-top: -60px;
+}
+
+.dtv-badge {
+  background: #f59e0b;
+  color: #000;
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+.dtv-body h2 {
+  font-size: 2.2rem;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.dtv-body p {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.dtv-device-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px 20px;
+  border-radius: 10px;
+}
+
+.dtv-icon {
+  font-size: 2rem;
+}
+
+.dtv-device-info strong {
+  color: #3b82f6;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.ua-string {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  word-break: break-all;
+  font-family: monospace;
+}
+
+.dtv-footer {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px;
+  border-radius: 8px;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Layout em 2 Colunas: Esquerda (Logo + Canal em baixo), Direita (Conteúdo) */
+.osd-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* Coluna da Esquerda Empilhada */
+.osd-left-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.osd-logo-container {
+  width: 130px;
+  height: 85px;
+  background: transparent !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.osd-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.7));
+}
+
+/* Número e Nome do Canal Abaixo da Logo (Menores e Centralizados) */
+.osd-channel-meta-bottom {
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.channel-number-sub {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #3b82f6; /* Azul UltimateTV */
+  margin-right: 4px;
+}
+
+.channel-name-sub {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Agrupamento do Topo Direito (Slot da Logo + Relógio) */
+.osd-top-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+/* Espaço Reservado Vazio para a Futura Logo da UltimateTV */
+.brand-logo-slot {
+  width: 90px;
+  height: 35px;
+  border: 1px dashed rgba(255, 255, 255, 0.2); /* Linha tracejada sutil de espera */
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  /* Futuramente, basta trocar por background-image ou tag img */
+}
+
+/* =====================================================================
+   NOVA TELA INICIAL (Estilo DirecTV Go - Menu Lateral + Catálogo)
+===================================================================== */
+.home-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #070a12; /* Azul Marinho Profundo / Preto DirecTV */
+  z-index: 70; /* Fica abaixo do Boot e dos Modais do Sistema */
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.home-screen.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  display: none !important;
+}
+
+/* Coluna Lateral de Navegação (Sidebar DirecTV Go) */
+.dtv-sidebar {
+  width: 260px;
+  background: rgba(10, 14, 22, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  padding: 30px 0;
+  flex-shrink: 0;
+}
+
+.dtv-brand {
+  padding: 0 24px;
+  margin-bottom: 40px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+.dtv-brand span {
+  color: #3b82f6;
+}
+
+.dtv-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.dtv-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+
+/* Estado Ativo e Foco D-Pad no Menu Lateral */
+.dtv-nav-item:hover, .dtv-nav-item:focus, .dtv-nav-item.active {
+  background: rgba(59, 130, 246, 0.18);
+  color: #fff;
+  border-color: #3b82f6;
+  outline: none;
+  transform: translateX(4px);
+}
+
+.dtv-nav-item .icon {
+  font-size: 1.3rem;
+}
+
+/* Área Principal de Catálogo (Vitrine e Destaques) */
+.dtv-main-content {
+  flex-grow: 1;
+  padding: 40px 50px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* Banner de Destaque no Topo (Hero) */
+.dtv-hero-banner {
+  background: linear-gradient(90deg, rgba(16, 24, 40, 0.9) 0%, rgba(10, 14, 22, 0.4) 100%), 
+              radial-gradient(circle at 80% 20%, #1e293b 0%, transparent 60%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 220px;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.dtv-hero-tag {
+  background: #f59e0b;
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: fit-content;
+  margin-bottom: 12px;
+}
+
+.dtv-hero-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.dtv-hero-desc {
+  color: #cbd5e1;
+  font-size: 1rem;
+  max-width: 600px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Vitrine de Canais Horizontal */
+.dtv-row-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.dtv-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.feat-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+.feat-card:hover, .feat-card:focus, .feat-card.active {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: #fff;
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+  outline: none;
+}
+
+.feat-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
+}
+
+.feat-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}

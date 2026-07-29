@@ -1,0 +1,16 @@
+services:
+  ultimatetv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ultimatetv
+    ports:
+      - "5173:80"
+    environment:
+      - TZ=America/Sao_Paulo
+    networks:
+      - tv-network
+
+networks:
+  tv-network:
+    driver: bridge

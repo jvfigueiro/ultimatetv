@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>UltimateTV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- 1. TELA DE BOOT / SPLASH SCREEN -->
+    <div id="splash-screen" class="splash-screen">
+      <div class="splash-content">
+        <div class="splash-logo">Ultimate<span>TV</span></div>
+        <div class="splash-spinner"></div>
+        <p id="splash-status" class="splash-status">Recebendo informações do servidor...</p>
+      </div>
+    </div>
+
+    <!-- 2. PORTAL INTERATIVO (Estilo DirecTV Go - Menu Lateral + Vitrine) -->
+    <div id="home-screen" class="home-screen hidden">
+      <!-- Sidebar de Navegação -->
+      <div class="dtv-sidebar">
+        <div class="dtv-brand">Ultimate<span>TV</span></div>
+        <div class="dtv-nav-list">
+          <div class="dtv-nav-item active" tabIndex="0" data-action="watch">
+            <span class="icon">📺</span><span>Assistir TV</span>
+          </div>
+          <div class="dtv-nav-item" tabIndex="0" data-action="guide">
+            <span class="icon">📅</span><span>Guia de Programação</span>
+          </div>
+          <div class="dtv-nav-item" tabIndex="0" data-action="last">
+            <span class="icon">↩️</span><span>Último Canal</span>
+          </div>
+          <div class="dtv-nav-item" tabIndex="0" data-action="sysinfo">
+            <span class="icon">⚙️</span><span>Opções</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Área de Catálogo -->
+      <div class="dtv-main-content">
+        <!-- Hero Banner Destaque -->
+        <div class="dtv-hero-banner">
+          <span class="dtv-hero-tag">TV ao Vivo</span>
+          <h1 class="dtv-hero-title">Bem-vindo à UltimateTV</h1>
+          <p class="dtv-hero-desc">Sintonize a programação em tempo real ou explore a grade completa! Powered by UltimateLab</p>
+        </div>
+
+        <!-- Vitrine de Canais Sorteados -->
+        <div class="dtv-row-section">
+          <h3>🎲 Canais em Destaque</h3>
+          <div id="featured-channels-grid" class="dtv-grid"></div>
+        </div>
+      </div>
+    </div>
+
+   <!-- MODAL DE OPÇÕES E DIAGNÓSTICO DO SISTEMA (z-index 100 para sobrepor a Home) -->
+    <div id="sys-info-modal" class="options-modal hidden" style="z-index: 100;">
+      <div class="options-box" style="max-width: 600px;">
+        <div class="options-header">
+          <h3>⚙️ Opções do Sistema</h3>
+          <span class="hint">Pressione ESC ou Voltar para fechar</span>
+        </div>
+        <div class="options-list" style="padding: 24px;">
+          <div style="margin-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px;">
+            <span style="color: #64748b; font-size: 0.8rem; display: block; text-transform: uppercase; font-weight: 700;">Versão do App</span>
+            <strong style="font-size: 1.1rem; color: #3b82f6;">UltimateTV v1.0</strong>
+          </div>
+          <div style="margin-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 14px;">
+            <span style="color: #64748b; font-size: 0.8rem; display: block; text-transform: uppercase; font-weight: 700;">Resolução da Tela</span>
+            <strong id="sys-res-val" style="font-size: 1.1rem; color: #fff;">1920 x 1080 (1080p)</strong>
+          </div>
+          <div style="margin-bottom: 24px;">
+            <span style="color: #64748b; font-size: 0.8rem; display: block; text-transform: uppercase; font-weight: 700;">User-Agent (ID do Dispositivo)</span>
+            <span id="sys-ua-val" style="font-size: 0.85rem; color: #94a3b8; font-family: monospace; word-break: break-all; display: block; margin-top: 4px;">---</span>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <button id="btn-sys-home" style="flex: 1; padding: 14px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer;">🏠 Voltar à Tela Inicial</button>
+            <button id="btn-sys-reload" style="flex: 1; padding: 14px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer;">↻ Recarregar App</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. TELA DE STREAM LENTO (4 Segundos) -->
+    <div id="slow-screen" class="no-signal hidden">
+      <div class="dtv-error-layout">
+        <div class="dtv-header"><div id="dtv-clock" class="dtv-clock">00:00</div><div id="dtv-date" class="dtv-date">--- 00/00</div></div>
+        <div class="dtv-body" style="margin-top: -20px; text-align: center;">
+          <div class="splash-spinner" style="margin-bottom: 30px;"></div>
+          <span class="dtv-badge" style="background: #eab308; color: #000;">CONEXÃO EM ANDAMENTO</span>
+          <h2 style="margin-bottom: 12px;">Aguarde</h2>
+          <p style="max-width: 600px; margin: 0 auto; color: #cbd5e1;">Este canal está demorando um pouco mais que o normal para abrir. Aguarde um momento ou tente novamente mais tarde.</p>
+        </div>
+        <div class="dtv-footer"><span>▲ ▼ Mudar de Canal &nbsp;|&nbsp; ◄ Lista &nbsp;|&nbsp; Voltar : Guia de Programação</span></div>
+      </div>
+    </div>
+
+    <!-- 5. TELA DE ERRO FATAL (DirecTV Error 771 - 18 Segundos) -->
+    <div id="no-signal" class="no-signal hidden">
+      <div class="dtv-error-layout">
+        <div class="dtv-header"><div id="dtv-clock" class="dtv-clock">00:00</div><div id="dtv-date" class="dtv-date">--- 00/00</div></div>
+        <div class="dtv-body">
+          <span class="dtv-badge">TRANSMISSÃO AO VIVO</span>
+          <h2 id="dtv-title">Erro 771 - Sem sinal do servidor</h2>
+          <p id="no-signal-msg">Este canal está indisponível ou demorou tempo demais para responder no servidor. Tente novamente mais tarde.</p>
+          <div class="dtv-device-info">
+            <span class="dtv-icon">💻</span>
+            <div><strong>ID do Dispositivo:</strong><div id="dtv-user-agent" class="ua-string">Carregando...</div></div>
+          </div>
+        </div>
+        <div class="dtv-footer"><span>▲ ▼ Mudar de Canal &nbsp;|&nbsp; ◄ Lista de Canais &nbsp;|&nbsp; Voltar : Guia de Programação</span></div>
+      </div>
+    </div>
+
+    <!-- O Motor de Vídeo -->
+    <video id="tv-screen" class="aspect-fill" autoplay playsinline></video>
+
+    <!-- Indicador Rápido de Mudança de Proporção (Toast) -->
+    <div id="aspect-toast" class="aspect-toast hidden">
+      <span>Proporção: <strong id="aspect-mode-label">Esticar (16:9)</strong></span>
+    </div>
+
+   <!-- Camada de OSD (Sem o bloco retangular pontilhado ao lado do relógio!) -->
+    <div id="osd" class="osd hidden">
+      <div class="osd-layout">
+        <div class="osd-left-column">
+          <div class="osd-logo-container"><img id="osd-logo" src="" alt="Logo" class="osd-logo" /></div>
+          <div class="osd-channel-meta-bottom"><span id="osd-number" class="channel-number-sub">101</span><span id="osd-name" class="channel-name-sub">Canal</span></div>
+        </div>
+        <div class="osd-content">
+          <div class="osd-header">
+            <div class="title-wrapper"><span id="osd-program" class="program-title">Programa Atual</span></div>
+            <div class="osd-top-right">
+              <!-- BLOCO RETANGULAR REMOVIDO DAQUI -->
+              <div class="osd-clock-wrapper"><div id="osd-clock" class="clock-time">00:00</div><div id="osd-date" class="clock-date">--- 00/00</div></div>
+            </div>
+          </div>
+          <div class="osd-metadata">
+            <span id="osd-start-end" class="time-range">00:00 - 00:00</span>
+            <div class="progress-container-inline"><div id="osd-progress" class="progress-bar" style="width: 0%"></div></div>
+            <span id="osd-remaining" class="remaining-time">0 min</span>
+            <div class="badges-wrapper"><span id="osd-res" class="badge">--</span><span id="osd-audio" class="badge">--</span></div>
+          </div>
+          <p id="osd-synopsis" class="osd-synopsis">Sem descrição disponível para este programa.</p>
+          <div class="osd-footer"><span id="osd-next-time" class="next-time">00:00 - 00:00</span><span class="next-label">Próximo:</span><span id="osd-next" class="next-program">Aguardando Guia...</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 1: Lista Rápida -->
+    <div id="channel-list-modal" class="sidebar-modal hidden">
+      <div class="sidebar-header"><h3>Canais</h3><span class="hint">▲ ▼ Navegar | OK Sintonizar</span></div>
+      <div id="channel-list-items" class="sidebar-items"></div>
+    </div>
+
+    <!-- MODAL 2: Guia de Programação EPG -->
+    <div id="guide-modal" class="guide-modal hidden">
+      <div class="guide-top-panel">
+        <div class="guide-synopsis-box">
+          <h2 id="guide-synopsis-title" class="g-syn-title">Selecione um programa</h2>
+          <div class="g-syn-meta"><span id="guide-synopsis-time">--:-- - --:--</span></div>
+          <p id="guide-synopsis-desc" class="g-syn-desc">Navegue pelas setas do controle para ver os detalhes da programação.</p>
+        </div>
+        <div class="guide-brand-clock"><div id="guide-clock" class="guide-clock">00:00</div><div id="guide-date" class="guide-date">--- 00/00</div></div>
+      </div>
+      <div id="guide-content-matrix" class="guide-matrix-container"></div>
+      <div class="guide-footer-bar"><span>▲ ▼ ◄ ► Navegar | OK Sintonizar | Voltar Fechar</span></div>
+    </div>
+
+    <!-- MODAL 3: BARRA DE AÇÕES INFERIOR (Com botão 🏠 Início) -->
+    <div id="bottom-menu" class="bottom-menu hidden">
+      <div class="bottom-menu-bar">
+        <div class="bm-item" tabIndex="0" data-action="home"><span class="bm-icon">🏠</span><span class="bm-label">Início</span></div>
+        <div class="bm-item" tabIndex="0" data-action="list"><span class="bm-icon">📋</span><span class="bm-label">Canais</span></div>
+        <div class="bm-item" tabIndex="0" data-action="guide"><span class="bm-icon">📅</span><span class="bm-label">Guia EPG</span></div>
+        <div class="bm-item" tabIndex="0" data-action="aspect"><span class="bm-icon">🖥️</span><span id="bm-val-aspect" class="bm-label">Esticar</span></div>
+        <div class="bm-item" tabIndex="0" data-action="subtitle"><span class="bm-icon">💬</span><span id="bm-val-sub" class="bm-label">CC: Off</span></div>
+        <div class="bm-item" tabIndex="0" data-action="reload"><span class="bm-icon">↻</span><span class="bm-label">Recarregar</span></div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
