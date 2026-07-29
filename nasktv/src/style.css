@@ -1156,3 +1156,25 @@ video::-webkit-media-controls-overlay-play-button {
     display: none !important;
     -webkit-appearance: none !important;
 }
+
+@media (max-width: 1280px) {
+  html { font-size: 13px; }
+  .osd { padding: 12px 20px; max-width: 95%; }
+  .osd-logo-container { width: 80px; height: 70px; }
+  .title-wrapper { font-size: 1.2rem; }
+  .clock-time { font-size: 1.2rem; }
+  .bottom-menu { max-width: 800px; bottom: 16px; }
+  .bm-item { padding: 8px 12px; }
+  .bm-icon { font-size: 1.2rem; }
+  .sidebar-modal { width: 300px; }
+  .sidebar-header { padding: 16px 14px; }
+  .channel-item { padding: 8px 10px; }
+  .ch-logo, .ch-logo-placeholder { width: 36px; height: 36px; }
+  .guide-modal { padding: 20px 30px; }
+  .guide-top-panel { padding: 16px 20px; min-height: 120px; margin-bottom: 12px; }
+  .g-syn-title { font-size: 1.3rem; }
+  .guide-clock { font-size: 1.5rem; }
+  .guide-col-channel-header, .guide-cell-channel { width: 160px; padding: 8px 12px; }
+  .guide-col-time-header, .guide-cell-prog { width: 140px; padding: 8px 10px; }
+  .dtv-sidebar { width: 220px; }
+}
