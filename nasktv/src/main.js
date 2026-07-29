@@ -189,7 +189,7 @@ class UltimateTV {
   }
 
   handleBackAction() {
-    const sysOpen = !this.sysModalEl.classList.contains('hidden');
+    const sysOpen = this.sysModalEl && !this.sysModalEl.classList.contains('hidden');
     if (sysOpen) { this.sysModalEl.classList.add('hidden'); return; }
 
     const listOpen = !document.getElementById('channel-list-modal').classList.contains('hidden');
@@ -219,7 +219,7 @@ class UltimateTV {
     this.player.stop();
     this.osd.hide();
     this.menu.hide();
-    this.sysModalEl.classList.add('hidden');
+    if (this.sysModalEl) this.sysModalEl.classList.add('hidden');
     
     const grid = document.getElementById('featured-channels-grid');
     if (grid) {
@@ -320,9 +320,9 @@ navigateHome(dir) {
   }
 
   showSysInfoModal() {
-    document.getElementById('sys-res-val').textContent = `${window.innerWidth} x ${window.innerHeight} (${this.player.getDetectedResolution()})`;
-    document.getElementById('sys-ua-val').textContent = navigator.userAgent;
-    this.sysModalEl.classList.remove('hidden');
+    if (document.getElementById('sys-res-val')) document.getElementById('sys-res-val').textContent = `${window.innerWidth} x ${window.innerHeight} (${this.player.getDetectedResolution()})`;
+    if (document.getElementById('sys-ua-val')) document.getElementById('sys-ua-val').textContent = navigator.userAgent;
+    if (this.sysModalEl) this.sysModalEl.classList.remove('hidden');
   }
 
   openFullOSDWithMenu() {
