@@ -3,6 +3,8 @@
   margin: 0;
   padding: 0;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 /* Troca global para a Open Sans */
@@ -93,6 +95,22 @@ video::-webkit-media-controls {
 }
 
 video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+}
+
+video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+}
+
+video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+video::-webkit-media-controls-play-button {
   display: none !important;
 }
 
