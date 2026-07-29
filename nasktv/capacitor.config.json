@@ -1,0 +1,14 @@
+{
+  "appId": "com.ultimatelab.nasktv",
+  "appName": "UltimateTV",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

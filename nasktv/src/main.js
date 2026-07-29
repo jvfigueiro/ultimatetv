@@ -5,6 +5,7 @@ import { DispatcharrAPI } from './api.js';
 import { ChannelList } from './list.js';
 import { EPGGuide } from './guide.js';
 import { OptionsMenu } from './menu.js';
+import { App } from '@capacitor/app';
 
 class UltimateTV {
   constructor() {
@@ -58,6 +59,10 @@ class UltimateTV {
     this.previousIndex = null;
 
     this.init();
+    
+    App.addListener('backButton', () => {
+      this.handleBackAction();
+    });
   }
 
   async init() {
@@ -156,22 +161,7 @@ class UltimateTV {
         this.openFullOSDWithMenu();
       },
       onBack: () => {
-        const sysOpen = !this.sysModalEl.classList.contains('hidden');
-        if (sysOpen) { this.sysModalEl.classList.add('hidden'); return; }
-
-        const listOpen = !document.getElementById('channel-list-modal').classList.contains('hidden');
-        const guideOpen = this.guide.isOpen;
-        const menuOpen = !document.getElementById('bottom-menu').classList.contains('hidden');
-        const osdOpen = !document.getElementById('osd').classList.contains('hidden');
-
-        if (listOpen || guideOpen || menuOpen || osdOpen) {
-          this.menu.hide();
-          this.list.hide();
-          this.guide.hide();
-          this.osd.hide();
-        } else if (!this.inHomeScreen) {
-          this.showHomeScreen();
-        }
+        this.handleBackAction();
       }
     });
 
@@ -196,6 +186,31 @@ class UltimateTV {
       document.querySelectorAll('.sys-time').forEach(el => el.textContent = timeStr);
       document.querySelectorAll('.sys-date').forEach(el => el.textContent = dateStr);
     }, 1000);
+  }
+
+  handleBackAction() {
+    const sysOpen = !this.sysModalEl.classList.contains('hidden');
+    if (sysOpen) { this.sysModalEl.classList.add('hidden'); return; }
+
+    const listOpen = !document.getElementById('channel-list-modal').classList.contains('hidden');
+    const guideOpen = this.guide.isOpen;
+    const menuOpen = !document.getElementById('bottom-menu').classList.contains('hidden');
+    const osdOpen = !document.getElementById('osd').classList.contains('hidden');
+
+    if (listOpen || guideOpen || menuOpen || osdOpen) {
+      this.menu.hide();
+      this.list.hide();
+      this.guide.hide();
+      this.osd.hide();
+    } else if (!this.inHomeScreen) {
+      this.showHomeScreen();
+    } else {
+      try {
+        App.exitApp();
+      } catch (e) {
+        console.error("Capacitor App.exitApp error", e);
+      }
+    }
   }
 
   showHomeScreen() {

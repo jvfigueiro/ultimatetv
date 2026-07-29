@@ -6,7 +6,7 @@ export class RemoteController {
 
   init() {
     window.addEventListener('keydown', (e) => {
-      if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space","PageUp","PageDown"].indexOf(e.code) > -1) {
+      if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space","PageUp","PageDown","Enter","NumpadEnter"].indexOf(e.code) > -1) {
         e.preventDefault();
       }
 
@@ -54,6 +54,6 @@ export class RemoteController {
           this.callbacks.onBack && this.callbacks.onBack();
           break;
       }
-    });
+    }, { capture: true });
   }
 }
