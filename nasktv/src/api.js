@@ -74,6 +74,7 @@ export class DispatcharrAPI {
   mergeEPG(channels, epgText) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(epgText, "text/xml");
+    this.rawXmlDoc = xmlDoc;
     const now = new Date();
 
     const xmlChannels = Array.from(xmlDoc.querySelectorAll('channel')).map(ch => {
@@ -94,7 +95,6 @@ export class DispatcharrAPI {
       
       let matchedEpgId = null;
 
-      // Busca o ID do XMLTV compatível com o M3U
       for (const xCh of xmlChannels) {
         if (xCh.cleanId === cleanM3uId || xCh.cleanNames.includes(cleanM3uName) || xCh.cleanNames.includes(cleanM3uId)) {
           matchedEpgId = xCh.realId; break;
@@ -118,13 +118,15 @@ export class DispatcharrAPI {
       if (!matchedEpgId) return;
       matchCount++;
 
+      // A MÁGICA ACONTECE AQUI: Salva o ID correto do XMLTV no canal para o EPG usar depois!
+      channel.epgId = matchedEpgId;
+
       const programmes = Array.from(xmlDoc.querySelectorAll(`programme[channel="${matchedEpgId}"]`));
       if (programmes.length === 0) return;
 
       let currentProg = null;
       let nextProg = null;
 
-      // CIRURGIA 1: Busca o programa que está rodando exatamente AGORA
       for (let i = 0; i < programmes.length; i++) {
         const start = this.parseXMLTVDate(programmes[i].getAttribute('start'));
         const end = this.parseXMLTVDate(programmes[i].getAttribute('stop'));
@@ -136,7 +138,6 @@ export class DispatcharrAPI {
         }
       }
 
-      // CIRURGIA 2: APROXIMAÇÃO (Se o fuso estiver levemente fora, pega o último que começou antes de agora)
       if (!currentProg) {
         for (let i = programmes.length - 1; i >= 0; i--) {
           const start = this.parseXMLTVDate(programmes[i].getAttribute('start'));
@@ -148,7 +149,6 @@ export class DispatcharrAPI {
         }
       }
 
-      // INJETA OS DADOS DE PROGRAMAÇÃO NA INTERFACE
       if (currentProg) {
         const start = this.parseXMLTVDate(currentProg.getAttribute('start'));
         const end = this.parseXMLTVDate(currentProg.getAttribute('stop'));
@@ -181,7 +181,6 @@ export class DispatcharrAPI {
 
   parseXMLTVDate(dateStr) {
     if (!dateStr) return new Date();
-    // Ex: "20260728183000 -0300" -> transforma em ISO "2026-07-28T18:30:00-03:00"
     const clean = dateStr.trim();
     const y = clean.substring(0, 4);
     const m = clean.substring(4, 6);
@@ -192,12 +191,11 @@ export class DispatcharrAPI {
     
     let iso = `${y}-${m}-${d}T${h}:${min}:${s}`;
     
-    // Captura o fuso horário (ex: -0300 ou +0000) e formata para -03:00
     const tzMatch = clean.match(/([+-]\d{2})(\d{2})$/);
     if (tzMatch) {
       iso += `${tzMatch[1]}:${tzMatch[2]}`;
     } else {
-      iso += '-03:00'; // Fuso padrão de Brasília se o XML não declarar nada
+      iso += '-03:00';
     }
     
     return new Date(iso);

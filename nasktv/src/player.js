@@ -8,14 +8,11 @@ export class TVPlayer {
     this.errorMsgEl = document.getElementById('no-signal-msg');
     this.slowScreenEl = document.getElementById('slow-screen');
     this.uaEl = document.getElementById('dtv-user-agent');
-    this.clockEl = document.getElementById('dtv-clock');
-    this.dateEl = document.getElementById('dtv-date');
     
     this.hls = null;
     this.tsPlayer = null;
     this.fatalTimer = null;
     this.slowTimer = null;
-    this.clockInterval = null;
     this.subtitlesActive = false;
     this.onStreamReady = onStreamReadyCallback;
 
@@ -37,7 +34,7 @@ export class TVPlayer {
   loadChannel(streamUrl) {
     console.log(`[UltimateTV Player] Sintonizando Proxy: ${streamUrl}`);
     this.stop();
-    this.startTimers(4000, 18000); // 4s para tela cheia lenta, 18s para erro fatal
+    this.startTimers(4000, 18000);
 
     if (streamUrl.includes('.m3u8') && Hls.isSupported()) {
       this.hls = new Hls({ maxBufferLength: 10, enableWorker: true });
@@ -129,7 +126,6 @@ export class TVPlayer {
   clearAllTimers() {
     if (this.slowTimer) { clearTimeout(this.slowTimer); this.slowTimer = null; }
     if (this.fatalTimer) { clearTimeout(this.fatalTimer); this.fatalTimer = null; }
-    if (this.clockInterval) { clearInterval(this.clockInterval); this.clockInterval = null; }
   }
 
   triggerFatalError(msg) {
@@ -138,21 +134,7 @@ export class TVPlayer {
     this.slowScreenEl.classList.add('hidden');
     this.errorMsgEl.textContent = `${msg} Tente mudar de canal ou verifique seu servidor.`;
     if (this.uaEl) this.uaEl.textContent = navigator.userAgent;
-    
-    this.updateErrorClock();
-    this.clockInterval = setInterval(() => this.updateErrorClock(), 1000);
     this.noSignalEl.classList.remove('hidden');
-  }
-
-  updateErrorClock() {
-    if (!this.clockEl || !this.dateEl) return;
-    const now = new Date();
-    const h = now.getHours().toString().padStart(2, '0');
-    const m = now.getMinutes().toString().padStart(2, '0');
-    this.clockEl.textContent = `${h}:${m}`;
-    const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    this.dateEl.textContent = `${dias[now.getDay()]} ${now.getDate()}/${meses[now.getMonth()]}`;
   }
 
   stop() {

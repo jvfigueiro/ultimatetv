@@ -39,6 +39,7 @@ class UltimateTV {
     this.aspectToastEl = document.getElementById('aspect-toast');
     this.aspectLabelEl = document.getElementById('aspect-mode-label');
     this.toastTimer = null;
+    this.osdTimer = null;
 
     this.inHomeScreen = true;
     this.homeSelectedIndex = 0;
@@ -75,11 +76,25 @@ class UltimateTV {
     this.splashStatusEl.textContent = `Carregando portal...`;
     this.list.render(this.channels, this.currentIndex);
 
-    // Conecta os botões do Modal de Opções do Sistema
     document.getElementById('btn-sys-reload')?.addEventListener('click', () => window.location.reload());
     document.getElementById('btn-sys-home')?.addEventListener('click', () => {
       this.sysModalEl.classList.add('hidden');
       this.showHomeScreen();
+    });
+
+    document.getElementById('tv-screen').addEventListener('click', () => {
+      if (this.inHomeScreen) return;
+      
+      const menuEl = document.getElementById('bottom-menu');
+      const isMenuOpen = menuEl && !menuEl.classList.contains('hidden');
+      
+      if (isMenuOpen) {
+        this.menu.hide();
+        this.osd.hide();
+        if (this.osdTimer) clearTimeout(this.osdTimer);
+      } else {
+        this.openFullOSDWithMenu();
+      }
     });
 
     new RemoteController({
@@ -98,19 +113,23 @@ class UltimateTV {
       onLeft: () => {
         if (this.inHomeScreen) { this.navigateHome('left'); return; }
         if (this.guide.isOpen) { this.guide.navigate('left'); return; }
-        if (this.menu.navigate('left')) return;
+        if (this.menu.navigate('left')) { this.resetOSDTimer(); return; }
         this.list.toggle(this.currentIndex);
       },
       onRight: () => {
         if (this.inHomeScreen) { this.navigateHome('right'); return; }
         if (this.guide.isOpen) { this.guide.navigate('right'); return; }
-        if (this.menu.navigate('right')) return;
+        if (this.menu.navigate('right')) { this.resetOSDTimer(); return; }
         this.tuneLastChannel();
       },
       onEnter: () => {
         if (this.inHomeScreen) { this.selectHomeItem(); return; }
         if (this.guide.isOpen) { this.guide.selectCurrent(); return; }
-        if (!document.getElementById('bottom-menu').classList.contains('hidden')) { this.menu.triggerCurrent(); return; }
+        if (!document.getElementById('bottom-menu').classList.contains('hidden')) { 
+          this.menu.triggerCurrent(); 
+          this.resetOSDTimer(); 
+          return; 
+        }
         if (this.list.selectCurrent()) return;
 
         this.openFullOSDWithMenu();
@@ -156,13 +175,29 @@ class UltimateTV {
       }
     });
 
+    this.startGlobalClock();
+
     setTimeout(() => {
       this.splashEl.classList.add('hidden');
       this.showHomeScreen();
     }, 1200);
   }
 
-  // --- LÓGICA DO PORTAL DIRECTV GO ---
+  startGlobalClock() {
+    setInterval(() => {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const dateStr = now.toLocaleDateString('pt-BR', { 
+        weekday: 'short', 
+        day: '2-digit', 
+        month: '2-digit' 
+      }).replace('.', '');
+
+      document.querySelectorAll('.sys-time').forEach(el => el.textContent = timeStr);
+      document.querySelectorAll('.sys-date').forEach(el => el.textContent = dateStr);
+    }, 1000);
+  }
+
   showHomeScreen() {
     console.log("🏠 [UltimateTV] Abrindo Portal DirecTV Go...");
     this.inHomeScreen = true;
@@ -171,7 +206,6 @@ class UltimateTV {
     this.menu.hide();
     this.sysModalEl.classList.add('hidden');
     
-    // Sorteia 5 canais aleatórios em destaque na grade horizontal
     const grid = document.getElementById('featured-channels-grid');
     if (grid) {
       grid.innerHTML = '';
@@ -222,24 +256,24 @@ class UltimateTV {
     });
   }
 
-  navigateHome(dir) {
-    const isSidebar = this.homeSelectedIndex < 4;
+navigateHome(dir) {
+    const isSidebar = this.homeSelectedIndex < 3; // Limite reduzido para 3 itens
     const total = this.homeItems.length;
 
     if (dir === 'up') {
-      if (isSidebar) this.homeSelectedIndex = (this.homeSelectedIndex - 1 + 4) % 4;
+      if (isSidebar) this.homeSelectedIndex = (this.homeSelectedIndex - 1 + 3) % 3;
       else this.homeSelectedIndex = 0;
     } else if (dir === 'down') {
       if (isSidebar) {
-        if (this.homeSelectedIndex < 3) this.homeSelectedIndex++;
-        else if (total > 4) this.homeSelectedIndex = 4;
+        if (this.homeSelectedIndex < 2) this.homeSelectedIndex++;
+        else if (total > 3) this.homeSelectedIndex = 3;
       }
     } else if (dir === 'right') {
-      if (isSidebar && total > 4) this.homeSelectedIndex = 4;
+      if (isSidebar && total > 3) this.homeSelectedIndex = 3;
       else if (!isSidebar) this.homeSelectedIndex = Math.min(total - 1, this.homeSelectedIndex + 1);
     } else if (dir === 'left') {
       if (!isSidebar) {
-        if (this.homeSelectedIndex === 4) this.homeSelectedIndex = 0;
+        if (this.homeSelectedIndex === 3) this.homeSelectedIndex = 0;
         else this.homeSelectedIndex--;
       }
     }
@@ -280,6 +314,20 @@ class UltimateTV {
     this.osd.show(this.getCurrentChannel(), this.player);
     const currentModeLabel = this.aspectModes[this.currentAspectIdx].label;
     this.menu.show(currentModeLabel, this.player.subtitlesActive);
+    
+    this.resetOSDTimer();
+  }
+
+  resetOSDTimer() {
+    if (this.osdTimer) clearTimeout(this.osdTimer);
+    
+    this.osdTimer = setTimeout(() => {
+      const menuEl = document.getElementById('bottom-menu');
+      if (menuEl && !menuEl.classList.contains('hidden')) {
+        this.menu.hide();
+        this.osd.hide();
+      }
+    }, 12000);
   }
 
   cycleAspectMode() {

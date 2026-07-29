@@ -16,39 +16,8 @@ export class OSD {
     this.nextTimeEl = document.getElementById('osd-next-time');
     this.nextEl = document.getElementById('osd-next');
     
-    this.clockEl = document.getElementById('osd-clock');
-    this.dateEl = document.getElementById('osd-date');
-    
     this.hideTimeout = null;
-    this.clockInterval = null;
     this.displayDuration = 7000;
-  }
-
-  updateClock() {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    this.clockEl.textContent = `${hours}:${minutes}`;
-
-    const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    const diaSemana = diasSemana[now.getDay()];
-    const dia = now.getDate().toString().padStart(2, '0');
-    const mes = (now.getMonth() + 1).toString().padStart(2, '0');
-    
-    this.dateEl.textContent = `${diaSemana} ${dia}/${mes}`;
-  }
-
-  startClockLoop() {
-    this.updateClock();
-    if (this.clockInterval) clearInterval(this.clockInterval);
-    this.clockInterval = setInterval(() => this.updateClock(), 1000);
-  }
-
-  stopClockLoop() {
-    if (this.clockInterval) {
-      clearInterval(this.clockInterval);
-      this.clockInterval = null;
-    }
   }
 
   show(channelData, playerInstance) {
@@ -78,7 +47,6 @@ export class OSD {
     this.nextTimeEl.textContent = `${channelData.nextStart || "--:--"} - ${channelData.nextEnd || "--:--"}`;
     this.nextEl.textContent = channelData.nextProgram || "Sem informação";
 
-    this.startClockLoop();
     this.el.classList.remove('hidden');
 
     this.hideTimeout = setTimeout(() => {
@@ -98,7 +66,6 @@ export class OSD {
 
   hide() {
     this.el.classList.add('hidden');
-    this.stopClockLoop();
   }
 
   toggle(channelData, playerInstance) {

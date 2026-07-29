@@ -34,9 +34,6 @@
           <div class="dtv-nav-item" tabIndex="0" data-action="last">
             <span class="icon">↩️</span><span>Último Canal</span>
           </div>
-          <div class="dtv-nav-item" tabIndex="0" data-action="sysinfo">
-            <span class="icon">⚙️</span><span>Opções</span>
-          </div>
         </div>
       </div>
 
@@ -57,7 +54,7 @@
       </div>
     </div>
 
-   <!-- MODAL DE OPÇÕES E DIAGNÓSTICO DO SISTEMA (z-index 100 para sobrepor a Home) -->
+   <!-- MODAL DE OPÇÕES E DIAGNÓSTICO DO SISTEMA -->
     <div id="sys-info-modal" class="options-modal hidden" style="z-index: 100;">
       <div class="options-box" style="max-width: 600px;">
         <div class="options-header">
@@ -88,7 +85,7 @@
     <!-- 4. TELA DE STREAM LENTO (4 Segundos) -->
     <div id="slow-screen" class="no-signal hidden">
       <div class="dtv-error-layout">
-        <div class="dtv-header"><div id="dtv-clock" class="dtv-clock">00:00</div><div id="dtv-date" class="dtv-date">--- 00/00</div></div>
+        <div class="dtv-header"><div id="dtv-clock" class="dtv-clock sys-time">00:00</div><div id="dtv-date" class="dtv-date sys-date">--- 00/00</div></div>
         <div class="dtv-body" style="margin-top: -20px; text-align: center;">
           <div class="splash-spinner" style="margin-bottom: 30px;"></div>
           <span class="dtv-badge" style="background: #eab308; color: #000;">CONEXÃO EM ANDAMENTO</span>
@@ -102,7 +99,7 @@
     <!-- 5. TELA DE ERRO FATAL (DirecTV Error 771 - 18 Segundos) -->
     <div id="no-signal" class="no-signal hidden">
       <div class="dtv-error-layout">
-        <div class="dtv-header"><div id="dtv-clock" class="dtv-clock">00:00</div><div id="dtv-date" class="dtv-date">--- 00/00</div></div>
+        <div class="dtv-header"><div id="dtv-clock" class="dtv-clock sys-time">00:00</div><div id="dtv-date" class="dtv-date sys-date">--- 00/00</div></div>
         <div class="dtv-body">
           <span class="dtv-badge">TRANSMISSÃO AO VIVO</span>
           <h2 id="dtv-title">Erro 771 - Sem sinal do servidor</h2>
@@ -124,7 +121,7 @@
       <span>Proporção: <strong id="aspect-mode-label">Esticar (16:9)</strong></span>
     </div>
 
-   <!-- Camada de OSD (Sem o bloco retangular pontilhado ao lado do relógio!) -->
+   <!-- Camada de OSD -->
     <div id="osd" class="osd hidden">
       <div class="osd-layout">
         <div class="osd-left-column">
@@ -135,8 +132,7 @@
           <div class="osd-header">
             <div class="title-wrapper"><span id="osd-program" class="program-title">Programa Atual</span></div>
             <div class="osd-top-right">
-              <!-- BLOCO RETANGULAR REMOVIDO DAQUI -->
-              <div class="osd-clock-wrapper"><div id="osd-clock" class="clock-time">00:00</div><div id="osd-date" class="clock-date">--- 00/00</div></div>
+              <div class="osd-clock-wrapper"><div id="osd-clock" class="clock-time sys-time">00:00</div><div id="osd-date" class="clock-date sys-date">--- 00/00</div></div>
             </div>
           </div>
           <div class="osd-metadata">
@@ -165,13 +161,13 @@
           <div class="g-syn-meta"><span id="guide-synopsis-time">--:-- - --:--</span></div>
           <p id="guide-synopsis-desc" class="g-syn-desc">Navegue pelas setas do controle para ver os detalhes da programação.</p>
         </div>
-        <div class="guide-brand-clock"><div id="guide-clock" class="guide-clock">00:00</div><div id="guide-date" class="guide-date">--- 00/00</div></div>
+        <div class="guide-brand-clock"><div id="guide-clock" class="guide-clock sys-time">00:00</div><div id="guide-date" class="guide-date sys-date">--- 00/00</div></div>
       </div>
       <div id="guide-content-matrix" class="guide-matrix-container"></div>
       <div class="guide-footer-bar"><span>▲ ▼ ◄ ► Navegar | OK Sintonizar | Voltar Fechar</span></div>
     </div>
 
-    <!-- MODAL 3: BARRA DE AÇÕES INFERIOR (Com botão 🏠 Início) -->
+    <!-- MODAL 3: BARRA DE AÇÕES INFERIOR -->
     <div id="bottom-menu" class="bottom-menu hidden">
       <div class="bottom-menu-bar">
         <div class="bm-item" tabIndex="0" data-action="home"><span class="bm-icon">🏠</span><span class="bm-label">Início</span></div>

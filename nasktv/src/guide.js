@@ -5,8 +5,6 @@ export class EPGGuide {
     this.synopsisTitleEl = document.getElementById('guide-synopsis-title');
     this.synopsisTimeEl = document.getElementById('guide-synopsis-time');
     this.synopsisDescEl = document.getElementById('guide-synopsis-desc');
-    this.clockEl = document.getElementById('guide-clock');
-    this.dateEl = document.getElementById('guide-date');
 
     this.onSelect = onSelectCallback;
     this.channels = [];
@@ -17,7 +15,6 @@ export class EPGGuide {
     this.selectedCol = 0;
     this.timeSlots = [];
     this.matrixData = {};
-    this.clockInterval = null;
   }
 
   render(channels, xmlDoc) {
@@ -31,7 +28,6 @@ export class EPGGuide {
     const now = new Date();
     now.setMinutes(now.getMinutes() < 30 ? 0 : 30, 0, 0);
 
-    // 6 colunas = 3 horas à frente
     for (let i = 0; i < 6; i++) {
       this.timeSlots.push(new Date(now.getTime() + i * 30 * 60000));
     }
@@ -41,7 +37,6 @@ export class EPGGuide {
     if (!this.container || !this.channels || this.channels.length === 0) return;
     this.container.innerHTML = '';
 
-    // Cabeçalho de Horários
     const headerRow = document.createElement('div');
     headerRow.className = 'guide-header-row';
     headerRow.innerHTML = `<div class="guide-col-channel-header">Canais</div>`;
@@ -76,7 +71,6 @@ export class EPGGuide {
         const slotEnd = new Date(slot.getTime() + 30 * 60000);
         let matchedProg = null;
 
-        // Busca programa que cruza com o bloco temporal
         for (let p = 0; p < programmes.length; p++) {
           const prog = programmes[p];
           const pStart = this.parseXMLTVDate(prog.getAttribute('start'));
@@ -102,7 +96,6 @@ export class EPGGuide {
           cell.textContent = sIdx === 0 ? (channel.currentProgram || "---") : "---";
         }
 
-        // Suporte perfeito ao Mouse!
         cell.addEventListener('click', () => {
           this.selectedRow = cIdx;
           this.selectedCol = sIdx;
@@ -186,33 +179,18 @@ export class EPGGuide {
     return true;
   }
 
-  updateClock() {
-    if (!this.clockEl || !this.dateEl) return;
-    const now = new Date();
-    const h = now.getHours().toString().padStart(2, '0');
-    const m = now.getMinutes().toString().padStart(2, '0');
-    this.clockEl.textContent = `${h}:${m}`;
-    const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    this.dateEl.textContent = `${dias[now.getDay()]} ${now.getDate()}/${meses[now.getMonth()]}`;
-  }
-
   show() {
     if (!this.el) return;
     this.isOpen = true;
     this.el.classList.remove('hidden');
     this.generateTimeSlots();
     this.renderMatrix();
-    this.updateClock();
-    if (this.clockInterval) clearInterval(this.clockInterval);
-    this.clockInterval = setInterval(() => this.updateClock(), 1000);
   }
 
   hide() {
     if (!this.el) return;
     this.isOpen = false;
     this.el.classList.add('hidden');
-    if (this.clockInterval) { clearInterval(this.clockInterval); this.clockInterval = null; }
   }
 
   toggle() { if (this.isOpen) this.hide(); else this.show(); }
