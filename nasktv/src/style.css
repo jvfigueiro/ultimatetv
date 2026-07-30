@@ -157,9 +157,13 @@ body, html {
 .dtv-grid {
   display: flex;
   gap: 20px;
-  overflow-x: hidden; /* Controlado via JS/D-Pad */
+  overflow-x: scroll; /* Changed to scroll */
   scroll-behavior: smooth;
-  padding-bottom: 20px; /* Para sombra dos cards não cortar */
+  padding: 20px 50px; /* Padding for shadow/scale and horizontal bounds */
+  margin: -20px -50px; /* Offset the padding to align with row section */
+}
+.dtv-grid::-webkit-scrollbar {
+  display: none; /* Hide scrollbar on Chrome/Android */
 }
 .feat-card {
   flex: 0 0 260px;
@@ -204,8 +208,12 @@ body, html {
 }
 
 #home-categories-container {
-  overflow-y: hidden;
+  overflow-y: scroll; /* Allow vertical scrolling */
   padding-bottom: 50px;
+  flex: 1; /* Fill remaining vertical space */
+}
+#home-categories-container::-webkit-scrollbar {
+  display: none;
 }
 
 /* =====================================================================

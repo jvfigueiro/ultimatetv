@@ -420,6 +420,8 @@ class UltimateTV {
       else this.tuneChannel(this.currentIndex);
     } else if (action === 'sysinfo') {
       this.showSysInfoModal();
+    } else if (action === 'reload') {
+      window.location.reload();
     } else if (action === 'tune') {
       const idx = parseInt(item.getAttribute('data-ch-idx'), 10);
       this.exitHomeScreen(idx);
