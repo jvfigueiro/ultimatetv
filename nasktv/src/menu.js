@@ -5,6 +5,7 @@ export class OptionsMenu {
     this.subValEl = document.getElementById('bm-val-sub');
     
     this.callbacks = callbacks;
+    this.onToggleSynopsis = null;
     this.items = [];
     this.selectedIndex = 0;
   }
@@ -20,6 +21,12 @@ export class OptionsMenu {
     });
   }
 
+  updateSubtitleLabel(enabled) {
+    if (this.subValEl) {
+      this.subValEl.textContent = enabled ? "Legendas Ativadas" : "Legendas Desativadas";
+    }
+  }
+
   show(currentAspectLabel, subtitlesActive) {
     if (this.items.length === 0) this.init();
     if (!this.el) return;
@@ -27,9 +34,7 @@ export class OptionsMenu {
     if (this.aspectValEl && currentAspectLabel) {
       this.aspectValEl.textContent = currentAspectLabel.split(' ')[0];
     }
-    if (this.subValEl) {
-      this.subValEl.textContent = subtitlesActive ? "CC: On" : "CC: Off";
-    }
+    this.updateSubtitleLabel(subtitlesActive);
     
     this.el.classList.remove('hidden');
     this.focusCurrent();
@@ -89,7 +94,10 @@ export class OptionsMenu {
       if (this.aspectValEl) this.aspectValEl.textContent = newLabel.split(' ')[0];
     } else if (action === 'subtitle') {
       const state = this.callbacks.onToggleSubtitles();
-      if (this.subValEl) this.subValEl.textContent = state ? "Legenda On" : "Legenda Off";
+      this.updateSubtitleLabel(state);
+    } else if (action === 'synopsis') {
+      this.hide();
+      if (this.onToggleSynopsis) this.onToggleSynopsis();
     } else if (action === 'reload') {
       this.hide();
       this.callbacks.onReload();

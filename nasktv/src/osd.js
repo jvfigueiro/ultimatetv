@@ -18,10 +18,16 @@ export class OSD {
     
     this.hideTimeout = null;
     this.progressInterval = null;
+    this.expandTimeout = null;
     this.displayDuration = 7000;
   }
 
   show(channelData, playerInstance) {
+    this.el.classList.remove('expanded');
+    if (this.expandTimeout) {
+      clearTimeout(this.expandTimeout);
+      this.expandTimeout = null;
+    }
     if (this.hideTimeout) clearTimeout(this.hideTimeout);
 
     if (channelData.logo) {
@@ -89,10 +95,41 @@ export class OSD {
 
   hide() {
     this.el.classList.add('hidden');
+    this.el.classList.remove('expanded'); // Reverte estado expandido ao esconder
+    if (this.expandTimeout) {
+      clearTimeout(this.expandTimeout);
+      this.expandTimeout = null;
+    }
     if (this.progressInterval) {
       clearInterval(this.progressInterval);
       this.progressInterval = null;
     }
+  }
+
+  expandSynopsis() {
+    this.el.classList.add('expanded');
+    this.el.classList.remove('hidden');
+    
+    // Cancela o auto-hide normal do OSD
+    if (this.hideTimeout) clearTimeout(this.hideTimeout);
+    
+    // Configura o auto-close de 20s
+    if (this.expandTimeout) clearTimeout(this.expandTimeout);
+    this.expandTimeout = setTimeout(() => {
+      this.el.classList.remove('expanded');
+      this.hide();
+    }, 20000);
+  }
+
+  isExpanded() {
+    return this.el.classList.contains('expanded');
+  }
+
+  collapseSynopsis() {
+    this.el.classList.remove('expanded');
+    if (this.expandTimeout) clearTimeout(this.expandTimeout);
+    // Reinicia o auto-hide normal
+    this.hideTimeout = setTimeout(() => this.hide(), this.displayDuration);
   }
 
   toggle(channelData, playerInstance) {

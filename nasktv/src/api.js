@@ -46,10 +46,12 @@ export class DispatcharrAPI {
         const idMatch = line.match(/tvg-id="([^"]*)"/i);
         const logoMatch = line.match(/tvg-logo="([^"]*)"/i);
         const numMatch = line.match(/tvg-chno="([^"]*)"/i);
+        const groupMatch = line.match(/group-title="([^"]*)"/i);
         
         currentChannel.id = idMatch ? idMatch[1].trim() : `ch_${channels.length + 1}`;
         currentChannel.logo = logoMatch ? logoMatch[1] : '';
         currentChannel.number = numMatch ? numMatch[1] : (channels.length + 1).toString().padStart(3, '0');
+        currentChannel.group = groupMatch ? groupMatch[1].trim() : 'Outros';
         
         const nameParts = line.split(',');
         currentChannel.name = nameParts[nameParts.length - 1].trim();
@@ -57,7 +59,7 @@ export class DispatcharrAPI {
         currentChannel.currentProgram = "Programação da UltimateTV";
         currentChannel.start = "--:--"; currentChannel.end = "--:--";
         currentChannel.progress = 0; currentChannel.remaining = 0;
-        currentChannel.category = "TV ao Vivo";
+        currentChannel.category = currentChannel.group;
         currentChannel.resolution = "FHD"; currentChannel.audio = "STEREO";
         currentChannel.synopsis = "Assista à programação ao vivo.";
         currentChannel.nextProgram = "Aguardando Guia...";

@@ -30,6 +30,9 @@ class UltimateTV {
       onToggleSubtitles: () => this.player.toggleSubtitles(),
       onOpenGuide: () => this.guide.show(),
       onOpenList: () => this.list.show(this.currentIndex),
+      onToggleSynopsis: () => {
+        this.osd.expandSynopsis();
+      },
       onReload: () => window.location.reload()
     });
     
@@ -42,8 +45,9 @@ class UltimateTV {
     this.osdTimer = null;
 
     this.inHomeScreen = true;
-    this.homeSelectedIndex = 0;
-    this.homeItems = [];
+    this.homeSelectedRow = 0; // 0 = sidebar, 1 = recent, 2..N = categorias
+    this.homeSelectedCol = 0; 
+    this.homeMatrix = []; // array 2D de elementos HTML focaveis
     
     // Historico de até 4 ultimos canais assistidos
     const savedHistory = localStorage.getItem('ultimatetv_history');
@@ -192,6 +196,11 @@ class UltimateTV {
     const sysOpen = this.sysModalEl && !this.sysModalEl.classList.contains('hidden');
     if (sysOpen) { this.sysModalEl.classList.add('hidden'); return; }
 
+    if (this.osd && this.osd.isExpanded()) {
+      this.osd.collapseSynopsis();
+      return;
+    }
+
     const listOpen = !document.getElementById('channel-list-modal').classList.contains('hidden');
     const guideOpen = this.guide.isOpen;
     const menuOpen = !document.getElementById('bottom-menu').classList.contains('hidden');
@@ -218,52 +227,166 @@ class UltimateTV {
     this.inHomeScreen = true;
     this.player.stop();
     this.osd.hide();
+    this.list.hide();
+    this.guide.hide();
     this.menu.hide();
+    this.homeEl.classList.remove('hidden');
     if (this.sysModalEl) this.sysModalEl.classList.add('hidden');
     
-    const grid = document.getElementById('featured-channels-grid');
-    const recentGrid = document.getElementById('recent-channels-grid');
+    const container = document.getElementById('home-categories-container');
+    if (!container) return;
     
-    if (recentGrid) {
-      recentGrid.innerHTML = '';
-      if (this.historyIndices.length > 0) {
-        this.historyIndices.forEach((idx) => {
-          const ch = this.channels[idx];
-          if (!ch) return;
-          const card = document.createElement('div');
-          card.className = 'feat-card';
-          card.tabIndex = 0;
-          card.setAttribute('data-action', 'tune');
-          card.setAttribute('data-ch-idx', idx);
-          const logoHtml = ch.logo ? `<img src="${ch.logo}" class="feat-logo"/>` : `<div style="font-size:1.8rem;margin-bottom:8px;">📺</div>`;
-          card.innerHTML = `${logoHtml}<span class="feat-name">${ch.number} • ${ch.name}</span>`;
-          card.addEventListener('click', () => this.tuneChannel(idx));
-          recentGrid.appendChild(card);
-        });
-      } else {
-        recentGrid.innerHTML = '<span style="color:#64748b; font-size:0.9rem;">Nenhum canal recente</span>';
-      }
-    }
+    container.innerHTML = '';
+    this.homeMatrix = []; // Reinicia a matriz
+    
+    const sidebarItems = Array.from(this.homeEl.querySelectorAll('.dtv-nav-item'));
+    this.homeMatrix.push(sidebarItems); // ROW 0 = Sidebar (Vertical)
+    
+    let currentRowIdx = 1;
 
-    if (grid) {
-      grid.innerHTML = '';
-      const shuffled = [...this.channels].sort(() => 0.5 - Math.random()).slice(0, 4);
-      shuffled.forEach((ch) => {
-        const idx = this.channels.indexOf(ch);
+    // Função auxiliar para injetar uma estante
+    const renderShelf = (title, channelsArray) => {
+      if (channelsArray.length === 0) return;
+      
+      const section = document.createElement('div');
+      section.className = 'dtv-row-section';
+      section.innerHTML = `<h3>${title}</h3><div class="dtv-grid"></div>`;
+      const grid = section.querySelector('.dtv-grid');
+      
+      const rowElements = [];
+      const limited = channelsArray.slice(0, 4); // Limita em 4
+      
+      limited.forEach((ch) => {
+        const globalIdx = this.channels.indexOf(ch);
         const card = document.createElement('div');
         card.className = 'feat-card';
         card.tabIndex = 0;
         card.setAttribute('data-action', 'tune');
-        card.setAttribute('data-ch-idx', idx);
+        card.setAttribute('data-ch-idx', globalIdx);
         const logoHtml = ch.logo ? `<img src="${ch.logo}" class="feat-logo"/>` : `<div style="font-size:1.8rem;margin-bottom:8px;">📺</div>`;
         card.innerHTML = `${logoHtml}<span class="feat-name">${ch.number} • ${ch.name}</span>`;
-        card.addEventListener('click', () => this.tuneChannel(idx));
+        card.addEventListener('click', () => this.tuneChannel(globalIdx));
         grid.appendChild(card);
+        rowElements.push(card);
       });
+      
+      container.appendChild(section);
+      this.homeMatrix.push(rowElements);
+      currentRowIdx++;
+    };
+
+    // 1. Últimos Vistos
+    const recentChannels = this.historyIndices.map(idx => this.channels[idx]).filter(Boolean);
+    if (recentChannels.length > 0) {
+      renderShelf('🕒 Últimos Vistos', recentChannels);
     }
 
-    this.homeEl.classList.remove('hidden');
-    this.initHomeNavigation();
+    // 2. Agrupar por Categorias Dinâmicas do M3U
+    const groups = {};
+    this.channels.forEach(ch => {
+      const g = ch.group || 'Outros';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(ch);
+    });
+
+    // 3. Renderizar cada Categoria
+    Object.keys(groups).sort().forEach(groupName => {
+      const shuffled = [...groups[groupName]].sort(() => 0.5 - Math.random());
+      renderShelf(`📌 ${groupName}`, shuffled);
+    });
+
+    // Adiciona evento de clique na Sidebar
+    sidebarItems.forEach((item) => {
+      item.onclick = () => {
+        const action = item.getAttribute('data-action');
+        if (action === 'watch') {
+          this.exitHomeScreen(this.currentIndex);
+        } else if (action === 'last') {
+          this.exitHomeScreen(localStorage.getItem('ultimatetv_last_channel') || 0);
+        } else if (action === 'guide') {
+          this.inHomeScreen = false;
+          this.homeEl.classList.add('hidden');
+          this.guide.show();
+        } else if (action === 'reload') {
+          window.location.reload();
+        }
+      };
+    });
+
+    this.homeSelectedRow = 0;
+    this.homeSelectedCol = 0;
+    this.updateHomeFocus();
+  }
+
+  updateHomeFocus() {
+    // Remove focus de todos
+    this.homeMatrix.forEach(row => {
+      row.forEach(el => el.classList.remove('active', 'focused'));
+    });
+    
+    // Aplica no alvo
+    const targetRow = this.homeMatrix[this.homeSelectedRow];
+    if (targetRow && targetRow[this.homeSelectedCol]) {
+      const el = targetRow[this.homeSelectedCol];
+      el.focus();
+      // Se for a sidebar, usamos a classe 'active'
+      if (this.homeSelectedRow === 0) el.classList.add('active');
+    }
+  }
+
+  navigateHome(dir) {
+    if (this.homeMatrix.length === 0) return;
+
+    const isSidebar = (this.homeSelectedRow === 0);
+    const maxRows = this.homeMatrix.length;
+
+    if (dir === 'up') {
+      if (isSidebar) {
+        if (this.homeSelectedCol > 0) this.homeSelectedCol--;
+      } else {
+        if (this.homeSelectedRow > 1) {
+           this.homeSelectedRow--;
+           if (this.homeSelectedCol >= this.homeMatrix[this.homeSelectedRow].length) {
+              this.homeSelectedCol = this.homeMatrix[this.homeSelectedRow].length - 1;
+           }
+        } else {
+           this.homeSelectedRow = 0;
+           this.homeSelectedCol = 0;
+        }
+      }
+    } else if (dir === 'down') {
+      if (isSidebar) {
+        if (this.homeSelectedCol < this.homeMatrix[0].length - 1) this.homeSelectedCol++;
+      } else {
+        if (this.homeSelectedRow < maxRows - 1) {
+           this.homeSelectedRow++;
+           if (this.homeSelectedCol >= this.homeMatrix[this.homeSelectedRow].length) {
+              this.homeSelectedCol = this.homeMatrix[this.homeSelectedRow].length - 1;
+           }
+        }
+      }
+    } else if (dir === 'right') {
+      if (isSidebar) {
+        if (maxRows > 1) {
+           this.homeSelectedRow = 1;
+           this.homeSelectedCol = 0;
+        }
+      } else {
+        if (this.homeSelectedCol < this.homeMatrix[this.homeSelectedRow].length - 1) {
+           this.homeSelectedCol++;
+        }
+      }
+    } else if (dir === 'left') {
+      if (!isSidebar) {
+        if (this.homeSelectedCol > 0) {
+           this.homeSelectedCol--;
+        } else {
+           this.homeSelectedRow = 0;
+           this.homeSelectedCol = 0;
+        }
+      }
+    }
+    this.updateHomeFocus();
   }
 
   exitHomeScreen(targetIndex) {
@@ -272,75 +395,10 @@ class UltimateTV {
     this.tuneChannel(targetIndex !== undefined ? targetIndex : this.currentIndex);
   }
 
-  initHomeNavigation() {
-    const navItems = Array.from(this.homeEl.querySelectorAll('.dtv-nav-item'));
-    const featItems = Array.from(this.homeEl.querySelectorAll('.feat-card'));
-    this.homeItems = [...navItems, ...featItems];
-    this.homeSelectedIndex = 0;
-    this.updateHomeFocus();
-
-    this.homeItems.forEach((item, idx) => {
-      item.addEventListener('click', () => {
-        this.homeSelectedIndex = idx;
-        this.selectHomeItem();
-      });
-    });
-  }
-
-  updateHomeFocus() {
-    this.homeItems.forEach((it, idx) => {
-      it.classList.toggle('active', idx === this.homeSelectedIndex);
-      if (idx === this.homeSelectedIndex) it.focus();
-    });
-  }
-
-  navigateHome(dir) {
-    const isSidebar = this.homeSelectedIndex < 3;
-    const total = this.homeItems.length;
-
-    if (dir === 'up') {
-      if (isSidebar) {
-        this.homeSelectedIndex = (this.homeSelectedIndex - 1 + 3) % 3;
-      } else {
-        const diff = this.homeSelectedIndex - 3; 
-        const hasRecents = this.historyIndices.length;
-        if (this.homeSelectedIndex >= 3 + hasRecents && hasRecents > 0) {
-          this.homeSelectedIndex = Math.max(3, this.homeSelectedIndex - 4);
-        } else {
-          this.homeSelectedIndex = 0; 
-        }
-      }
-    } else if (dir === 'down') {
-      if (isSidebar) {
-        if (this.homeSelectedIndex < 2) this.homeSelectedIndex++;
-        else if (total > 3) this.homeSelectedIndex = 3;
-      } else {
-        const diff = this.homeSelectedIndex - 3;
-        const hasRecents = this.historyIndices.length;
-        if (this.homeSelectedIndex < 3 + hasRecents && total > 3 + hasRecents) {
-          this.homeSelectedIndex = Math.min(total - 1, this.homeSelectedIndex + 4);
-        }
-      }
-    } else if (dir === 'right') {
-      if (isSidebar && total > 3) this.homeSelectedIndex = 3;
-      else if (!isSidebar) this.homeSelectedIndex = Math.min(total - 1, this.homeSelectedIndex + 1);
-    } else if (dir === 'left') {
-      if (!isSidebar) {
-        const hasRecents = this.historyIndices.length;
-        if (this.homeSelectedIndex === 3 || this.homeSelectedIndex === 3 + hasRecents) {
-           this.homeSelectedIndex = 0;
-        } else {
-           this.homeSelectedIndex--;
-        }
-      }
-    }
-    this.updateHomeFocus();
-  }
-
   selectHomeItem() {
-    const item = this.homeItems[this.homeSelectedIndex];
+    const targetRow = this.homeMatrix[this.homeSelectedRow];
+    const item = targetRow ? targetRow[this.homeSelectedCol] : null;
     if (!item) return;
-    const action = item.getAttribute('data-action');
 
     if (action === 'watch') {
       this.exitHomeScreen(0);
@@ -382,6 +440,8 @@ class UltimateTV {
       const menuEl = document.getElementById('bottom-menu');
       if (menuEl && !menuEl.classList.contains('hidden')) {
         this.menu.hide();
+        this.osd.hide();
+      } else {
         this.osd.hide();
       }
     }, 12000);
