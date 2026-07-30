@@ -5,7 +5,7 @@ export class OptionsMenu {
     this.subValEl = document.getElementById('bm-val-sub');
     
     this.callbacks = callbacks;
-    this.onToggleSynopsis = null;
+    this.onToggleSynopsis = callbacks.onToggleSynopsis || null;
     this.items = [];
     this.selectedIndex = 0;
   }
