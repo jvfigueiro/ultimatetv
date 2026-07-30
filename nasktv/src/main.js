@@ -34,7 +34,6 @@ class UltimateTV {
     });
     
     this.splashEl = document.getElementById('splash-screen');
-    this.splashStatusEl = document.getElementById('splash-status');
     this.homeEl = document.getElementById('home-screen');
     this.sysModalEl = document.getElementById('sys-info-modal');
     this.aspectToastEl = document.getElementById('aspect-toast');
@@ -45,6 +44,10 @@ class UltimateTV {
     this.inHomeScreen = true;
     this.homeSelectedIndex = 0;
     this.homeItems = [];
+    
+    // Historico de até 4 ultimos canais assistidos
+    const savedHistory = localStorage.getItem('ultimatetv_history');
+    this.historyIndices = savedHistory ? JSON.parse(savedHistory) : [];
 
     this.aspectModes = [
       { class: 'aspect-fill', label: 'Esticar (16:9)' },
@@ -67,18 +70,15 @@ class UltimateTV {
 
   async init() {
     console.log("[UltimateTV] Iniciando Sistema...");
-    this.splashStatusEl.textContent = "Baixando listas do Servidor...";
 
     this.channels = await this.api.loadAllData();
     this.guide.render(this.channels, this.api.rawXmlDoc);
 
     if (this.channels.length === 0) {
-      this.splashStatusEl.textContent = "Erro: Servidor indisponível.";
-      this.splashStatusEl.style.color = "#ef4444";
+      console.error("[UltimateTV] Erro: Servidor indisponível.");
       return;
     }
 
-    this.splashStatusEl.textContent = `Carregando portal...`;
     this.list.render(this.channels, this.currentIndex);
 
     document.getElementById('btn-sys-reload')?.addEventListener('click', () => window.location.reload());
@@ -222,9 +222,32 @@ class UltimateTV {
     if (this.sysModalEl) this.sysModalEl.classList.add('hidden');
     
     const grid = document.getElementById('featured-channels-grid');
+    const recentGrid = document.getElementById('recent-channels-grid');
+    
+    if (recentGrid) {
+      recentGrid.innerHTML = '';
+      if (this.historyIndices.length > 0) {
+        this.historyIndices.forEach((idx) => {
+          const ch = this.channels[idx];
+          if (!ch) return;
+          const card = document.createElement('div');
+          card.className = 'feat-card';
+          card.tabIndex = 0;
+          card.setAttribute('data-action', 'tune');
+          card.setAttribute('data-ch-idx', idx);
+          const logoHtml = ch.logo ? `<img src="${ch.logo}" class="feat-logo"/>` : `<div style="font-size:1.8rem;margin-bottom:8px;">📺</div>`;
+          card.innerHTML = `${logoHtml}<span class="feat-name">${ch.number} • ${ch.name}</span>`;
+          card.addEventListener('click', () => this.tuneChannel(idx));
+          recentGrid.appendChild(card);
+        });
+      } else {
+        recentGrid.innerHTML = '<span style="color:#64748b; font-size:0.9rem;">Nenhum canal recente</span>';
+      }
+    }
+
     if (grid) {
       grid.innerHTML = '';
-      const shuffled = [...this.channels].sort(() => 0.5 - Math.random()).slice(0, 5);
+      const shuffled = [...this.channels].sort(() => 0.5 - Math.random()).slice(0, 4);
       shuffled.forEach((ch) => {
         const idx = this.channels.indexOf(ch);
         const card = document.createElement('div');
@@ -271,25 +294,44 @@ class UltimateTV {
     });
   }
 
-navigateHome(dir) {
-    const isSidebar = this.homeSelectedIndex < 3; // Limite reduzido para 3 itens
+  navigateHome(dir) {
+    const isSidebar = this.homeSelectedIndex < 3;
     const total = this.homeItems.length;
 
     if (dir === 'up') {
-      if (isSidebar) this.homeSelectedIndex = (this.homeSelectedIndex - 1 + 3) % 3;
-      else this.homeSelectedIndex = 0;
+      if (isSidebar) {
+        this.homeSelectedIndex = (this.homeSelectedIndex - 1 + 3) % 3;
+      } else {
+        const diff = this.homeSelectedIndex - 3; 
+        const hasRecents = this.historyIndices.length;
+        if (this.homeSelectedIndex >= 3 + hasRecents && hasRecents > 0) {
+          this.homeSelectedIndex = Math.max(3, this.homeSelectedIndex - 4);
+        } else {
+          this.homeSelectedIndex = 0; 
+        }
+      }
     } else if (dir === 'down') {
       if (isSidebar) {
         if (this.homeSelectedIndex < 2) this.homeSelectedIndex++;
         else if (total > 3) this.homeSelectedIndex = 3;
+      } else {
+        const diff = this.homeSelectedIndex - 3;
+        const hasRecents = this.historyIndices.length;
+        if (this.homeSelectedIndex < 3 + hasRecents && total > 3 + hasRecents) {
+          this.homeSelectedIndex = Math.min(total - 1, this.homeSelectedIndex + 4);
+        }
       }
     } else if (dir === 'right') {
       if (isSidebar && total > 3) this.homeSelectedIndex = 3;
       else if (!isSidebar) this.homeSelectedIndex = Math.min(total - 1, this.homeSelectedIndex + 1);
     } else if (dir === 'left') {
       if (!isSidebar) {
-        if (this.homeSelectedIndex === 3) this.homeSelectedIndex = 0;
-        else this.homeSelectedIndex--;
+        const hasRecents = this.historyIndices.length;
+        if (this.homeSelectedIndex === 3 || this.homeSelectedIndex === 3 + hasRecents) {
+           this.homeSelectedIndex = 0;
+        } else {
+           this.homeSelectedIndex--;
+        }
       }
     }
     this.updateHomeFocus();
@@ -371,6 +413,13 @@ navigateHome(dir) {
     }
 
     this.currentIndex = index;
+    
+    // Atualizar Array de historico circular de ate 4 canais
+    this.historyIndices = this.historyIndices.filter(i => i !== index);
+    this.historyIndices.unshift(index);
+    if (this.historyIndices.length > 4) this.historyIndices.pop();
+    localStorage.setItem('ultimatetv_history', JSON.stringify(this.historyIndices));
+
     const channel = this.getCurrentChannel();
     localStorage.setItem('ultimatetv_last_channel', this.currentIndex);
     
