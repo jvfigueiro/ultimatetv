@@ -14,7 +14,12 @@ class UltimateTV {
         this.osd.updateBadges(this.player);
       }
     });
-    this.osd = new OSD();
+    this.osd = new OSD(() => {
+      // Quando o programa atual acabar, atualiza os dados da tarja se ela estiver visível
+      if (this.currentIndex !== null && !this.osd.el.classList.contains('hidden')) {
+        this.osd.show(this.getChannelEPGData(this.currentIndex), this.player);
+      }
+    });
     this.api = new DispatcharrAPI();
     this.channels = [];
     

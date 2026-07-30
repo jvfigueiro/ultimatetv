@@ -1,10 +1,11 @@
 export class OSD {
-  constructor() {
+  constructor(onProgramEndedCallback) {
     this.el = document.getElementById('osd');
     this.logoEl = document.getElementById('osd-logo');
     this.numEl = document.getElementById('osd-number');
     this.nameEl = document.getElementById('osd-name');
     this.progEl = document.getElementById('osd-program');
+    this.onProgramEnded = onProgramEndedCallback;
     
     this.startEndEl = document.getElementById('osd-start-end');
     this.barEl = document.getElementById('osd-progress');
@@ -51,6 +52,13 @@ export class OSD {
         const now = new Date();
         const start = channelData.startObj;
         const end = channelData.endObj;
+
+        // Se o programa acabou, solicita novos dados pro main.js
+        if (now >= end && this.onProgramEnded) {
+          this.onProgramEnded();
+          return;
+        }
+
         const totalDuration = Math.max(1, (end - start) / 1000 / 60);
         const elapsed = (now - start) / 1000 / 60;
         const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
