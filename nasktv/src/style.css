@@ -171,13 +171,12 @@ video::-webkit-media-controls-play-button {
   transform: translateX(-50%);
   width: 96%;
   max-width: 1900px;
-  background: linear-gradient(135deg, rgba(12, 16, 24, 0.82) 0%, rgba(8, 10, 16, 0.88) 100%);
+  background: linear-gradient(135deg, rgba(12, 16, 24, 0.90) 0%, rgba(8, 10, 16, 0.94) 100%);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   padding: 14px 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(8px);
   z-index: 10;
 }
 
@@ -367,7 +366,7 @@ video::-webkit-media-controls-play-button {
 }
 
 /* =====================================================================
-   BARRA DE AÇÕES INFERIOR (Estilo Horizontal TiviMate - Blindada)
+   BARRA DE AÇÕES INFERIOR
 ===================================================================== */
 .bottom-menu {
   position: absolute;
@@ -445,7 +444,7 @@ video::-webkit-media-controls-play-button {
 }
 
 /* =====================================================================
-   GAVETA LATERAL: LISTA DE CANAIS (Leve e Sem Sombreado Pesado)
+   GAVETA LATERAL
 ===================================================================== */
 .sidebar-modal {
   position: absolute;
@@ -453,14 +452,13 @@ video::-webkit-media-controls-play-button {
   left: 0;
   width: 380px;
   height: 100vh;
-  background: rgba(10, 12, 18, 0.98); /* Fundo sólido e leve */
+  background: rgba(10, 12, 18, 0.98);
   border-right: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: none; /* Removido o sombreado pesado para poupar GPU */
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   z-index: 20;
   transition: transform 0.2s ease;
-  backdrop-filter: none; /* Removido o blur de fundo */
 }
 
 .sidebar-modal.hidden {
@@ -566,7 +564,7 @@ video::-webkit-media-controls-play-button {
 }
 
 /* =====================================================================
-   GUIA EPG (Estilo Matriz DirecTV)
+   GUIA EPG
 ===================================================================== */
 .guide-modal {
   position: absolute;
@@ -740,14 +738,14 @@ video::-webkit-media-controls-play-button {
 }
 
 /* =====================================================================
-   AVISO DE LENTIDÃO DE STREAM (4 Segundos)
+   AVISO DE LENTIDÃO DE STREAM
 ===================================================================== */
 .slow-warning {
   position: absolute;
   top: 90px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(234, 179, 8, 0.95); /* Amarelo Alerta */
+  background: rgba(234, 179, 8, 0.95);
   color: #000;
   font-weight: 700;
   font-size: 0.95rem;
@@ -764,7 +762,7 @@ video::-webkit-media-controls-play-button {
 }
 
 /* =====================================================================
-   TELA DE ERRO FATAL (Estilo DirecTV Error 771 - Sem Sinal)
+   TELA DE ERRO FATAL (Sem Sinal)
 ===================================================================== */
 .no-signal {
   position: absolute;

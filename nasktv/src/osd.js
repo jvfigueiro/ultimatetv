@@ -17,6 +17,7 @@ export class OSD {
     this.nextEl = document.getElementById('osd-next');
     
     this.hideTimeout = null;
+    this.progressInterval = null;
     this.displayDuration = 7000;
   }
 
@@ -35,8 +36,30 @@ export class OSD {
     this.progEl.textContent = channelData.currentProgram || "Programação indisponível";
     
     this.startEndEl.textContent = `${channelData.start || "--:--"} - ${channelData.end || "--:--"}`;
-    this.barEl.style.width = `${channelData.progress || 0}%`;
-    this.remainingEl.textContent = `${channelData.remaining || 0} min`;
+    
+    // Configura o intervalo de atualização em tempo real
+    if (this.progressInterval) clearInterval(this.progressInterval);
+    
+    const updateProgress = () => {
+      if (channelData.startObj && channelData.endObj) {
+        const now = new Date();
+        const start = channelData.startObj;
+        const end = channelData.endObj;
+        const totalDuration = Math.max(1, (end - start) / 1000 / 60);
+        const elapsed = (now - start) / 1000 / 60;
+        const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+        const remaining = Math.max(0, Math.round(totalDuration - elapsed));
+        
+        this.barEl.style.width = `${progress}%`;
+        this.remainingEl.textContent = `${remaining} min`;
+      } else {
+        this.barEl.style.width = `${channelData.progress || 0}%`;
+        this.remainingEl.textContent = `${channelData.remaining || 0} min`;
+      }
+    };
+    
+    updateProgress();
+    this.progressInterval = setInterval(updateProgress, 60000); // Atualiza a cada 1 minuto
     
     this.updateBadges(playerInstance);
 
@@ -66,6 +89,10 @@ export class OSD {
 
   hide() {
     this.el.classList.add('hidden');
+    if (this.progressInterval) {
+      clearInterval(this.progressInterval);
+      this.progressInterval = null;
+    }
   }
 
   toggle(channelData, playerInstance) {

@@ -160,6 +160,9 @@ export class DispatcharrAPI {
         channel.start = this.formatTime(start);
         channel.end = this.formatTime(end);
         
+        channel.startObj = start;
+        channel.endObj = end;
+        
         const totalDuration = Math.max(1, (end - start) / 1000 / 60);
         const elapsed = (now - start) / 1000 / 60;
         channel.progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));

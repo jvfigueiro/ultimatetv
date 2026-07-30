@@ -3,7 +3,7 @@
   "appName": "UltimateTV",
   "webDir": "dist",
   "server": {
-    "androidScheme": "http",
+    "url": "http://10.0.7.25:5173",
     "cleartext": true
   },
   "plugins": {

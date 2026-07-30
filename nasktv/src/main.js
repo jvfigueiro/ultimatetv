@@ -214,7 +214,7 @@ class UltimateTV {
   }
 
   showHomeScreen() {
-    console.log("🏠 [UltimateTV] Abrindo Portal DirecTV Go...");
+    console.log("🏠 [UltimateTV] Abrindo Portal...");
     this.inHomeScreen = true;
     this.player.stop();
     this.osd.hide();
