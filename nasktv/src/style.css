@@ -157,6 +157,9 @@ body, html {
 .dtv-grid {
   display: flex;
   gap: 20px;
+  overflow-x: hidden; /* Controlado via JS/D-Pad */
+  scroll-behavior: smooth;
+  padding-bottom: 20px; /* Para sombra dos cards não cortar */
 }
 .feat-card {
   flex: 0 0 260px;

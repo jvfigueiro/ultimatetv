@@ -179,12 +179,23 @@ export class EPGGuide {
     return true;
   }
 
-  show() {
+  show(currentIndex) {
     if (!this.el) return;
     this.isOpen = true;
     this.el.classList.remove('hidden');
+    
+    if (currentIndex !== undefined && currentIndex >= 0 && currentIndex < this.channels.length) {
+      this.selectedRow = currentIndex;
+    }
+    this.selectedCol = 0;
+    
     this.generateTimeSlots();
     this.renderMatrix();
+    
+    // Rola para a linha atual
+    setTimeout(() => {
+      this.updateFocus();
+    }, 50);
   }
 
   hide() {
@@ -193,5 +204,5 @@ export class EPGGuide {
     this.el.classList.add('hidden');
   }
 
-  toggle() { if (this.isOpen) this.hide(); else this.show(); }
+  toggle(currentIndex) { if (this.isOpen) this.hide(); else this.show(currentIndex); }
 }

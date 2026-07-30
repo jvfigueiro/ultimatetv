@@ -28,7 +28,7 @@ class UltimateTV {
       onOpenHome: () => this.showHomeScreen(),
       onCycleAspect: () => this.cycleAspectMode(),
       onToggleSubtitles: () => this.player.toggleSubtitles(),
-      onOpenGuide: () => this.guide.show(),
+      onOpenGuide: () => this.guide.show(this.currentIndex),
       onOpenList: () => this.list.show(this.currentIndex),
       onToggleSynopsis: () => {
         this.osd.expandSynopsis();
@@ -155,10 +155,10 @@ class UltimateTV {
         if (this.inHomeScreen) { 
           this.inHomeScreen = false;
           this.homeEl.classList.add('hidden');
-          this.guide.show(); 
+          this.guide.show(this.currentIndex); 
           return; 
         }
-        this.guide.toggle();
+        this.guide.toggle(this.currentIndex);
       },
       onMenu: () => {
         if (this.inHomeScreen) return;
@@ -254,7 +254,7 @@ class UltimateTV {
       const grid = section.querySelector('.dtv-grid');
       
       const rowElements = [];
-      const limited = channelsArray.slice(0, 4); // Limita em 4
+      const limited = channelsArray.slice(0, 15); // Limita em 15
       
       limited.forEach((ch) => {
         const globalIdx = this.channels.indexOf(ch);
@@ -306,7 +306,7 @@ class UltimateTV {
         } else if (action === 'guide') {
           this.inHomeScreen = false;
           this.homeEl.classList.add('hidden');
-          this.guide.show();
+          this.guide.show(this.currentIndex);
         } else if (action === 'reload') {
           window.location.reload();
         }
@@ -330,7 +330,12 @@ class UltimateTV {
       const el = targetRow[this.homeSelectedCol];
       el.focus();
       // Se for a sidebar, usamos a classe 'active'
-      if (this.homeSelectedRow === 0) el.classList.add('active');
+      if (this.homeSelectedRow === 0) {
+        el.classList.add('active');
+      } else {
+        // Garantir que o card fique visível na tela sem rolar a página inteira
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
     }
   }
 
@@ -407,7 +412,7 @@ class UltimateTV {
     } else if (action === 'guide') {
       this.inHomeScreen = false;
       this.homeEl.classList.add('hidden');
-      this.guide.show();
+      this.guide.show(this.currentIndex);
     } else if (action === 'last') {
       this.inHomeScreen = false;
       this.homeEl.classList.add('hidden');
