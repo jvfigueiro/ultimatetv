@@ -17,7 +17,8 @@ class UltimateTV {
     this.osd = new OSD(() => {
       // Quando o programa atual acabar, atualiza os dados da tarja se ela estiver visível
       if (this.currentIndex !== null && !this.osd.el.classList.contains('hidden')) {
-        this.osd.show(this.getChannelEPGData(this.currentIndex), this.player);
+        const updatedChannel = this.getChannelEPGData(this.currentIndex);
+        this.osd.show(updatedChannel, this.player);
       }
     });
     this.api = new DispatcharrAPI();
@@ -476,7 +477,15 @@ class UltimateTV {
     this.toastTimer = setTimeout(() => this.aspectToastEl.classList.add('hidden'), 3000);
   }
 
-  getCurrentChannel() { return this.channels[this.currentIndex] || {}; }
+  getChannelEPGData(idx) {
+    let channel = this.channels[idx];
+    if (!channel) return {};
+    return this.api.updateChannelEPG(channel);
+  }
+
+  getCurrentChannel() { 
+    return this.getChannelEPGData(this.currentIndex); 
+  }
 
   tuneChannel(index) {
     if (index >= this.channels.length) index = 0;
