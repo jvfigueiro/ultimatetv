@@ -400,8 +400,10 @@ class UltimateTV {
     const item = targetRow ? targetRow[this.homeSelectedCol] : null;
     if (!item) return;
 
+    const action = item.getAttribute('data-action');
+
     if (action === 'watch') {
-      this.exitHomeScreen(0);
+      this.exitHomeScreen(this.currentIndex);
     } else if (action === 'guide') {
       this.inHomeScreen = false;
       this.homeEl.classList.add('hidden');
