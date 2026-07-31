@@ -1186,7 +1186,7 @@ video::-webkit-media-controls-play-button {
 }
 
 /* =====================================================================
-   NOVA TELA INICIAL (Estilo DirecTV Go - Menu Lateral + Catálogo)
+   NOVA TELA INICIAL (Menu Lateral + Catálogo)
 ===================================================================== */
 .home-screen {
   position: absolute;
@@ -1194,7 +1194,7 @@ video::-webkit-media-controls-play-button {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #070a12; /* Azul Marinho Profundo / Preto DirecTV */
+  background: #070a12; /* Azul Marinho Profundo */
   z-index: 70; /* Fica abaixo do Boot e dos Modais do Sistema */
   display: flex;
   flex-direction: row;
@@ -1208,7 +1208,7 @@ video::-webkit-media-controls-play-button {
   display: none !important;
 }
 
-/* Coluna Lateral de Navegação (Sidebar DirecTV Go) */
+/* Coluna Lateral de Navegação (Sidebar) */
 .dtv-sidebar {
   width: 260px;
   background: rgba(10, 14, 22, 0.95);
