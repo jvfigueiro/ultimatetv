@@ -1,6 +1,6 @@
 # UltimateTV
 
-O **UltimateTV** é uma interface Web e aplicativo Android construído para atuar como um Front-end dedicado para o **Dispatcharr**, voltado para execução em rede local.
+O **UltimateTV** é uma **Single Page Application (SPA)** construída para atuar primariamente como um *Thin Client* (Front-end remoto) dedicado para o **Dispatcharr**, voltado para execução em rede local.
 
 O objetivo principal deste projeto é proporcionar uma experiência de uso premium, fluída e responsiva, semelhante aos aplicativos oficiais de serviços de streaming e Set-Top Boxes de operadoras de TV, através do consumo inteligente das listas M3U e dados de programação XMLTV entregues pelo Dispatcharr.
 
@@ -21,6 +21,7 @@ Isso significa que **qualquer alteração na interface ou nas lógicas do aplica
 
 ### Otimizações e Topologia
 
+- **Foco em 720p:** Toda a interface gráfica, fontes e margens (overscan) foram meticulosamente desenhadas tendo em mente displays de **720p**. Embora seja perfeitamente escalável e compatível com TVs 1080p e 4K, o foco em 720p garante que TVs mais antigas não engasguem tentando renderizar elementos pesados em altas resoluções.
 - Todo o processamento de interface e reprodução de vídeo (buffers, navegação 2D na home, cruzamento inteligente de EPG) acontece totalmente do lado do *cliente*, utilizando o suporte nativo a decodificação de hardware (GPU) da TV.
 - O servidor atua estritamente hospedando os arquivos estáticos (`dist`), operando com consumo virtualmente zero de CPU e memória RAM para a aplicação web.
 
