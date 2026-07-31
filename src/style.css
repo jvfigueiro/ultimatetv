@@ -365,10 +365,12 @@ video::-webkit-media-controls-play-button {
   position: absolute;
   top: 16px;
   left: 50%;
-  transform: translateX(-50%);
-  width: 96%;
-  max-width: 1900px;
-  background: linear-gradient(135deg, rgba(12, 16, 24, 0.90) 0%, rgba(8, 10, 16, 0.94) 100%);
+  transform: translateX(-50%) translateY(0);
+  width: 90%;
+  max-width: 1400px;
+  background: rgba(12, 25, 44, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   padding: 14px 24px;
@@ -380,7 +382,7 @@ video::-webkit-media-controls-play-button {
 .osd.hidden {
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, -24px);
+  transform: translate(-50%, -150%);
 }
 
 /* Força alinhamento horizontal: Logo na esquerda, texto na direita! */
@@ -593,14 +595,14 @@ video::-webkit-media-controls-play-button {
   position: absolute;
   bottom: 24px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(0);
   width: 86%;
   max-width: 1000px;
-  z-index: 999; /* Força ficar no topo absoluto de qualquer camada */
+  z-index: 10;
   opacity: 1;
   visibility: visible;
   display: block;
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  transition: opacity 0.3s ease, transform 0.3s ease-out;
 }
 
 /* O !important impede que o navegador ignore o ocultamento */
@@ -608,7 +610,7 @@ video::-webkit-media-controls-play-button {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transform: translate(-50%, 24px) !important;
+  transform: translate(-50%, 150px) !important;
 }
 
 .bottom-menu-bar {
