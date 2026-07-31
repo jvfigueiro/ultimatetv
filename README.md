@@ -2,7 +2,7 @@
 
 O **UltimateTV** é uma **Single Page Application (SPA)** construída para atuar primariamente como um *Thin Client* (Front-end remoto) dedicado para o **Dispatcharr**, voltado para execução em rede local.
 
-O objetivo principal deste projeto é proporcionar uma experiência de uso premium, fluída e responsiva, semelhante aos aplicativos oficiais de serviços de streaming e Set-Top Boxes de operadoras de TV, através do consumo inteligente das listas M3U e dados de programação XMLTV entregues pelo Dispatcharr.
+O objetivo principal deste projeto é proporcionar uma experiência de uso premium, fluída e responsiva, semelhante a apps de streaming e experiências de uso de receptores de TV a cabo, através do consumo inteligente das listas M3U e dados de programação XMLTV entregues pelo Dispatcharr.
 
 ## 🎯 Plataformas e Foco
 
