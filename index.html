@@ -81,7 +81,7 @@
           <p id="no-signal-msg">Este canal está temporariamente indisponível ou demorou tempo demais para responder. Tente novamente mais tarde.</p>
           <div class="dtv-device-info">
             <span class="dtv-icon">💻</span>
-            <div><strong>ID do Dispositivo:</strong><div id="dtv-user-agent" class="ua-string">Carregando...</div></div>
+            <div><strong>ID do Dispositivo:</strong><div id="dtv-user-agent" class="ua-string">Carregando...</div><div class="ua-string" style="margin-top: 4px;">Versão: 1.0.S1</div></div>
           </div>
         </div>
         <div class="dtv-footer"><span>▲ ▼ Mudar de Canal &nbsp;|&nbsp; ◄ Lista de Canais &nbsp;|&nbsp; Voltar : Início</span></div>
@@ -153,11 +153,18 @@
         <div class="bm-item" tabIndex="0" data-action="list"><span class="bm-icon">📋</span><span class="bm-label">Canais</span></div>
         <div class="bm-item" tabIndex="0" data-action="guide"><span class="bm-icon">📅</span><span class="bm-label">Guia</span></div>
         <div class="bm-item" tabIndex="0" data-action="synopsis"><span class="bm-icon">📖</span><span class="bm-label">Sinopse</span></div>
+        <div class="bm-item" tabIndex="0" data-action="audio"><span class="bm-icon">🔊</span><span id="bm-val-audio" class="bm-label">Áudio</span></div>
         <div class="bm-item" tabIndex="0" data-action="aspect"><span class="bm-icon">🖥️</span><span id="bm-val-aspect" class="bm-label">Proporção</span></div>
         <div class="bm-item" tabIndex="0" data-action="subtitle"><span class="bm-icon">💬</span><span id="bm-val-sub" class="bm-label">Legendas Desativadas</span></div>
       </div>
     </div>
 
+    <!-- Indicador de Versão do App -->
+    <div id="app-version" class="app-version">v1.0.S1</div>
+
+    <script>
+      window.APP_VERSION = "1.0.S1";
+    </script>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

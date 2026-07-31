@@ -83,11 +83,30 @@ export class TVPlayer {
 
   getDetectedAudio() {
     try {
-      if (this.hls && this.hls.audioTracks && this.hls.audioTracks.length > 1) return "MULTI";
+      if (this.hls && this.hls.audioTracks) {
+        const currentTrack = this.hls.audioTracks[this.hls.audioTrack];
+        if (currentTrack && currentTrack.audioCodec) {
+          const codec = currentTrack.audioCodec.toLowerCase();
+          if (codec.includes('ac-3') || codec.includes('ec-3')) return "DOLBY";
+          if (codec.includes('aac')) return "AAC";
+        }
+        if (this.hls.audioTracks.length > 1) return "MULTI";
+      }
       return "STEREO";
     } catch {
       return "STEREO";
     }
+  }
+
+  cycleAudioTrack() {
+    if (this.hls && this.hls.audioTracks && this.hls.audioTracks.length > 1) {
+      const tracks = this.hls.audioTracks;
+      let nextId = this.hls.audioTrack + 1;
+      if (nextId >= tracks.length) nextId = 0;
+      this.hls.audioTrack = nextId;
+      return `Áudio (${nextId + 1}/${tracks.length})`;
+    }
+    return "Áudio (1/1)";
   }
 
   setAspectMode(modeClass) { this.video.className = modeClass; }

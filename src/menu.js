@@ -95,6 +95,11 @@ export class OptionsMenu {
     } else if (action === 'subtitle') {
       const state = this.callbacks.onToggleSubtitles();
       this.updateSubtitleLabel(state);
+    } else if (action === 'audio') {
+      const newLabel = this.callbacks.onCycleAudio();
+      if (document.getElementById('bm-val-audio')) {
+        document.getElementById('bm-val-audio').textContent = newLabel;
+      }
     } else if (action === 'synopsis') {
       this.hide();
       if (this.onToggleSynopsis) this.onToggleSynopsis();

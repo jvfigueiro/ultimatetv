@@ -16,9 +16,15 @@ class UltimateTV {
     });
     this.osd = new OSD(() => {
       // Quando o programa atual acabar, atualiza os dados da tarja se ela estiver visível
-      if (this.currentIndex !== null && !this.osd.el.classList.contains('hidden')) {
+      if (this.currentIndex !== null) {
         const updatedChannel = this.getChannelEPGData(this.currentIndex);
-        this.osd.show(updatedChannel, this.player);
+        // Atualiza tarja OSD se estiver visível
+        if (!this.osd.el.classList.contains('hidden')) {
+          this.osd.show(updatedChannel, this.player);
+        }
+        // Atualiza array e a renderização da lista
+        this.channels[this.currentIndex] = updatedChannel;
+        this.list.render(this.channels, this.currentIndex);
       }
     });
     this.api = new DispatcharrAPI();
@@ -34,6 +40,7 @@ class UltimateTV {
       onOpenHome: () => this.showHomeScreen(),
       onCycleAspect: () => this.cycleAspectMode(),
       onToggleSubtitles: () => this.player.toggleSubtitles(),
+      onCycleAudio: () => this.player.cycleAudioTrack(),
       onOpenGuide: () => this.guide.show(this.currentIndex),
       onOpenList: () => this.list.show(this.currentIndex),
       onToggleSynopsis: () => {
