@@ -34,11 +34,21 @@ export class TVPlayer {
   loadChannel(streamUrl) {
     console.log(`[UltimateTV Player] Sintonizando Proxy: ${streamUrl}`);
     this.stop();
-    this.startTimers(7000, 35000);
+    this.startTimers(7000, 20000);
+
+    this.detectedVideoCodec = '';
+    this.detectedAudioCodec = '';
 
     if (streamUrl.includes('.m3u8') && Hls.isSupported()) {
       this.hls = new Hls({ maxBufferLength: 10, enableWorker: true });
       this.hls.loadSource(streamUrl);
+      
+      this.hls.on(Hls.Events.FRAG_PARSING_INIT_SEGMENT, (event, data) => {
+        if (data && data.tracks) {
+          if (data.tracks.video && data.tracks.video.codec) this.detectedVideoCodec = data.tracks.video.codec;
+          if (data.tracks.audio && data.tracks.audio.codec) this.detectedAudioCodec = data.tracks.audio.codec;
+        }
+      });
       this.hls.attachMedia(this.video);
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
         this.video.play().catch(() => {});
@@ -73,13 +83,15 @@ export class TVPlayer {
 
   getDetectedVideoCodec() {
     try {
-      if (this.hls && this.hls.levels && this.hls.levels.length > 0) {
+      let codec = this.detectedVideoCodec;
+      if (!codec && this.hls && this.hls.levels && this.hls.levels.length > 0) {
         const currentLevel = this.hls.levels[this.hls.currentLevel >= 0 ? this.hls.currentLevel : 0];
-        if (currentLevel && currentLevel.videoCodec) {
-          const codec = currentLevel.videoCodec.toLowerCase();
-          if (codec.includes('hevc') || codec.includes('h265')) return "HEVC";
-          if (codec.includes('avc') || codec.includes('h264')) return "H264";
-        }
+        if (currentLevel && currentLevel.videoCodec) codec = currentLevel.videoCodec;
+      }
+      if (codec) {
+        const c = codec.toLowerCase();
+        if (c.includes('hevc') || c.includes('h265')) return "HEVC";
+        if (c.includes('avc') || c.includes('h264')) return "H264";
       }
       return "--";
     } catch (e) {
@@ -92,26 +104,27 @@ export class TVPlayer {
     const h = this.video.videoHeight;
     if (!w || !h) return "--";
     if (h >= 2160 || w >= 3840) return "4K";
-    if (h >= 1080 || w >= 1920) return "FHD";
-    if (h >= 720 || w >= 1280) return "HD";
+    if (h >= 1080 || w >= 1920) return "1080p";
+    if (h >= 720 || w >= 1280) return "720p";
     return "SD";
   }
 
   getDetectedAudio() {
     try {
       if (this.hls) {
-        let codec = '';
-        if (this.hls.audioTracks && this.hls.audioTracks.length > 0) {
+        let codec = this.detectedAudioCodec || '';
+        if (!codec && this.hls.audioTracks && this.hls.audioTracks.length > 0) {
           const currentTrack = this.hls.audioTracks[this.hls.audioTrack] || this.hls.audioTracks[0];
-          if (currentTrack && currentTrack.audioCodec) codec = currentTrack.audioCodec.toLowerCase();
+          if (currentTrack && currentTrack.audioCodec) codec = currentTrack.audioCodec;
         }
         if (!codec && this.hls.levels && this.hls.levels.length > 0) {
           const currentLevel = this.hls.levels[this.hls.currentLevel >= 0 ? this.hls.currentLevel : 0];
-          if (currentLevel && currentLevel.audioCodec) codec = currentLevel.audioCodec.toLowerCase();
+          if (currentLevel && currentLevel.audioCodec) codec = currentLevel.audioCodec;
         }
         if (codec) {
-          if (codec.includes('ac-3') || codec.includes('ec-3') || codec.includes('ac3')) return "DOLBY";
-          if (codec.includes('aac')) return "AAC";
+          const c = codec.toLowerCase();
+          if (c.includes('ac-3') || c.includes('ec-3') || c.includes('ac3')) return "DOLBY";
+          if (c.includes('aac') || c.includes('mp4a')) return "AAC";
         }
         if (this.hls.audioTracks && this.hls.audioTracks.length > 1) return "MULTI";
       }
