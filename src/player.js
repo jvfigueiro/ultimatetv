@@ -40,7 +40,13 @@ export class TVPlayer {
     this.detectedAudioCodec = '';
 
     if (streamUrl.includes('.m3u8') && Hls.isSupported()) {
-      this.hls = new Hls({ maxBufferLength: 10, enableWorker: true });
+      this.hls = new Hls({
+        maxBufferLength: 10,
+        maxMaxBufferLength: 20,
+        maxBufferSize: 30 * 1000 * 1000, // 30MB max RAM para o buffer HLS
+        capLevelToPlayerSize: true, // Força carregar resolução compativel com a TV
+        enableWorker: true
+      });
       this.hls.loadSource(streamUrl);
       
       this.hls.on(Hls.Events.FRAG_PARSING_INIT_SEGMENT, (event, data) => {

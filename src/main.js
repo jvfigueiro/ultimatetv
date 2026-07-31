@@ -183,6 +183,7 @@ class UltimateTV {
     });
 
     this.startGlobalClock();
+    this.updateGlobalClock(); // call immediately once
 
     setTimeout(() => {
       this.splashEl.classList.add('hidden');
@@ -190,19 +191,23 @@ class UltimateTV {
     }, 1200);
   }
 
+  updateGlobalClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = now.toLocaleDateString('pt-BR', { 
+      weekday: 'short', 
+      day: '2-digit', 
+      month: '2-digit' 
+    }).replace('.', '');
+
+    document.querySelectorAll('.sys-time').forEach(el => el.textContent = timeStr);
+    document.querySelectorAll('.sys-date').forEach(el => el.textContent = dateStr);
+  }
+
   startGlobalClock() {
     setInterval(() => {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      const dateStr = now.toLocaleDateString('pt-BR', { 
-        weekday: 'short', 
-        day: '2-digit', 
-        month: '2-digit' 
-      }).replace('.', '');
-
-      document.querySelectorAll('.sys-time').forEach(el => el.textContent = timeStr);
-      document.querySelectorAll('.sys-date').forEach(el => el.textContent = dateStr);
-    }, 1000);
+      this.updateGlobalClock();
+    }, 60000);
   }
 
   handleBackAction() {
@@ -249,13 +254,29 @@ class UltimateTV {
     const container = document.getElementById('home-categories-container');
     if (!container) return;
     
-    container.innerHTML = '';
-    this.homeMatrix = []; // Reinicia a matriz
-    
+    // Reconstruir matrix dinamicamente sem destruir o DOM se já renderizado
+    this.homeMatrix = []; 
     const sidebarItems = Array.from(this.homeEl.querySelectorAll('.dtv-nav-item'));
     this.homeMatrix.push(sidebarItems); // ROW 0 = Sidebar (Vertical)
     
     let currentRowIdx = 1;
+
+    if (this.homeRendered) {
+      const sections = container.querySelectorAll('.dtv-row-section');
+      sections.forEach(sec => {
+        const cards = Array.from(sec.querySelectorAll('.feat-card'));
+        if (cards.length > 0) {
+          this.homeMatrix.push(cards);
+          currentRowIdx++;
+        }
+      });
+      this.homeSelectedRow = 0;
+      this.homeSelectedCol = 0;
+      this.updateHomeFocus();
+      return;
+    }
+
+    container.innerHTML = '';
 
     // Função auxiliar para injetar uma estante
     const renderShelf = (title, channelsArray) => {
@@ -276,7 +297,7 @@ class UltimateTV {
         card.tabIndex = 0;
         card.setAttribute('data-action', 'tune');
         card.setAttribute('data-ch-idx', globalIdx);
-        const logoHtml = ch.logo ? `<img src="${ch.logo}" class="feat-logo"/>` : `<div style="font-size:1.8rem;margin-bottom:8px;">📺</div>`;
+        const logoHtml = ch.logo ? `<img src="${ch.logo}" loading="lazy" class="feat-logo"/>` : `<div style="font-size:1.8rem;margin-bottom:8px;">📺</div>`;
         card.innerHTML = `${logoHtml}<span class="feat-name">${ch.number} • ${ch.name}</span>`;
         card.addEventListener('click', () => this.tuneChannel(globalIdx));
         grid.appendChild(card);
@@ -326,6 +347,7 @@ class UltimateTV {
       };
     });
 
+    this.homeRendered = true;
     this.homeSelectedRow = 0;
     this.homeSelectedCol = 0;
     this.updateHomeFocus();

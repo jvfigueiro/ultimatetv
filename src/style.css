@@ -375,13 +375,14 @@ video::-webkit-media-controls-play-button {
   border-radius: 12px;
   padding: 14px 24px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
-  transition: opacity 0.4s ease, transform 0.4s ease-out;
   z-index: 10;
+  will-change: transform;
+  transition: transform 0.3s ease-out;
 }
 
 .osd.hidden {
-  opacity: 0;
   pointer-events: none;
+  visibility: hidden;
   transform: translate(-50%, -150%);
 }
 
@@ -599,15 +600,14 @@ video::-webkit-media-controls-play-button {
   width: 86%;
   max-width: 1000px;
   z-index: 10;
-  opacity: 1;
   visibility: visible;
   display: block;
-  transition: opacity 0.3s ease, transform 0.3s ease-out;
+  will-change: transform;
+  transition: transform 0.3s ease-out;
 }
 
 /* O !important impede que o navegador ignore o ocultamento */
 .bottom-menu.hidden {
-  opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
   transform: translate(-50%, 150px) !important;
@@ -681,11 +681,13 @@ video::-webkit-media-controls-play-button {
   display: flex;
   flex-direction: column;
   z-index: 20;
+  will-change: transform;
   transition: transform 0.3s ease-out;
 }
 
 .sidebar-modal.hidden {
   transform: translateX(-100%);
+  visibility: hidden;
   pointer-events: none;
 }
 
