@@ -88,13 +88,12 @@ export class TVPlayer {
   }
 
   getDetectedResolution() {
-    if (!this.hls) return "HD";
     const w = this.video.videoWidth;
     const h = this.video.videoHeight;
     if (!w || !h) return "--";
     if (h >= 2160 || w >= 3840) return "4K";
-    if (h >= 1080 || w >= 1920) return "1080p";
-    if (h >= 720 || w >= 1280) return "720p";
+    if (h >= 1080 || w >= 1920) return "FHD";
+    if (h >= 720 || w >= 1280) return "HD";
     return "SD";
   }
 
