@@ -261,8 +261,8 @@ class UltimateTV {
     
     // Reconstruir matrix dinamicamente sem destruir o DOM se já renderizado
     this.homeMatrix = []; 
-    const sidebarItems = Array.from(this.homeEl.querySelectorAll('.dtv-nav-item'));
-    this.homeMatrix.push(sidebarItems); // ROW 0 = Sidebar (Vertical)
+    const topNavItems = Array.from(this.homeEl.querySelectorAll('.home-nav-item'));
+    this.homeMatrix.push(topNavItems); // ROW 0 = Top Nav (Horizontal)
     
     let currentRowIdx = 1;
 
@@ -334,8 +334,8 @@ class UltimateTV {
       renderShelf(`📌 ${groupName}`, shuffled);
     });
 
-    // Adiciona evento de clique na Sidebar
-    sidebarItems.forEach((item) => {
+    // Adiciona evento de clique no Top Nav
+    topNavItems.forEach((item) => {
       item.onclick = () => {
         const action = item.getAttribute('data-action');
         if (action === 'watch') {
@@ -369,12 +369,24 @@ class UltimateTV {
     if (targetRow && targetRow[this.homeSelectedCol]) {
       const el = targetRow[this.homeSelectedCol];
       el.focus({ preventScroll: true });
-      // Se for a sidebar, usamos a classe 'active'
       if (this.homeSelectedRow === 0) {
         el.classList.add('active');
       } else {
-        // Garantir que o card fique visível na tela sem rolar a página inteira
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        // Update Hero Dynamic Content
+        const chIdx = el.getAttribute('data-ch-idx');
+        if (chIdx !== null) {
+          const ch = this.channels[chIdx];
+          document.getElementById('hero-ch-number').textContent = ch.number || '--';
+          document.getElementById('hero-ch-name').textContent = ch.name || 'Desconhecido';
+          const logoEl = document.getElementById('hero-ch-logo');
+          if (ch.logo) { logoEl.src = ch.logo; logoEl.style.display = 'block'; } else { logoEl.style.display = 'none'; }
+          
+          this.api.updateChannelEPG(ch);
+          document.getElementById('hero-prog-title').textContent = ch.currentProgram || 'Sem Título';
+          document.getElementById('hero-prog-time').textContent = (ch.start && ch.end) ? `${ch.start} - ${ch.end}` : '--:--';
+          document.getElementById('hero-prog-synopsis').textContent = ch.synopsis || 'Sem informações disponíveis.';
+        }
       }
     }
   }
@@ -382,53 +394,30 @@ class UltimateTV {
   navigateHome(dir) {
     if (this.homeMatrix.length === 0) return;
 
-    const isSidebar = (this.homeSelectedRow === 0);
+    const isTopNav = (this.homeSelectedRow === 0);
     const maxRows = this.homeMatrix.length;
 
     if (dir === 'up') {
-      if (isSidebar) {
-        if (this.homeSelectedCol > 0) this.homeSelectedCol--;
-      } else {
-        if (this.homeSelectedRow > 1) {
-           this.homeSelectedRow--;
-           if (this.homeSelectedCol >= this.homeMatrix[this.homeSelectedRow].length) {
-              this.homeSelectedCol = this.homeMatrix[this.homeSelectedRow].length - 1;
-           }
-        } else {
-           this.homeSelectedRow = 0;
-           this.homeSelectedCol = 0;
+      if (!isTopNav) {
+        this.homeSelectedRow--;
+        if (this.homeSelectedCol >= this.homeMatrix[this.homeSelectedRow].length) {
+          this.homeSelectedCol = this.homeMatrix[this.homeSelectedRow].length - 1;
         }
       }
     } else if (dir === 'down') {
-      if (isSidebar) {
-        if (this.homeSelectedCol < this.homeMatrix[0].length - 1) this.homeSelectedCol++;
-      } else {
-        if (this.homeSelectedRow < maxRows - 1) {
-           this.homeSelectedRow++;
-           if (this.homeSelectedCol >= this.homeMatrix[this.homeSelectedRow].length) {
-              this.homeSelectedCol = this.homeMatrix[this.homeSelectedRow].length - 1;
-           }
-        }
-      }
-    } else if (dir === 'right') {
-      if (isSidebar) {
-        if (maxRows > 1) {
-           this.homeSelectedRow = 1;
-           this.homeSelectedCol = 0;
-        }
-      } else {
-        if (this.homeSelectedCol < this.homeMatrix[this.homeSelectedRow].length - 1) {
-           this.homeSelectedCol++;
+      if (this.homeSelectedRow < maxRows - 1) {
+        this.homeSelectedRow++;
+        if (this.homeSelectedCol >= this.homeMatrix[this.homeSelectedRow].length) {
+          this.homeSelectedCol = this.homeMatrix[this.homeSelectedRow].length - 1;
         }
       }
     } else if (dir === 'left') {
-      if (!isSidebar) {
-        if (this.homeSelectedCol > 0) {
-           this.homeSelectedCol--;
-        } else {
-           this.homeSelectedRow = 0;
-           this.homeSelectedCol = 0;
-        }
+      if (this.homeSelectedCol > 0) {
+        this.homeSelectedCol--;
+      }
+    } else if (dir === 'right') {
+      if (this.homeSelectedCol < this.homeMatrix[this.homeSelectedRow].length - 1) {
+        this.homeSelectedCol++;
       }
     }
     this.updateHomeFocus();

@@ -21,39 +21,40 @@
 
     <!-- 2. PORTAL INTERATIVO (Menu Lateral + Vitrine) -->
     <div id="home-screen" class="home-screen hidden">
-      <!-- Sidebar de Navegação -->
-      <div class="dtv-sidebar">
-        <div class="dtv-brand">Ultimate<span>TV</span></div>
-        <div class="dtv-nav-list">
-          <div class="dtv-nav-item active" tabIndex="0" data-action="watch">
-            <span class="icon">📺</span><span>Assistir TV</span>
+      <div class="home-layout-wrapper">
+        <!-- Header de Ações no Topo -->
+        <div class="home-top-nav">
+          <div class="home-nav-item" data-action="watch">
+            <span class="nav-icon">▶</span> Assistir TV
           </div>
-          <div class="dtv-nav-item" tabIndex="0" data-action="last">
-            <span class="icon">↩️</span><span>Último Canal</span>
+          <div class="home-nav-item" data-action="last">
+            <span class="nav-icon">↩</span> Último Canal
           </div>
-          <div class="dtv-nav-item" tabIndex="0" data-action="guide">
-            <span class="icon">📅</span><span>Guia EPG</span>
+          <div class="home-nav-item" data-action="guide">
+            <span class="nav-icon">📅</span> Guia EPG
           </div>
-          <div class="dtv-nav-item" tabIndex="0" data-action="reload">
-            <span class="icon">↻</span><span>Atualizar App</span>
+          <div class="home-nav-item" data-action="reload">
+            <span class="nav-icon">🔄</span> Atualizar
           </div>
-        </div>
-      </div>
-
-      <!-- Conteúdo Principal -->
-      <div class="dtv-content-area">
-        <!-- Vitrine Principal / Hero -->
-        <div class="dtv-hero">
-          <div class="hero-top-bar">
-             <div class="hero-status"><span class="dot connected"></span> Conectado</div>
+          <div class="home-clock-wrapper">
+             <div class="hero-status"><span class="dot connected"></span></div>
              <div class="hero-clock"><span class="sys-time">00:00</span> <span class="sys-date">--/--</span></div>
           </div>
-          <div class="dtv-hero-content">
-            <h1>UltimateTV</h1>
-            <p class="dtv-hero-desc">Sintonize a programação em tempo real ou explore a grade completa!</p>
-          </div>
         </div>
 
+        <!-- Área Hero (Metadados do Foco) -->
+        <div class="home-hero">
+          <div class="hero-channel-info">
+            <img id="hero-ch-logo" src="" alt="Logo" style="display:none;"/>
+            <span id="hero-ch-number">--</span>
+            <span id="hero-ch-name">Carregando...</span>
+          </div>
+          <h1 id="hero-prog-title">UltimateTV</h1>
+          <p class="hero-prog-time" id="hero-prog-time">Bem-vindo ao mosaico dinâmico</p>
+          <p class="hero-prog-synopsis" id="hero-prog-synopsis">Navegue pelos canais abaixo. A programação em tempo real será exibida aqui.</p>
+        </div>
+
+        <!-- Prateleiras (Mosaico) -->
         <div id="home-categories-container"></div>
       </div>
     </div>
