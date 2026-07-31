@@ -683,7 +683,7 @@ video::-webkit-media-controls-play-button {
 }
 
 .sidebar-modal.hidden {
-  transform: translateX(100%);
+  transform: translateX(-100%);
   pointer-events: none;
 }
 
