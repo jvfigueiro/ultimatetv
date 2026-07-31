@@ -679,7 +679,7 @@ video::-webkit-media-controls-play-button {
   display: flex;
   flex-direction: column;
   z-index: 20;
-  transition: transform 1.5s ease-out;
+  transition: transform 0.7s ease-out;
 }
 
 .sidebar-modal.hidden {

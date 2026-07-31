@@ -71,7 +71,24 @@ export class TVPlayer {
     }
   }
 
+  getDetectedVideoCodec() {
+    try {
+      if (this.hls && this.hls.levels && this.hls.levels.length > 0) {
+        const currentLevel = this.hls.levels[this.hls.currentLevel >= 0 ? this.hls.currentLevel : 0];
+        if (currentLevel && currentLevel.videoCodec) {
+          const codec = currentLevel.videoCodec.toLowerCase();
+          if (codec.includes('hevc') || codec.includes('h265')) return "HEVC";
+          if (codec.includes('avc') || codec.includes('h264')) return "H264";
+        }
+      }
+      return "--";
+    } catch (e) {
+      return "--";
+    }
+  }
+
   getDetectedResolution() {
+    if (!this.hls) return "HD";
     const w = this.video.videoWidth;
     const h = this.video.videoHeight;
     if (!w || !h) return "--";
@@ -99,10 +116,10 @@ export class TVPlayer {
         }
         if (this.hls.audioTracks && this.hls.audioTracks.length > 1) return "MULTI";
       }
-      return "STEREO";
+      return "--";
     } catch (e) {
       console.warn('Erro audio:', e);
-      return "STEREO";
+      return "--";
     }
   }
 

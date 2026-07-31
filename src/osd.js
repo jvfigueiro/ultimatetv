@@ -11,6 +11,7 @@ export class OSD {
     this.barEl = document.getElementById('osd-progress');
     this.remainingEl = document.getElementById('osd-remaining');
     this.resEl = document.getElementById('osd-res');
+    this.videoEl = document.getElementById('osd-video');
     this.audioEl = document.getElementById('osd-audio');
     
     this.synopsisEl = document.getElementById('osd-synopsis');
@@ -95,10 +96,12 @@ export class OSD {
   updateBadges(playerInstance) {
     if (playerInstance) {
       this.resEl.textContent = playerInstance.getDetectedResolution();
+      this.videoEl.textContent = playerInstance.getDetectedVideoCodec();
       this.audioEl.textContent = playerInstance.getDetectedAudio();
     } else {
-      this.resEl.textContent = "HD";
-      this.audioEl.textContent = "STEREO";
+      this.resEl.textContent = "--";
+      this.videoEl.textContent = "--";
+      this.audioEl.textContent = "--";
     }
   }
 
