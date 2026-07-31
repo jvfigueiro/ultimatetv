@@ -77,8 +77,9 @@ export class OSD {
     
     this.updateBadges(playerInstance);
 
-    // Se a resolução demorou a subir na GPU, força uma releitura após 1 segundo
-    setTimeout(() => this.updateBadges(playerInstance), 1000);
+    // Se a resolução/audio demorou a subir na GPU, força uma releitura progressiva
+    setTimeout(() => this.updateBadges(playerInstance), 1500);
+    setTimeout(() => this.updateBadges(playerInstance), 3500);
 
     this.synopsisEl.textContent = channelData.synopsis || "Sem descrição disponível para este programa.";
     this.nextTimeEl.textContent = `${channelData.nextStart || "--:--"} - ${channelData.nextEnd || "--:--"}`;

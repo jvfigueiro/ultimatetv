@@ -34,7 +34,7 @@ export class TVPlayer {
   loadChannel(streamUrl) {
     console.log(`[UltimateTV Player] Sintonizando Proxy: ${streamUrl}`);
     this.stop();
-    this.startTimers(4000, 18000);
+    this.startTimers(7000, 35000);
 
     if (streamUrl.includes('.m3u8') && Hls.isSupported()) {
       this.hls = new Hls({ maxBufferLength: 10, enableWorker: true });
@@ -83,17 +83,25 @@ export class TVPlayer {
 
   getDetectedAudio() {
     try {
-      if (this.hls && this.hls.audioTracks) {
-        const currentTrack = this.hls.audioTracks[this.hls.audioTrack];
-        if (currentTrack && currentTrack.audioCodec) {
-          const codec = currentTrack.audioCodec.toLowerCase();
-          if (codec.includes('ac-3') || codec.includes('ec-3')) return "DOLBY";
+      if (this.hls) {
+        let codec = '';
+        if (this.hls.audioTracks && this.hls.audioTracks.length > 0) {
+          const currentTrack = this.hls.audioTracks[this.hls.audioTrack] || this.hls.audioTracks[0];
+          if (currentTrack && currentTrack.audioCodec) codec = currentTrack.audioCodec.toLowerCase();
+        }
+        if (!codec && this.hls.levels && this.hls.levels.length > 0) {
+          const currentLevel = this.hls.levels[this.hls.currentLevel >= 0 ? this.hls.currentLevel : 0];
+          if (currentLevel && currentLevel.audioCodec) codec = currentLevel.audioCodec.toLowerCase();
+        }
+        if (codec) {
+          if (codec.includes('ac-3') || codec.includes('ec-3') || codec.includes('ac3')) return "DOLBY";
           if (codec.includes('aac')) return "AAC";
         }
-        if (this.hls.audioTracks.length > 1) return "MULTI";
+        if (this.hls.audioTracks && this.hls.audioTracks.length > 1) return "MULTI";
       }
       return "STEREO";
-    } catch {
+    } catch (e) {
+      console.warn('Erro audio:', e);
       return "STEREO";
     }
   }
