@@ -57,7 +57,7 @@ export class OptionsMenu {
     if (this.items[this.selectedIndex]) {
       this.items.forEach(it => it.classList.remove('active'));
       this.items[this.selectedIndex].classList.add('active');
-      this.items[this.selectedIndex].focus();
+      this.items[this.selectedIndex].focus({ preventScroll: true });
     }
   }
 

@@ -162,6 +162,11 @@ class UltimateTV {
       },
       onList: () => {
         if (this.inHomeScreen) { this.exitHomeScreen(this.currentIndex); return; }
+        const listHidden = document.getElementById('channel-list-modal').classList.contains('hidden');
+        if (listHidden) {
+          this.updateAllChannelsEPG();
+          this.list.render(this.channels, this.currentIndex);
+        }
         this.list.toggle(this.currentIndex);
       },
       onGuide: () => {
@@ -363,7 +368,7 @@ class UltimateTV {
     const targetRow = this.homeMatrix[this.homeSelectedRow];
     if (targetRow && targetRow[this.homeSelectedCol]) {
       const el = targetRow[this.homeSelectedCol];
-      el.focus();
+      el.focus({ preventScroll: true });
       // Se for a sidebar, usamos a classe 'active'
       if (this.homeSelectedRow === 0) {
         el.classList.add('active');
@@ -514,6 +519,10 @@ class UltimateTV {
 
   getCurrentChannel() { 
     return this.getChannelEPGData(this.currentIndex); 
+  }
+
+  updateAllChannelsEPG() {
+    this.channels.forEach(ch => this.api.updateChannelEPG(ch));
   }
 
   tuneChannel(index) {

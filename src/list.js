@@ -55,7 +55,7 @@ export class ChannelList {
   focusCurrent() {
     const items = this.container.querySelectorAll('.channel-item');
     if (items[this.selectedIndex]) {
-      items[this.selectedIndex].focus();
+      items[this.selectedIndex].focus({ preventScroll: true });
       items[this.selectedIndex].scrollIntoView({ block: 'nearest' });
     }
   }
