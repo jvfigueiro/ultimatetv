@@ -223,7 +223,7 @@ body, html {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: radial-gradient(circle, #10141e 0%, #05070a 100%);
+  background: #020305;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -242,11 +242,23 @@ body, html {
 }
 
 .splash-logo {
-  font-size: 4rem;
+  font-size: 4.5rem;
   font-weight: 700;
-  letter-spacing: 4px;
+  letter-spacing: 0px;
   color: #fff;
   margin-bottom: 24px;
+  animation: logoBoot 1.5s ease-out forwards;
+}
+
+@keyframes logoBoot {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .splash-logo span {
