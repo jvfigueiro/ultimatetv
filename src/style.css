@@ -377,12 +377,11 @@ video::-webkit-media-controls-play-button {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
   z-index: 10;
   will-change: transform;
-  transition: transform 0.3s ease-out;
+  transition: transform 0.5s ease-out;
 }
 
 .osd.hidden {
   pointer-events: none;
-  visibility: hidden;
   transform: translate(-50%, -150%);
 }
 
@@ -600,15 +599,13 @@ video::-webkit-media-controls-play-button {
   width: 86%;
   max-width: 1000px;
   z-index: 10;
-  visibility: visible;
   display: block;
   will-change: transform;
-  transition: transform 0.3s ease-out;
+  transition: transform 0.5s ease-out;
 }
 
 /* O !important impede que o navegador ignore o ocultamento */
 .bottom-menu.hidden {
-  visibility: hidden !important;
   pointer-events: none !important;
   transform: translate(-50%, 150px) !important;
 }
@@ -686,8 +683,7 @@ video::-webkit-media-controls-play-button {
 }
 
 .sidebar-modal.hidden {
-  transform: translateX(-100%);
-  visibility: hidden;
+  transform: translateX(100%);
   pointer-events: none;
 }
 
