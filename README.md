@@ -1,53 +1,48 @@
-# UltimateTV
+﻿# UltimateTV
 
-O **UltimateTV** é uma **Single Page Application (SPA)** construída para atuar primariamente como um *Thin Client* (Front-end remoto) dedicado para o **Dispatcharr**, voltado para execução em rede local.
+O **UltimateTV** é uma **Single Page Application (SPA)** construída com HTML5 e Vanilla JavaScript puro para atuar como um *Thin Client* de altíssima performance para o **Dispatcharr**, focado em execução em rede local.
 
-O objetivo principal deste projeto é proporcionar uma experiência de uso premium, fluída e responsiva, semelhante a apps de streaming e experiências de uso de receptores de TV a cabo, através do consumo inteligente das listas M3U e dados de programação XMLTV entregues pelo Dispatcharr.
+O objetivo deste projeto é proporcionar uma experiência visual premium, idêntica aos sistemas nativos como Google TV e tvOS, garantindo altíssimo nível de fluidez mesmo em hardwares de baixo custo.
 
 ## 🎯 Plataformas e Foco
 
-O projeto foi rigorosamente projetado para rodar de forma suave em hardwares com limitação de processamento e recursos. O foco de compatibilidade engloba:
+O projeto foi inteiramente desenhado e calibrado para dominar o ecossistema Android:
 
-- **Android TV (Box TVs, Sticks e Smart TVs Android):** Através do empacotamento com Capacitor.
-- **LG NetCast 4.0:** Compatibilidade otimizada com navegadores de Smart TVs antigas da LG (modelos de 2013 e 2014), que dependem de baixo consumo de memória e CSS simplificado.
-- **Navegadores Modernos (Chrome/Web):** Para visualização responsiva e ágil no computador ou celular.
+- **Android TV (Projetores, Box TVs, Sticks e Smart TVs Android):** Suporte de ponta a ponta, operando lisamente mesmo em dispositivos de entrada com 1GB de RAM.
+- **Navegadores Modernos (Chrome/Web):** Acessível via web para consumo rápido pelo PC.
 
-## 🚀 Arquitetura e "Thin Client"
+*(Nota: O suporte ao legado LG NetCast foi formalmente descontinuado em prol de mantermos uma base de código moderna, segura e com acesso às APIs mais recentes de vídeo e HLS).*
 
-O aplicativo Android utiliza o **Capacitor** para criar um wrapper ao redor da aplicação web. 
-No entanto, ele opera como um *Thin Client* (Conector Remoto). Em vez de embutir todos os arquivos HTML, JS e CSS estaticamente dentro do arquivo APK gerado, o aplicativo aponta para o servidor Web local onde a interface compilada está hospedada.
+## 🚀 Otimizações de Engenharia (Performance)
 
-Isso significa que **qualquer alteração na interface ou nas lógicas do aplicativo refletirá instantaneamente em todas as TVs** da sua rede ao recarregá-las. Não há necessidade de recompilar, assinar ou instalar um novo APK via pendrive a cada melhoria visual ou correção de bug.
+Construir uma interface digna de aparelhos topo de linha em processadores lentos exigiu medidas drásticas de economia de GPU e RAM:
 
-### Otimizações e Topologia
+- **Arquitetura Zero-Opacidade:** Extirpamos transições de opacity, lur e sombras complexas da engine de renderização CSS. Menus (OSD, Lista de Canais, Guia) deslizam via pura matemática vetorial (	ransform: translate) com will-change: transform, erradicando stutters e lags nos primeiros frames de animação.
+- **Lazy Loading & DOM Caching:** A tela inicial (Home) com suporte a carrosséis por categoria aplica estratégias de carregamento preguiçoso (loading="lazy") em logotipos. Ao zappear canais, a TV não demole e reconstrói o DOM inteiro, ela preserva a UI em memória e foca exatamente de onde o usuário parou, zerando tempos de loading.
+- **Limites de Buffer Estritos (HLS.js):** Para evitar crasheamentos infames por *Out of Memory (OOM)* em projetores básicos, a instância nativa de HLS limita o *buffer* de retenção no tempo a curtos blocos com um teto severo de RAM (30MB), descartando silenciosamente resoluções maiores que a dimensão do painel via capLevelToPlayerSize.
 
-- **Foco em 720p:** Toda a interface gráfica, fontes e margens (overscan) foram meticulosamente desenhadas tendo em mente displays de **720p**. Embora seja perfeitamente escalável e compatível com TVs 1080p e 4K, o foco em 720p garante que TVs mais antigas não engasguem tentando renderizar elementos pesados em altas resoluções.
-- Todo o processamento de interface e reprodução de vídeo (buffers, navegação 2D na home, cruzamento inteligente de EPG) acontece totalmente do lado do *cliente*, utilizando o suporte nativo a decodificação de hardware (GPU) da TV.
-- O servidor atua estritamente hospedando os arquivos estáticos (`dist`), operando com consumo virtualmente zero de CPU e memória RAM para a aplicação web.
+## 🎨 Design Premium "Mosaico" Dinâmico
 
-## 🛠️ Tecnologias Utilizadas
+Inspirado no visual de plataformas como Google TV e na interatividade dos sistemas antigos (como o Mosaico interativo), a arquitetura UX foi dividida em:
 
-- **HTML5, Vanilla JS, CSS3:** Tecnologias puras focadas em extrema performance e baixo consumo de recursos, substituindo grids pesadas e DOM excessivo por linhas deslizantes de alto desempenho.
-- **Vite:** Bundler moderno configurado com plugins `legacy`, garantindo compatibilidade com motores JavaScript antigos de TVs fabricadas antes de 2015.
-- **hls.js / mpegts.js:** Motores de proxying para reprodução de streams (HLS/TS) na tag de vídeo nativa da TV, com suporte a extração "on-the-fly" de legendas ocultas embutidas.
-- **Capacitor:** Empacotador para transformar a SPA num aplicativo de Android TV.
+1. **Top Menu Flat:** Menu superior direto ao ponto (Assistir TV, Último Canal, Guia EPG) garantindo 100% de largura horizontal disponível.
+2. **Hero Banner Dinâmico:** Uma vitrine cinemática estática mas inteligentemente responsiva. Navegar na prateleira atualiza instantaneamente a arte, título, horário e sinopse do programa atual no painel sem engasgar o vídeo ao fundo.
+3. **OSD & EPG Real-Time:** Uma tarja inferior elegante (On-Screen Display) informando a resolução real (1080p, 720p), metadados e barra de progresso perfeitamente calibrados pela sincronização entre os horários do servidor e a máquina local.
 
-## ⚙️ Como Construir e Sincronizar
+## ⚙️ Como Construir e Sincronizar (Thin Client)
 
-Caso precise alterar o IP da sua VPS ou construir um novo APK:
+O aplicativo Android gerado é apenas um wrapper que aponta para o servidor que hospeda o repositório Web. Isso significa que **qualquer alteração no código reflete instantaneamente nas TVs** da rede assim que elas são reiniciadas. Não é necessário recompilar APKs a cada nova feature visual.
 
-1. Modifique o arquivo `capacitor.config.json` e aponte o `server.url` para o IP onde a UltimateTV e o Dispatcharr estão hospedados.
-2. Construa a aplicação de produção compatível com os navegadores legacy e empurre pro repositório:
-   ```bash
-   npm run build
-   ```
-3. Se estiver desenvolvendo o lado Android, atualize a base e abra a IDE para gerar um novo APK:
-   ```bash
+Caso precise gerar um novo APK via Capacitor:
+
+1. Modifique o capacitor.config.json, inserindo o IP do seu servidor no campo server.url.
+2. Sincronize a base de código e gere o binário pelo Android Studio:
+   `ash
    npx cap sync android
    npx cap open android
-   ```
+   `
 
-## 📝 Observações
+## 📝 Notas Finais
 
-- Nenhuma dependência de banco de dados. Todo o mapeamento dos canais, histórico e metadados das categorias vêm processados na hora pelo back-end local do **Dispatcharr**.
-- Design arquitetado com precisão milimétrica nas margens (overscan-safe) para não cortar elementos nas beiradas dos monitores CRT ou LCD.
+- O projeto não utiliza banco de dados próprio. Ele depende do pareamento e cruzamento de metadados em tempo real gerados a partir do parse do **Dispatcharr** (XMLTV/M3U).
+- Foi criado sob a filosofia de não necessitar pacotes NPM Node pesados como Webpack ou React, vivendo perfeitamente da trindade nativa da web (HTML/JS/CSS).
