@@ -1,4 +1,4 @@
-﻿# UltimateTV
+# UltimateTV
 
 O **UltimateTV** é um player de IPTV construído com HTML5 e JavaScript para atuar como um front-end de alta performance para o **Dispatcharr**, focado em execução em rede local.
 
@@ -6,6 +6,13 @@ O objetivo deste projeto é proporcionar uma experiência de uso semelhante a eq
 
 Embora projetado e otimizado para consumir listas geradas pelo Dispatcharr, a arquitetura flexível permite que ele seja adaptado para consumir outras listas M3U e XMLTV diretamente (mediante pequenas alterações no código-fonte).
 
+---
+
+## Telas do Aplicativo
+
+- ![Tela Inicial](./docs/screenshots/home.png)
+- ![Player e OSD](./docs/screenshots/osd.png)
+- ![Guia de Programação](./docs/screenshots/epg.png)
 
 ---
 
