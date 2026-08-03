@@ -2,8 +2,6 @@
 
 O **UltimateTV** é um player de IPTV construído com HTML5 e JavaScript para atuar como um cliente/front-end para o **Dispatcharr**, focado em execução em rede local.
 
-O objetivo deste projeto é proporcionar uma experiência de uso semelhante a equipamentos OEM de TV a cabo e/ou de apps de streaming, garantindo altíssimo nível de fluidez mesmo em hardwares com capacidade limitada.
-
 ---
 
 ## Telas do Aplicativo
@@ -16,7 +14,7 @@ O objetivo deste projeto é proporcionar uma experiência de uso semelhante a eq
 
 ## Objetivo e Plataformas
 
-O projeto foi inteiramente desenhado e calibrado para dominar o ecossistema Android:
+O objetivo deste projeto é proporcionar uma experiência de uso semelhante a equipamentos OEM de TV a cabo e/ou de apps de streaming, garantindo altíssimo nível de fluidez mesmo em hardwares com capacidade limitada. O projeto foi inteiramente desenhado e otimizado visando funcionamento eficiente em dispositivos baseados em Android TV.
 
 - **Android TV (Projetores, Smart TVs, Sticks e Set-Top-Boxes Android):** Suporte de ponta a ponta, operando lisamente mesmo em dispositivos de entrada com 1GB de RAM.
 - **Navegadores Modernos (Web/PWA):** Acessível via web para consumo rápido pelo PC.
