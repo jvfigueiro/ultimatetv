@@ -1,21 +1,11 @@
 ﻿# UltimateTV
 
-**Reprodutor de IPTV para Android TV baseado em PWA que traz a experiência de uso da TV tradicional.**
-
 O **UltimateTV** é um player de IPTV construído com HTML5 e JavaScript para atuar como um front-end de alta performance para o **Dispatcharr**, focado em execução em rede local.
 
 O objetivo deste projeto é proporcionar uma experiência de uso semelhante a equipamentos OEM de TV a cabo e/ou de apps de streaming, garantindo altíssimo nível de fluidez mesmo em hardwares de baixo custo.
 
 Embora projetado e otimizado para consumir listas geradas pelo Dispatcharr, a arquitetura flexível permite que ele seja adaptado para consumir outras listas M3U e XMLTV diretamente (mediante pequenas alterações no código-fonte).
 
----
-
-## Telas do Aplicativo
-
-*(Substitua pelos prints da sua interface utilizando canais abertos)*
-- ![Tela Inicial](./docs/screenshots/home.png)
-- ![Player e OSD](./docs/screenshots/osd.png)
-- ![Guia de Programação](./docs/screenshots/epg.png)
 
 ---
 
@@ -46,8 +36,7 @@ Inspirado no visual de plataformas como Android TV e equipamentos de TV a cabo, 
 
 ## Segurança e Controle de Acesso (NGINX)
 
-O projeto pode ser servido via servidor web (como NGINX), o que possibilita a implementação de **Controle de Acesso por IPs Autorizados** (via 
-ginx.conf). Isso garante que apenas dispositivos explícitos e confiáveis da sua rede local (ou túnel VPN) possam carregar a interface e os streams, entregando uma camada extra e invisível de segurança.
+O projeto pode ser servido via servidor web (como NGINX), o que possibilita a implementação de **Controle de Acesso por IPs Autorizados** (via nginx.conf). Isso garante que apenas dispositivos explícitos e confiáveis da sua rede local (ou túnel VPN) possam carregar a interface e os streams, entregando uma camada extra e invisível de segurança.
 
 ## Como Construir e Sincronizar
 
