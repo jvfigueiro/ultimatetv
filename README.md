@@ -1,68 +1,54 @@
-# UltimateTV
+﻿# UltimateTV
 
-O **UltimateTV** é um player de IPTV construído com HTML5 e JavaScript para atuar como um front-end de alta performance para o **Dispatcharr**, focado em execução em rede local.
-
-O objetivo deste projeto é proporcionar uma experiência de uso semelhante a equipamentos OEM de TV a cabo e/ou de apps de streaming, garantindo altíssimo nível de fluidez mesmo em hardwares de baixo custo.
-
-Embora projetado e otimizado para consumir listas geradas pelo Dispatcharr, a arquitetura flexível permite que ele seja adaptado para consumir outras listas M3U e XMLTV diretamente (mediante pequenas alterações no código-fonte).
+UltimateTV is an HTML5 and JavaScript IPTV player built as a dedicated web client/frontend for Dispatcharr, designed specifically for local network execution.
 
 ---
 
-## Telas do Aplicativo
+## Application Screenshots
 
-- ![Tela Inicial](./docs/screenshots/home.png)
-- ![Player e OSD](./docs/screenshots/osd.png)
-- ![Guia de Programação](./docs/screenshots/epg.png)
+![Home Screen](./docs/screenshots/home.png)
+![Player and OSD](./docs/screenshots/osd.png)
+![EPG Guide](./docs/screenshots/epg.png)
 
 ---
 
-## Objetivo e Plataformas
+## Purpose and Platforms
 
-O projeto foi inteiramente desenhado e calibrado para dominar o ecossistema Android:
+The project aims to deliver a user experience similar to cable TV OEM set-top boxes and mainstream streaming applications, ensuring high fluidity even on constrained hardware. The application was designed and optimized from the ground up to run efficiently on Android TV-based devices.
 
-- **Android TV (Projetores, Box TVs, Sticks e Smart TVs Android):** Suporte de ponta a ponta, operando lisamente mesmo em dispositivos de entrada com 1GB de RAM.
-- **Navegadores Modernos (Chrome/Web):** Acessível via web para consumo rápido pelo PC.
+- **Android TV Projectors, Smart TVs, Sticks, and Set-Top Boxes:** End-to-end support, operating smoothly even on entry-level devices with 1GB of RAM.
+- **Modern Web Browsers (Web/PWA):** Accessible via modern browsers for desktop viewing.
 
-*(Nota: O suporte ao legado LG NetCast [baseado em Chrome 22.0] foi formalmente descontinuado em prol de mantermos uma base de código moderna, segura e com acesso às APIs mais recentes de vídeo e HLS).*
+## Performance Optimizations
 
-## Otimizações de Performance
+Designing a premium-grade UI for low-end processors required aggressive RAM and GPU optimization strategies:
 
-Construir uma interface digna de aparelhos topo de linha em processadores lentos exigiu medidas drásticas de economia de GPU e RAM:
+- **Zero-Opacity Architecture:** Eliminated CSS opacity transitions, blurs, and complex drop shadows from the rendering pipeline. On-Screen Display (OSD), Channel Lists, and EPG menus slide using vector mathematics (	ransform: translate) paired with will-change: transform, preventing frame drops and stutters during initial animation frames.
+- **Lazy Loading & DOM Caching:** The Home screen employs loading="lazy" strategies on channel logos within carousel layouts. During channel zapping, the application preserves the UI in memory rather than destroying and rebuilding the entire DOM tree, eliminating load times.
+- **Strict Buffer Limits (HLS.js):** To prevent Out-of-Memory (OOM) crashes on low-spec hardware, the native HLS.js instance caps buffer retention time to short blocks with a strict RAM ceiling, discarding video resolutions higher than the display container dimensions via capLevelToPlayerSize.
 
-- **Arquitetura Zero-Opacidade:** Extirpamos transições de opacity, blur e sombras complexas da engine de renderização CSS. Menus (OSD, Lista de Canais, Guia) deslizam via pura matemática vetorial (transform: translate) com will-change: transform, erradicando stutters e lags nos primeiros frames de animação.
-- **Lazy Loading & DOM Caching:** A tela inicial (Home) com suporte a carrosséis por categoria aplica estratégias de carregamento preguiçoso (loading="lazy") em logotipos. Ao zappear canais, a TV não demole e reconstrói o DOM inteiro, ela preserva a UI em memória e foca exatamente de onde o usuário parou, zerando tempos de loading.
-- **Limites de Buffer Estritos (HLS.js):** Para evitar crasheamentos infames por *Out of Memory (OOM)* em projetores básicos, a instância nativa de HLS limita o *buffer* de retenção no tempo a curtos blocos com um teto severo de RAM (30MB), descartando silenciosamente resoluções maiores que a dimensão do painel via capLevelToPlayerSize.
+## Dynamic Design
 
-## Design Premium "Mosaico" Dinâmico
+Inspired by standard TV platform interfaces, the UX architecture is split into:
 
-Inspirado no visual de plataformas como Android TV e equipamentos de TV a cabo, a arquitetura UX foi dividida em:
+1. **Flat Top Menu:** A minimal top navigation bar (Watch TV, Last Channel, EPG Guide) maximizing horizontal screen real estate.
+2. **Dynamic Hero Banner:** A static yet reactive showcase panel. Navigating through the carousel updates the active program title, time slot, metadata, and synopsis in real time without interrupting the background stream.
+3. **Real-time OSD & EPG:** An overlay bar displaying real-time stream resolution (1080p, 720p), metadata, and progress bars synchronized between local system time and the server backend.
 
-1. **Top Menu Flat:** Menu superior direto ao ponto (Assistir TV, Último Canal, Guia EPG) garantindo 100% de largura horizontal disponível.
-2. **Hero Banner Dinâmico:** Uma vitrine cinemática estática mas inteligentemente responsiva. Navegar na prateleira atualiza instantaneamente a arte, título, horário e sinopse do programa atual no painel sem engasgar o vídeo ao fundo.
-3. **OSD & EPG Real-Time:** Uma tarja inferior elegante (On-Screen Display) informando a resolução real (1080p, 720p), metadados e barra de progresso perfeitamente calibrados pela sincronização entre os horários do servidor e a máquina local.
+## Security and Access Control (NGINX)
 
-## Segurança e Controle de Acesso (NGINX)
+The web application can be hosted via web servers such as NGINX, enabling IP-based Access Control via 
+ginx.conf. This enforces an invisible security layer, ensuring only authorized local devices or VPN endpoints can access the interface and media streams.
 
-O projeto pode ser servido via servidor web (como NGINX), o que possibilita a implementação de **Controle de Acesso por IPs Autorizados** (via nginx.conf). Isso garante que apenas dispositivos explícitos e confiáveis da sua rede local (ou túnel VPN) possam carregar a interface e os streams, entregando uma camada extra e invisível de segurança.
+## Android Wrapper App
 
-## Como Construir e Sincronizar
+The generated Android application acts as a lightweight native wrapper pointing to the server hosting the web repository. Any codebase update reflects instantly across network devices upon application restart, eliminating the need to recompile APKs for UI changes.
 
-O aplicativo Android gerado é apenas um wrapper que aponta para o servidor que hospeda o repositório Web. Isso significa que **qualquer alteração no código reflete instantaneamente nas TVs** da rede assim que elas são reiniciadas. Não é necessário recompilar APKs a cada nova feature visual.
+## Final Notes
 
-Caso precise gerar um novo APK via Capacitor:
+- The project does not maintain a standalone database. It relies on real-time metadata parsing provided directly by Dispatcharr (XMLTV/M3U).
+- Developed without heavy Node/NPM dependencies (e.g., Webpack, React), utilizing vanilla web standards (HTML, JavaScript, CSS).
 
-1. Modifique o capacitor.config.json, inserindo o IP do seu servidor no campo server.url.
-2. Sincronize a base de código e gere o binário pelo Android Studio:
-   `ash
-   npx cap sync android
-   npx cap open android
-   `
+## License
 
-## Notas Finais
-
-- O projeto não utiliza banco de dados próprio. Ele depende do pareamento e cruzamento de metadados em tempo real gerados a partir do parse do **Dispatcharr** (XMLTV/M3U).
-- Foi criado sob a filosofia de não necessitar pacotes NPM Node pesados como Webpack ou React, vivendo perfeitamente da trindade nativa da web (HTML/JS/CSS).
-
-## Licença
-
-Este projeto é licenciado sob a Licença MIT - veja o arquivo [LICENSE](./LICENSE) para detalhes.
+Distributed under the MIT License.
