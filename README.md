@@ -6,9 +6,9 @@ O **UltimateTV** é um player de IPTV construído com HTML5 e JavaScript para at
 
 ## Telas do Aplicativo
 
-- ![Tela Inicial](./docs/screenshots/home.png)
-- ![Player e OSD](./docs/screenshots/osd.png)
-- ![Guia de Programação](./docs/screenshots/epg.png)
+![Tela Inicial](./docs/screenshots/home.png)
+![Player e OSD](./docs/screenshots/osd.png)
+![Guia de Programação](./docs/screenshots/epg.png)
 
 ---
 
