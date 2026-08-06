@@ -16,7 +16,7 @@ O **UltimateTV** é um player de IPTV construído com HTML5 e JavaScript para at
 
 O objetivo deste projeto é proporcionar uma experiência de uso semelhante a equipamentos OEM de TV a cabo e/ou de apps de streaming, garantindo altíssimo nível de fluidez mesmo em hardwares com capacidade limitada. O projeto foi inteiramente desenhado e otimizado visando funcionamento eficiente em dispositivos baseados em Android TV.
 
-- **Android TV (Projetores, Smart TVs, Sticks e Set-Top-Boxes Android):** Suporte de ponta a ponta, operando lisamente mesmo em dispositivos de entrada com 1GB de RAM.
+- **Projetores, Smart TVs, Sticks e Set-Top-Boxes Android:** Suporte de ponta a ponta, operando lisamente mesmo em dispositivos de entrada com 1GB de RAM.
 - **Navegadores Modernos (Web/PWA):** Acessível via web para consumo rápido pelo PC.
 
 ## Otimizações de Performance
@@ -39,18 +39,9 @@ Inspirado no visual de plataformas como Android TV e equipamentos de TV a cabo, 
 
 A aplicação pode ser servida via servidor web (como NGINX), o que possibilita a implementação de **Controle de Acesso por IPs Autorizados** (via nginx.conf). Isso garante que apenas dispositivos explícitos e confiáveis da sua rede local, ou túnel VPN possam carregar a interface e os streams, entregando uma camada extra e invisível de segurança.
 
-## Como Construir e Sincronizar
+## App para Android
 
 O aplicativo Android gerado é apenas um wrapper que aponta para o servidor que hospeda o repositório Web. Isso significa que **qualquer alteração no código reflete instantaneamente nas TVs** da rede assim que elas são reiniciadas. Não é necessário recompilar APKs a cada nova feature visual.
-
-Caso precise gerar um novo APK via Capacitor:
-
-1. Modifique o capacitor.config.json, inserindo o IP do seu servidor no campo server.url.
-2. Sincronize a base de código e gere o binário pelo Android Studio:
-   `ash
-   npx cap sync android
-   npx cap open android
-   `
 
 ## Notas Finais
 
