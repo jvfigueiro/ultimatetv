@@ -41,7 +41,7 @@ class UltimateTV {
       onCycleAspect: () => this.cycleAspectMode(),
       onToggleSubtitles: () => this.player.toggleSubtitles(),
       onCycleAudio: () => this.player.cycleAudioTrack(),
-      onOpenGuide: () => this.guide.show(this.currentIndex),
+      onOpenGuide: () => this.openGuide(),
       onOpenList: () => this.list.show(this.currentIndex),
       onToggleSynopsis: () => {
         this.osd.expandSynopsis();
@@ -67,8 +67,8 @@ class UltimateTV {
     this.historyIndices = savedHistory ? JSON.parse(savedHistory) : [];
 
     this.aspectModes = [
-      { class: 'aspect-fill', label: 'Esticar (16:9)' },
       { class: 'aspect-contain', label: 'Original (Ajustar)' },
+      { class: 'aspect-fill', label: 'Esticar (16:9)' },
       { class: 'aspect-cover', label: 'Zoom (Cortar Bordas)' },
       { class: 'aspect-stretch-h', label: 'Super Zoom 4:3' }
     ];
@@ -171,11 +171,10 @@ class UltimateTV {
       },
       onGuide: () => {
         if (this.inHomeScreen) { 
-          this.inHomeScreen = false;
-          this.homeEl.classList.add('hidden');
-          this.guide.show(this.currentIndex); 
+          this.openGuide(); 
           return; 
         }
+        if (!this.guide.isOpen) this.updateAllChannelsEPG();
         this.guide.toggle(this.currentIndex);
       },
       onMenu: () => {
@@ -331,7 +330,7 @@ class UltimateTV {
     // 3. Renderizar cada Categoria
     Object.keys(groups).sort().forEach(groupName => {
       const shuffled = [...groups[groupName]].sort(() => 0.5 - Math.random());
-      renderShelf(`📌 ${groupName}`, shuffled);
+      renderShelf(groupName, shuffled);
     });
 
     // Adiciona evento de clique no Top Nav
@@ -339,13 +338,11 @@ class UltimateTV {
       item.onclick = () => {
         const action = item.getAttribute('data-action');
         if (action === 'watch') {
-          this.exitHomeScreen(this.currentIndex);
+          this.exitHomeScreen(0);
         } else if (action === 'last') {
           this.exitHomeScreen(localStorage.getItem('ultimatetv_last_channel') || 0);
         } else if (action === 'guide') {
-          this.inHomeScreen = false;
-          this.homeEl.classList.add('hidden');
-          this.guide.show(this.currentIndex);
+          this.openGuide();
         } else if (action === 'reload') {
           window.location.reload();
         }
@@ -437,11 +434,9 @@ class UltimateTV {
     const action = item.getAttribute('data-action');
 
     if (action === 'watch') {
-      this.exitHomeScreen(this.currentIndex);
+      this.exitHomeScreen(0);
     } else if (action === 'guide') {
-      this.inHomeScreen = false;
-      this.homeEl.classList.add('hidden');
-      this.guide.show(this.currentIndex);
+      this.openGuide();
     } else if (action === 'last') {
       this.inHomeScreen = false;
       this.homeEl.classList.add('hidden');
@@ -482,7 +477,7 @@ class UltimateTV {
       } else {
         this.osd.hide();
       }
-    }, 12000);
+    }, 7000);
   }
 
   cycleAspectMode() {
@@ -512,6 +507,13 @@ class UltimateTV {
 
   updateAllChannelsEPG() {
     this.channels.forEach(ch => this.api.updateChannelEPG(ch));
+  }
+
+  openGuide() {
+    this.inHomeScreen = false;
+    this.homeEl.classList.add('hidden');
+    this.updateAllChannelsEPG();
+    this.guide.show(this.currentIndex);
   }
 
   tuneChannel(index) {
