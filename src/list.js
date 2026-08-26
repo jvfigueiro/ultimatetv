@@ -44,6 +44,19 @@ export class ChannelList {
     this.el.classList.add('hidden');
   }
 
+  updatePrograms(channels) {
+    this.channels = channels;
+    const items = this.container.querySelectorAll('.channel-item');
+    this.channels.forEach((channel, idx) => {
+      if (items[idx]) {
+        const progEl = items[idx].querySelector('.ch-prog');
+        if (progEl && progEl.textContent !== channel.currentProgram) {
+          progEl.textContent = channel.currentProgram;
+        }
+      }
+    });
+  }
+
   toggle(currentIndex) {
     if (this.el.classList.contains('hidden')) {
       this.show(currentIndex);

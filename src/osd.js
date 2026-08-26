@@ -11,7 +11,6 @@ export class OSD {
     this.barEl = document.getElementById('osd-progress');
     this.remainingEl = document.getElementById('osd-remaining');
     this.resEl = document.getElementById('osd-res');
-    this.audioEl = document.getElementById('osd-audio');
     
     this.synopsisEl = document.getElementById('osd-synopsis');
     this.nextTimeEl = document.getElementById('osd-next-time');
@@ -95,10 +94,8 @@ export class OSD {
   updateBadges(playerInstance) {
     if (playerInstance) {
       this.resEl.textContent = playerInstance.getDetectedResolution();
-      this.audioEl.textContent = playerInstance.getDetectedAudio();
     } else {
       this.resEl.textContent = "--";
-      this.audioEl.textContent = "--";
     }
   }
 

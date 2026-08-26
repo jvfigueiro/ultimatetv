@@ -143,7 +143,7 @@ export class DispatcharrAPI {
       const start = this.parseXMLTVDate(programmes[i].getAttribute('start'));
       const end = this.parseXMLTVDate(programmes[i].getAttribute('stop'));
 
-      if (now >= start && now <= end) {
+      if (now >= start && now < end) {
         currentProg = programmes[i];
         nextProg = programmes[i + 1] || null;
         break;

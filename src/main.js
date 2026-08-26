@@ -167,7 +167,7 @@ class UltimateTV {
         const listHidden = document.getElementById('channel-list-modal').classList.contains('hidden');
         if (listHidden) {
           this.updateAllChannelsEPG();
-          this.list.render(this.channels, this.currentIndex);
+          this.list.updatePrograms(this.channels);
         }
         this.list.toggle(this.currentIndex);
       },
@@ -268,7 +268,7 @@ class UltimateTV {
       
       const listEl = document.getElementById('channel-list-modal');
       if (listEl && !listEl.classList.contains('hidden')) {
-        this.list.render(this.channels, this.currentIndex);
+        this.list.updatePrograms(this.channels);
       }
       if (this.guide && this.guide.isOpen) {
         this.guide.render(this.channels, this.api.rawXmlDoc);
