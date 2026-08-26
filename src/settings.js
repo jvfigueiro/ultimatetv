@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pin.length !== 4 || isNaN(pin)) pin = '1234';
     localStorage.setItem('ultimatetv_admin_pin', pin);
 
-    window.location.href = '/index.html';
+    window.location.href = 'index.html';
   });
 
   btnCancel.addEventListener('click', () => {
-    window.location.href = '/index.html';
+    window.location.href = 'index.html';
   });
 
   btnUpdate.addEventListener('click', () => {

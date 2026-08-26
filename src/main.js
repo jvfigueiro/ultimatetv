@@ -86,7 +86,9 @@ class UltimateTV {
   }
 
   async init() {
-    console.log("[UltimateTV] Iniciando Sistema...");
+    console.log(`[UltimateTV] Iniciando Sistema... Versão: ${window.APP_VERSION}`);
+    const dtvVersion = document.getElementById('dtv-version');
+    if (dtvVersion) dtvVersion.textContent = `Versão: ${window.APP_VERSION}`;
 
     this.channels = await this.api.loadAllData();
     this.guide.render(this.channels, this.api.rawXmlDoc);
@@ -413,7 +415,7 @@ class UltimateTV {
         } else if (action === 'reload') {
           window.location.reload();
         } else if (action === 'settings' && this.role === 'admin') {
-          window.location.href = '/settings.html';
+          window.location.href = 'settings.html';
         }
       };
     });
@@ -516,7 +518,7 @@ class UltimateTV {
     } else if (action === 'reload') {
       window.location.reload();
     } else if (action === 'settings' && this.role === 'admin') {
-      window.location.href = '/settings.html';
+      window.location.href = 'settings.html';
     } else if (action === 'tune') {
       const idx = parseInt(item.getAttribute('data-ch-idx'), 10);
       this.exitHomeScreen(idx);

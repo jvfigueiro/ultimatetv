@@ -18,6 +18,12 @@ export default defineConfig({
   ],
   build: {
     target: 'es2015',
-    minify: 'terser'
+    minify: 'terser',
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        settings: './settings.html'
+      }
+    }
   }
 });

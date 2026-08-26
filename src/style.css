@@ -1051,7 +1051,7 @@ video::-webkit-media-controls-play-button {
 
 .dtv-body {
   max-width: 750px;
-  margin-top: -60px;
+  margin: auto 0;
 }
 
 .dtv-badge {
