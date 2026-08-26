@@ -1543,7 +1543,7 @@ video::-webkit-media-controls-overlay-play-button {
   position: absolute;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.9);
+  background: radial-gradient(circle at 70% 30%, #0c192c 0%, #04080e 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1573,13 +1573,18 @@ video::-webkit-media-controls-overlay-play-button {
   background: #1e293b;
   height: 60px;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
   font-size: 2rem;
   letter-spacing: 15px;
   color: #fff;
+  border: none;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
   margin-bottom: 20px;
+}
+.pin-display:focus {
+  outline: 2px solid #3b82f6;
 }
 .auth-hint {
   font-size: 0.9rem !important;

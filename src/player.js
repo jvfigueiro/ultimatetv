@@ -8,6 +8,7 @@ export class TVPlayer {
     this.errorMsgEl = document.getElementById('no-signal-msg');
     this.slowScreenEl = document.getElementById('slow-screen');
     this.uaEl = document.getElementById('dtv-user-agent');
+    this.reasonEl = document.getElementById('dtv-error-reason');
     
     this.hls = null;
     this.tsPlayer = null;
@@ -61,7 +62,13 @@ export class TVPlayer {
         this.applySubtitleState();
       });
       this.hls.on(Hls.Events.ERROR, (e, data) => {
-        if (data.fatal) this.triggerFatalError("Falha fatal no manifesto HLS do servidor.");
+        if (data.fatal) {
+          let reason = "Falha na reprodução do stream.";
+          if (data.response && (data.response.code === 401 || data.response.code === 403)) {
+            reason = "Não autorizado pela programadora.";
+          }
+          this.triggerFatalError(reason);
+        }
       });
     } else if (mpegts.getFeatureList().mseLivePlayback) {
       this.tsPlayer = mpegts.createPlayer({
@@ -79,7 +86,7 @@ export class TVPlayer {
       this.tsPlayer.play().catch(() => {});
       
       this.tsPlayer.on(mpegts.Events.ERROR, () => {
-        this.triggerFatalError("A conexão com o servidor foi perdida ou recusada.");
+        this.triggerFatalError("Falha na reprodução do stream.");
       });
     } else {
       this.video.src = streamUrl;
@@ -181,7 +188,7 @@ export class TVPlayer {
     }, slowMs);
 
     this.fatalTimer = setTimeout(() => {
-      this.triggerFatalError("Tempo limite excedido. O canal não respondeu a tempo.");
+      this.triggerFatalError("Tempo limite de conexão excedido.");
     }, fatalMs);
   }
 
@@ -194,7 +201,7 @@ export class TVPlayer {
     console.warn(`[Player] Erro Fatal: ${msg}`);
     this.clearAllTimers();
     this.slowScreenEl.classList.add('hidden');
-    this.errorMsgEl.textContent = `${msg} Tente mudar de canal ou verifique o servidor.`;
+    if (this.reasonEl) this.reasonEl.textContent = `Informação Adicional: ${msg}`;
     if (this.uaEl) this.uaEl.textContent = navigator.userAgent;
     this.noSignalEl.classList.remove('hidden');
   }

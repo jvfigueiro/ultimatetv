@@ -77,17 +77,25 @@
 
     <!-- 5. SEM SINAL -->
     <div id="no-signal" class="no-signal hidden">
-      <div class="dtv-error-layout">
-        <div class="dtv-body">
+      <div class="dtv-error-layout" style="justify-content: space-between; align-items: center;">
+        <div style="flex: 1;"></div>
+        <div class="dtv-body" style="text-align: center; margin-top: 0; margin-bottom: 0;">
           <span class="dtv-badge">ERRO 771</span>
-          <h2 id="dtv-title">Sem sinal do servidor</h2>
-          <p id="no-signal-msg">Este canal está temporariamente indisponível ou demorou tempo demais para responder. Tente novamente mais tarde.</p>
-          <div class="dtv-device-info">
+          <h2 id="dtv-title">Sem sinal do streaming</h2>
+          <p id="no-signal-msg" style="max-width: 600px; margin: 0 auto; color: #cbd5e1;">Este canal está temporariamente indisponível. Tente novamente mais tarde.</p>
+          <div class="dtv-device-info" style="margin: 30px auto 0; text-align: left; display: inline-flex;">
             <span class="dtv-icon">💻</span>
-            <div><strong>ID do Dispositivo:</strong><div id="dtv-user-agent" class="ua-string">Carregando...</div><div id="dtv-version" class="ua-string" style="margin-top: 4px;">Versão: 1.0.S3</div></div>
+            <div>
+              <strong>ID do Dispositivo:</strong>
+              <div id="dtv-user-agent" class="ua-string">Carregando...</div>
+              <div id="dtv-version" class="ua-string" style="margin-top: 4px;">Versão: 1.0.S3</div>
+              <div id="dtv-error-reason" class="ua-string" style="margin-top: 4px; color: #f87171;">Informação Adicional: Falha na reprodução do stream.</div>
+            </div>
           </div>
         </div>
-        <div class="dtv-footer"><span>▲ ▼ Mudar de Canal &nbsp;|&nbsp; ◄ Lista de Canais &nbsp;|&nbsp; Voltar : Início</span></div>
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; width: 100%;">
+          <div class="dtv-footer"><span>▲ ▼ Mudar de Canal &nbsp;|&nbsp; ◄ Lista de Canais &nbsp;|&nbsp; Voltar : Início</span></div>
+        </div>
       </div>
     </div>
 
@@ -175,8 +183,8 @@
       <div class="auth-box">
         <h2>Acesso Restrito</h2>
         <p>Digite a senha de acesso (PIN)</p>
-        <div id="pin-display" class="pin-display"></div>
-        <p class="auth-hint">Pressione os números no controle</p>
+        <input id="pin-input" class="pin-display" type="password" pattern="[0-9]*" inputmode="numeric" maxlength="8" />
+        <p class="auth-hint">Pressione OK para digitar a senha</p>
       </div>
     </div>
 

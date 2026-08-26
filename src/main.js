@@ -210,37 +210,55 @@ class UltimateTV {
 
   showAuthPrompt() {
     const authModal = document.getElementById('auth-modal');
-    const pinDisplay = document.getElementById('pin-display');
+    const pinInput = document.getElementById('pin-input');
     const expectedPin = localStorage.getItem('ultimatetv_admin_pin') || '1234';
-    let currentPin = '';
 
     authModal.classList.remove('hidden');
+    pinInput.value = '';
+    pinInput.focus();
     
-    const handleKey = (e) => {
-      const isNum = e.key >= '0' && e.key <= '9';
-      if (isNum) {
-        currentPin += e.key;
-        pinDisplay.textContent = '*'.repeat(currentPin.length);
-        
-        if (currentPin.length === 4) {
-          if (currentPin === expectedPin) {
-            this.isUnlocked = true;
-            cleanup();
-            this.finishBoot();
-          } else {
-            pinDisplay.textContent = 'ERRO';
-            setTimeout(() => { currentPin = ''; pinDisplay.textContent = ''; }, 1000);
-          }
-        }
+    const preventLoss = (e) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.stopPropagation();
       }
     };
     
+    const validate = () => {
+      if (pinInput.value === expectedPin) {
+        this.isUnlocked = true;
+        cleanup();
+        this.finishBoot();
+      } else {
+        pinInput.value = '';
+        pinInput.type = 'text';
+        pinInput.value = 'ERRO';
+        pinInput.style.color = '#ef4444';
+        setTimeout(() => { 
+          pinInput.value = ''; 
+          pinInput.type = 'password';
+          pinInput.style.color = '#fff';
+        }, 1000);
+      }
+    };
+
+    const handleKey = (e) => {
+      if (e.key === 'Enter') validate();
+    };
+
+    const handleInput = () => {
+      if (pinInput.value.length === 4 && pinInput.type === 'password') validate();
+    };
+    
     const cleanup = () => {
-      window.removeEventListener('keydown', handleKey, { capture: true });
+      pinInput.removeEventListener('keydown', handleKey);
+      pinInput.removeEventListener('keydown', preventLoss);
+      pinInput.removeEventListener('input', handleInput);
       authModal.classList.add('hidden');
     };
     
-    window.addEventListener('keydown', handleKey, { capture: true });
+    pinInput.addEventListener('keydown', preventLoss);
+    pinInput.addEventListener('keydown', handleKey);
+    pinInput.addEventListener('input', handleInput);
   }
 
   finishBoot() {
