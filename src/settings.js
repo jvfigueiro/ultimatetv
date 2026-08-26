@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Carregar valores do localStorage
   inputServer.value = localStorage.getItem('ultimatetv_server') || 'http://10.0.7.25:9191';
   selectOsd.value = localStorage.getItem('ultimatetv_osd_timeout') || '7000';
-  toggleAuth.value = localStorage.getItem('ultimatetv_access_control') || 'false';
+  toggleAuth.value = localStorage.getItem('ultimatetv_access_control');
+  if (toggleAuth.value === null) toggleAuth.value = 'true';
   inputPin.value = localStorage.getItem('ultimatetv_admin_pin') || '1234';
 
   btnSave.addEventListener('click', () => {

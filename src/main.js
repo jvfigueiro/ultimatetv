@@ -197,11 +197,13 @@ class UltimateTV {
   }
 
   checkAuthGate() {
-    const isProtected = localStorage.getItem('ultimatetv_access_control') === 'true';
+    const rawSetting = localStorage.getItem('ultimatetv_access_control');
+    const isProtected = rawSetting === null ? true : rawSetting === 'true';
+    
     if (isProtected) {
       this.showAuthPrompt();
     } else {
-      this.role = 'admin';
+      this.isUnlocked = true;
       this.finishBoot();
     }
   }
@@ -222,7 +224,7 @@ class UltimateTV {
         
         if (currentPin.length === 4) {
           if (currentPin === expectedPin) {
-            this.role = 'admin';
+            this.isUnlocked = true;
             cleanup();
             this.finishBoot();
           } else {
@@ -230,10 +232,6 @@ class UltimateTV {
             setTimeout(() => { currentPin = ''; pinDisplay.textContent = ''; }, 1000);
           }
         }
-      } else if (e.key === 'Escape' || e.key === 'Backspace' || e.keyCode === 27 || e.keyCode === 4 || e.keyCode === 8) {
-        this.role = 'guest';
-        cleanup();
-        this.finishBoot();
       }
     };
     
@@ -247,10 +245,6 @@ class UltimateTV {
 
   finishBoot() {
     this.splashEl.classList.add('hidden');
-    if (this.role === 'guest') {
-      const settingsBtn = document.getElementById('nav-item-settings');
-      if (settingsBtn) settingsBtn.style.display = 'none';
-    }
     this.showHomeScreen();
   }
 
@@ -329,8 +323,7 @@ class UltimateTV {
     
     // Reconstruir matrix dinamicamente sem destruir o DOM se já renderizado
     this.homeMatrix = []; 
-    const topNavItems = Array.from(this.homeEl.querySelectorAll('.home-nav-item'))
-      .filter(item => item.style.display !== 'none');
+    const topNavItems = Array.from(this.homeEl.querySelectorAll('.home-nav-item'));
     this.homeMatrix.push(topNavItems); // ROW 0 = Top Nav (Horizontal)
     
     let currentRowIdx = 1;
@@ -413,7 +406,7 @@ class UltimateTV {
           this.exitHomeScreen(localStorage.getItem('ultimatetv_last_channel') || 0);
         } else if (action === 'guide') {
           this.openGuide();
-        } else if (action === 'settings' && this.role === 'admin') {
+        } else if (action === 'settings') {
           window.location.href = 'settings.html';
         }
       };
@@ -514,7 +507,7 @@ class UltimateTV {
       else this.tuneChannel(this.currentIndex);
     } else if (action === 'sysinfo') {
       this.showSysInfoModal();
-    } else if (action === 'settings' && this.role === 'admin') {
+    } else if (action === 'settings') {
       window.location.href = 'settings.html';
     } else if (action === 'tune') {
       const idx = parseInt(item.getAttribute('data-ch-idx'), 10);
