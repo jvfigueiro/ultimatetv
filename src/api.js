@@ -1,6 +1,6 @@
 export class DispatcharrAPI {
   constructor() {
-    this.serverUrl = localStorage.getItem('ultimatetv_server') || 'http://10.0.7.26:9191';
+    this.serverUrl = localStorage.getItem('ultimatetv_server') || 'http://10.0.7.25:9191';
     this.m3uUrl = localStorage.getItem('ultimatetv_m3u') || `${this.serverUrl}/output/m3u`;
     this.epgUrl = localStorage.getItem('ultimatetv_epg') || `${this.serverUrl}/output/epg`;
   }

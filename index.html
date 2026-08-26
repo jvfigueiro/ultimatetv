@@ -32,6 +32,9 @@
           <div class="home-nav-item" data-action="guide">
             <span class="nav-icon">📅</span> Guia de Programação
           </div>
+          <div class="home-nav-item" id="nav-item-settings" data-action="settings">
+            <span class="nav-icon">⚙️</span> Configurações
+          </div>
           <div class="home-nav-item" data-action="reload">
             <span class="nav-icon">🔄</span> Atualizar
           </div>
@@ -78,7 +81,6 @@
     <!-- 5. SEM SINAL -->
     <div id="no-signal" class="no-signal hidden">
       <div class="dtv-error-layout">
-        <div class="dtv-header"><div id="dtv-clock" class="dtv-clock sys-time">00:00</div><div id="dtv-date" class="dtv-date sys-date">--- 00/00</div></div>
         <div class="dtv-body">
           <span class="dtv-badge">ERRO 771</span>
           <h2 id="dtv-title">Sem sinal do servidor</h2>
@@ -93,7 +95,7 @@
     </div>
 
     <!-- O Motor de Vídeo -->
-    <video id="tv-screen" class="aspect-fill" autoplay playsinline poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
+    <video id="tv-screen" class="aspect-contain" autoplay playsinline poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
 
     <!-- Indicador Rápido de Mudança de Proporção (Toast) -->
     <div id="aspect-toast" class="aspect-toast hidden">
@@ -167,11 +169,21 @@
     </div>
 
     <!-- Indicador de Versão do App -->
-    <div id="app-version" class="app-version">v1.0.S1</div>
+    <div id="app-version" class="app-version">v1.0.S3</div>
 
     <script>
-      window.APP_VERSION = "1.0.S1";
+      window.APP_VERSION = "1.0.S3";
     </script>
+    <!-- MODAL DE PIN -->
+    <div id="auth-modal" class="auth-modal hidden">
+      <div class="auth-box">
+        <h2>Acesso Restrito</h2>
+        <p>Digite o PIN de administrador</p>
+        <div id="pin-display" class="pin-display"></div>
+        <p class="auth-hint">Pressione números no controle ou Voltar para fechar</p>
+      </div>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

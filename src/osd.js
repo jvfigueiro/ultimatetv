@@ -20,7 +20,7 @@ export class OSD {
     this.hideTimeout = null;
     this.progressInterval = null;
     this.expandTimeout = null;
-    this.displayDuration = 7000;
+    this.displayDuration = parseInt(localStorage.getItem('ultimatetv_osd_timeout'), 10) || 7000;
   }
 
   show(channelData, playerInstance) {

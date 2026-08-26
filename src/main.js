@@ -190,9 +190,66 @@ class UltimateTV {
     this.updateGlobalClock(); // call immediately once
 
     setTimeout(() => {
-      this.splashEl.classList.add('hidden');
-      this.showHomeScreen();
+      this.checkAuthGate();
     }, 1200);
+  }
+
+  checkAuthGate() {
+    const isProtected = localStorage.getItem('ultimatetv_access_control') === 'true';
+    if (isProtected) {
+      this.showAuthPrompt();
+    } else {
+      this.role = 'admin';
+      this.finishBoot();
+    }
+  }
+
+  showAuthPrompt() {
+    const authModal = document.getElementById('auth-modal');
+    const pinDisplay = document.getElementById('pin-display');
+    const expectedPin = localStorage.getItem('ultimatetv_admin_pin') || '1234';
+    let currentPin = '';
+
+    authModal.classList.remove('hidden');
+    
+    const handleKey = (e) => {
+      const isNum = e.key >= '0' && e.key <= '9';
+      if (isNum) {
+        currentPin += e.key;
+        pinDisplay.textContent = '*'.repeat(currentPin.length);
+        
+        if (currentPin.length === 4) {
+          if (currentPin === expectedPin) {
+            this.role = 'admin';
+            cleanup();
+            this.finishBoot();
+          } else {
+            pinDisplay.textContent = 'ERRO';
+            setTimeout(() => { currentPin = ''; pinDisplay.textContent = ''; }, 1000);
+          }
+        }
+      } else if (e.key === 'Escape' || e.key === 'Backspace' || e.keyCode === 27 || e.keyCode === 4 || e.keyCode === 8) {
+        this.role = 'guest';
+        cleanup();
+        this.finishBoot();
+      }
+    };
+    
+    const cleanup = () => {
+      window.removeEventListener('keydown', handleKey, { capture: true });
+      authModal.classList.add('hidden');
+    };
+    
+    window.addEventListener('keydown', handleKey, { capture: true });
+  }
+
+  finishBoot() {
+    this.splashEl.classList.add('hidden');
+    if (this.role === 'guest') {
+      const settingsBtn = document.getElementById('nav-item-settings');
+      if (settingsBtn) settingsBtn.style.display = 'none';
+    }
+    this.showHomeScreen();
   }
 
   updateGlobalClock() {
@@ -211,6 +268,16 @@ class UltimateTV {
   startGlobalClock() {
     setInterval(() => {
       this.updateGlobalClock();
+      this.updateAllChannelsEPG();
+      
+      const listEl = document.getElementById('channel-list-modal');
+      if (listEl && !listEl.classList.contains('hidden')) {
+        this.list.render(this.channels, this.currentIndex);
+      }
+      if (this.guide && this.guide.isOpen) {
+        this.guide.render(this.channels, this.api.rawXmlDoc);
+        this.guide.show(this.guide.selectedRow);
+      }
     }, 60000);
   }
 
@@ -345,6 +412,8 @@ class UltimateTV {
           this.openGuide();
         } else if (action === 'reload') {
           window.location.reload();
+        } else if (action === 'settings' && this.role === 'admin') {
+          window.location.href = '/settings.html';
         }
       };
     });
@@ -446,6 +515,8 @@ class UltimateTV {
       this.showSysInfoModal();
     } else if (action === 'reload') {
       window.location.reload();
+    } else if (action === 'settings' && this.role === 'admin') {
+      window.location.href = '/settings.html';
     } else if (action === 'tune') {
       const idx = parseInt(item.getAttribute('data-ch-idx'), 10);
       this.exitHomeScreen(idx);
@@ -469,6 +540,7 @@ class UltimateTV {
   resetOSDTimer() {
     if (this.osdTimer) clearTimeout(this.osdTimer);
     
+    const timeoutMs = parseInt(localStorage.getItem('ultimatetv_osd_timeout'), 10) || 7000;
     this.osdTimer = setTimeout(() => {
       const menuEl = document.getElementById('bottom-menu');
       if (menuEl && !menuEl.classList.contains('hidden')) {
@@ -477,7 +549,7 @@ class UltimateTV {
       } else {
         this.osd.hide();
       }
-    }, 7000);
+    }, timeoutMs);
   }
 
   cycleAspectMode() {
