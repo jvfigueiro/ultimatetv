@@ -329,7 +329,8 @@ class UltimateTV {
     
     // Reconstruir matrix dinamicamente sem destruir o DOM se já renderizado
     this.homeMatrix = []; 
-    const topNavItems = Array.from(this.homeEl.querySelectorAll('.home-nav-item'));
+    const topNavItems = Array.from(this.homeEl.querySelectorAll('.home-nav-item'))
+      .filter(item => item.style.display !== 'none');
     this.homeMatrix.push(topNavItems); // ROW 0 = Top Nav (Horizontal)
     
     let currentRowIdx = 1;
@@ -412,8 +413,6 @@ class UltimateTV {
           this.exitHomeScreen(localStorage.getItem('ultimatetv_last_channel') || 0);
         } else if (action === 'guide') {
           this.openGuide();
-        } else if (action === 'reload') {
-          window.location.reload();
         } else if (action === 'settings' && this.role === 'admin') {
           window.location.href = 'settings.html';
         }
@@ -515,8 +514,6 @@ class UltimateTV {
       else this.tuneChannel(this.currentIndex);
     } else if (action === 'sysinfo') {
       this.showSysInfoModal();
-    } else if (action === 'reload') {
-      window.location.reload();
     } else if (action === 'settings' && this.role === 'admin') {
       window.location.href = 'settings.html';
     } else if (action === 'tune') {
