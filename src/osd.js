@@ -39,7 +39,7 @@ export class OSD {
 
     this.numEl.textContent = channelData.number || "--";
     this.nameEl.textContent = channelData.name || "Canal";
-    this.progEl.textContent = channelData.currentProgram || "Programação indisponível";
+    this.progEl.textContent = channelData.currentProgram || "Sem informações do programa";
     
     this.startEndEl.textContent = `${channelData.start || "--:--"} - ${channelData.end || "--:--"}`;
     
@@ -78,11 +78,10 @@ export class OSD {
 
     // Se a resolução/audio demorou a subir na GPU, força uma releitura progressiva
     setTimeout(() => this.updateBadges(playerInstance), 1500);
-    setTimeout(() => this.updateBadges(playerInstance), 3500);
-
-    this.synopsisEl.textContent = channelData.synopsis || "Sem descrição disponível para este programa.";
+    this.progEl.textContent = channelData.currentProgram || "Sem informações do programa";
+    this.synopsisEl.textContent = channelData.synopsis || "Este canal não forneceu informações sobre o programa atual.";
     this.nextTimeEl.textContent = `${channelData.nextStart || "--:--"} - ${channelData.nextEnd || "--:--"}`;
-    this.nextEl.textContent = channelData.nextProgram || "Sem informação";
+    this.nextEl.textContent = channelData.nextProgram || "Aguardando Guia...";
 
     this.el.classList.remove('hidden');
 

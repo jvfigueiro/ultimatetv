@@ -56,12 +56,12 @@ export class DispatcharrAPI {
         const nameParts = line.split(',');
         currentChannel.name = nameParts[nameParts.length - 1].trim();
         
-        currentChannel.currentProgram = "Programação da UltimateTV";
+        currentChannel.currentProgram = "Sem informações do programa";
         currentChannel.start = "--:--"; currentChannel.end = "--:--";
         currentChannel.progress = 0; currentChannel.remaining = 0;
         currentChannel.category = currentChannel.group;
         currentChannel.resolution = "FHD"; currentChannel.audio = "STEREO";
-        currentChannel.synopsis = "Assista à programação ao vivo.";
+        currentChannel.synopsis = "Este canal não forneceu informações sobre o programa atual.";
         currentChannel.nextProgram = "Aguardando Guia...";
         currentChannel.nextStart = "--:--"; currentChannel.nextEnd = "--:--";
       } else if (line.startsWith('http') && currentChannel) {
