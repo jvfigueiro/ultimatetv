@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ── Inject system info (read-only) ────────────────────────────
+  const versionEl = document.getElementById('sysinfo-version');
+  const uaEl      = document.getElementById('sysinfo-ua');
+  if (versionEl) versionEl.textContent = window.APP_VERSION || '1.0.S3';
+  if (uaEl)      uaEl.textContent      = navigator.userAgent;
+
   // Focus first field on boot
   focusAt(0);
 
