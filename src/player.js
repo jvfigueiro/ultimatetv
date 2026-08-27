@@ -201,7 +201,7 @@ export class TVPlayer {
     console.warn(`[Player] Erro Fatal: ${msg}`);
     this.clearAllTimers();
     this.slowScreenEl.classList.add('hidden');
-    if (this.reasonEl) this.reasonEl.textContent = `Informação Adicional: ${msg}`;
+    if (this.reasonEl) this.reasonEl.textContent = msg;
     if (this.uaEl) this.uaEl.textContent = navigator.userAgent;
     this.noSignalEl.classList.remove('hidden');
   }

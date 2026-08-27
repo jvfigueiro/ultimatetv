@@ -88,7 +88,7 @@ class UltimateTV {
   async init() {
     console.log(`[UltimateTV] Iniciando Sistema... Versão: ${window.APP_VERSION}`);
     const dtvVersion = document.getElementById('dtv-version');
-    if (dtvVersion) dtvVersion.textContent = `Versão: ${window.APP_VERSION}`;
+    if (dtvVersion) dtvVersion.textContent = window.APP_VERSION;
 
     this.channels = await this.api.loadAllData();
     this.guide.render(this.channels, this.api.rawXmlDoc);
