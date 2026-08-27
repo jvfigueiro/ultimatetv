@@ -85,11 +85,19 @@
           <p id="no-signal-msg" style="max-width: 600px; margin: 0 auto; color: #cbd5e1;">Este canal está temporariamente indisponível. Tente novamente mais tarde.</p>
           <div class="dtv-device-info" style="margin: 30px auto 0; text-align: left; display: inline-flex;">
             <span class="dtv-icon">💻</span>
-            <div>
-              <strong>ID do Dispositivo:</strong>
-              <div id="dtv-user-agent" class="ua-string">Carregando...</div>
-              <div id="dtv-version" class="ua-string" style="margin-top: 4px;">Versão: 1.0.S3</div>
-              <div id="dtv-error-reason" class="ua-string" style="margin-top: 4px; color: #f87171;">Informação Adicional: Falha na reprodução do stream.</div>
+            <div class="dtv-info-rows">
+              <div class="dtv-info-row">
+                <strong>ID do Dispositivo</strong>
+                <div id="dtv-user-agent" class="ua-string">Carregando...</div>
+              </div>
+              <div class="dtv-info-row">
+                <strong>Versão</strong>
+                <div id="dtv-version" class="ua-string">1.0.S3</div>
+              </div>
+              <div class="dtv-info-row">
+                <strong>Informação Adicional</strong>
+                <div id="dtv-error-reason" class="ua-string" style="color: #f87171;">Falha na reprodução do stream.</div>
+              </div>
             </div>
           </div>
         </div>

@@ -1083,7 +1083,7 @@ video::-webkit-media-controls-play-button {
 
 .dtv-device-info {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1091,16 +1091,27 @@ video::-webkit-media-controls-play-button {
   border-radius: 10px;
 }
 
-.dtv-icon {
-  font-size: 2rem;
+.dtv-info-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.dtv-device-info strong {
+.dtv-info-row strong {
   color: #3b82f6;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 600;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
+
+.dtv-icon {
+  font-size: 2rem;
+  padding-top: 4px;
+}
+
 
 .ua-string {
   color: #94a3b8;
