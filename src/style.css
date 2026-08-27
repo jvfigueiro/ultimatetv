@@ -615,33 +615,29 @@ video::-webkit-media-controls-play-button {
 ===================================================================== */
 .bottom-menu {
   position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(0);
-  width: 86%;
-  max-width: 1000px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
   z-index: 10;
   display: block;
-  will-change: transform;
-  transition: transform 0.5s ease-out;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.6) 70%, transparent 100%);
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
 }
 
 /* O !important impede que o navegador ignore o ocultamento */
 .bottom-menu.hidden {
   pointer-events: none !important;
-  transform: translate(-50%, 150px) !important;
+  opacity: 0 !important;
 }
 
 .bottom-menu-bar {
-  background: rgba(10, 14, 22, 0.96);
-  border: 1px solid rgba(59, 130, 246, 0.4); /* Borda azul sutil para destaque no preto */
-  border-radius: 14px;
-  padding: 12px 20px;
+  padding: 12px 20px 24px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.95);
   gap: 10px;
 }
 
@@ -1414,7 +1410,7 @@ video::-webkit-media-controls-overlay-play-button {
   .osd-logo-container { width: 80px; height: 70px; }
   .title-wrapper { font-size: 1.2rem; }
   .clock-time { font-size: 1.2rem; }
-  .bottom-menu { max-width: 800px; bottom: 16px; }
+
   .bm-item { padding: 8px 12px; }
   .bm-icon { font-size: 1.2rem; }
   .sidebar-modal { width: 300px; }
