@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnUpdate   = document.getElementById('btn-update');
 
   // ── Load stored values ──────────────────────────────────────────
-  inputServer.value = localStorage.getItem('ultimatetv_server') || 'http://10.0.7.25:9191';
+  inputServer.value = localStorage.getItem('ultimatetv_server') || 'http://10.0.7.26:9191';
   selectOsd.value   = localStorage.getItem('ultimatetv_osd_timeout') || '7000';
   const storedAuth  = localStorage.getItem('ultimatetv_access_control');
   toggleAuth.value  = storedAuth === null ? 'true' : storedAuth;

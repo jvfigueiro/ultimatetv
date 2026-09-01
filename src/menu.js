@@ -37,7 +37,6 @@ export class OptionsMenu {
     this.updateSubtitleLabel(subtitlesActive);
     
     this.el.classList.remove('hidden');
-    this.selectedIndex = 0;
     this.focusCurrent();
   }
 
