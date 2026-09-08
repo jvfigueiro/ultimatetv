@@ -43,40 +43,20 @@
           </div>
         </div>
 
-        <!-- Showcase do Canal em Destaque (Padrão STB 10-Foot) -->
-        <div class="home-showcase-container">
-          <div id="home-channel-card" class="home-showcase-card" tabindex="0" data-action="tune">
-            <!-- Row 1: Channel Badge (LCN) + Logo + Channel Name -->
-            <div class="home-showcase-channel">
-              <span id="hero-ch-number" class="home-lcn-pill">--</span>
-              <img id="hero-ch-logo" src="" alt="Logo" class="home-showcase-logo" style="display:none;" />
-              <span id="hero-ch-name" class="home-showcase-ch-name">Carregando...</span>
-            </div>
-
-            <!-- Row 2 (Main Hero): Current Program Title (2.2rem - 2.6rem bold) -->
-            <h1 id="hero-prog-title" class="home-showcase-title">Sem informações do programa</h1>
-
-            <!-- Row 3: Time range + duration + dynamic progress bar -->
-            <div class="home-showcase-meta">
-              <span id="hero-prog-time" class="home-showcase-time">--:-- - --:--</span>
-              <div class="home-progress-track">
-                <div id="hero-prog-bar" class="home-progress-bar" style="width: 0%;"></div>
-              </div>
-              <span id="hero-prog-remaining" class="home-showcase-remaining"></span>
-            </div>
-
-            <!-- Row 4: Program Synopsis / Description (3-4 lines with line-clamp) -->
-            <p id="hero-prog-synopsis" class="home-showcase-synopsis">Este canal não forneceu informações sobre o programa atual.</p>
-
-            <!-- Action Hint: A subtle highlight pill/button -->
-            <div class="home-showcase-action">
-              <div class="home-action-btn">
-                <span class="action-icon">▶</span> Assistir Canal
-              </div>
-              <span class="home-action-hint">Pressione OK para assistir</span>
-            </div>
+        <!-- Área Hero (Metadados do Foco) -->
+        <div class="home-hero">
+          <div class="hero-channel-info">
+            <img id="hero-ch-logo" src="" alt="Logo" style="display:none;"/>
+            <span id="hero-ch-number">Powered by</span>
+            <span id="hero-ch-name">UltimateLab</span>
           </div>
+          <h1 id="hero-prog-title">UltimateTV</h1>
+          <p class="hero-prog-time" id="hero-prog-time">Bem-vindo ao mosaico dinâmico</p>
+          <p class="hero-prog-synopsis" id="hero-prog-synopsis">Navegue pelos canais abaixo. A programação em tempo real será exibida aqui.</p>
         </div>
+
+        <!-- Prateleiras (Mosaico) -->
+        <div id="home-categories-container"></div>
       </div>
     </div>
 

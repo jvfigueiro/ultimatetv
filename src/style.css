@@ -1451,160 +1451,85 @@ video::-webkit-media-controls-overlay-play-button {
   font-weight: 600;
 }
 
-/* ── Featured Showcase Layout (10-Foot STB Standard) ── */
-.home-showcase-container {
-  flex: 1;
+.home-hero {
+  flex: 0 0 35%;
   display: flex;
-  align-items: flex-start;
-  margin-left: 5vw;
-  margin-top: 5vh;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 20px;
 }
-
-.home-showcase-card {
-  max-width: 65vw;
-  width: 100%;
-  padding: 36px 44px;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 15, 26, 0.75) 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
-  outline: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-
-.home-showcase-card:focus,
-.home-showcase-card.active {
-  border-color: rgba(59, 130, 246, 0.6);
-  background: linear-gradient(135deg, rgba(20, 35, 65, 0.9) 0%, rgba(10, 16, 28, 0.85) 100%);
-}
-
-/* Row 1: Channel Badge + Logo + Name */
-.home-showcase-channel {
+.hero-channel-info {
   display: flex;
   align-items: center;
-  gap: 14px;
-}
-
-.home-lcn-pill {
-  font-size: 0.95rem;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
   font-weight: 700;
+  color: #3b82f6;
+}
+#hero-ch-logo {
+  height: 40px;
+  border-radius: 4px;
+}
+#hero-prog-title {
+  font-size: 2.5rem;
+  margin: 0 0 5px 0;
   color: #fff;
-  background: #2563eb;
-  padding: 3px 10px;
-  border-radius: 6px;
-  letter-spacing: 0.5px;
 }
-
-.home-showcase-logo {
-  height: 32px;
-  max-width: 80px;
-  object-fit: contain;
-}
-
-.home-showcase-ch-name {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #e2e8f0;
-}
-
-/* Row 2: Current Program Title (2.2rem to 2.6rem bold) */
-.home-showcase-title {
-  font-size: 2.4rem;
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.2;
-  margin: 16px 0 12px 0;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Row 3: Time range + duration + dynamic progress bar */
-.home-showcase-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.95rem;
+.hero-prog-time {
+  font-size: 1.1rem;
   color: #94a3b8;
-  margin-bottom: 14px;
+  margin: 0 0 10px 0;
 }
-
-.home-showcase-time {
-  font-weight: 600;
-}
-
-.home-progress-track {
-  width: 130px;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-  overflow: hidden;
-  display: inline-block;
-}
-
-.home-progress-bar {
-  height: 100%;
-  background: #3b82f6;
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-
-.home-showcase-remaining {
-  color: #64748b;
-  font-size: 0.9rem;
-}
-
-/* Row 4: Synopsis / Description */
-.home-showcase-synopsis {
-  font-size: 1.05rem;
+.hero-prog-synopsis {
+  font-size: 1rem;
   color: #cbd5e1;
-  line-height: 1.55;
+  max-width: 800px;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin: 0 0 24px 0;
-  max-width: 58vw;
 }
-
-/* Action Button */
-.home-showcase-action {
+#home-categories-container {
+  flex: 1;
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  gap: 20px;
+  overflow: hidden;
 }
-
-.home-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 22px;
-  border-radius: 8px;
-  font-size: 0.95rem;
+.cat-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cat-title {
+  font-size: 1.2rem;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
-  border: 1.5px solid rgba(255, 255, 255, 0.12);
-  transition: all 0.15s ease;
+  color: #fff;
 }
-
-.home-showcase-card:focus .home-action-btn,
-.home-showcase-card.active .home-action-btn {
-  background: #3b82f6;
-  color: #ffffff;
-  border-color: #60a5fa;
-  box-shadow: 0 0 16px rgba(59, 130, 246, 0.4);
+.cat-row {
+  display: flex;
+  gap: 15px;
+  transition: transform 0.3s ease-out;
 }
-
-.action-icon {
-  font-size: 0.85rem;
+.feat-card {
+  flex: 0 0 200px;
+  height: 120px;
+  background: #1e293b;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  text-align: center;
+  transition: none;
 }
-
-.home-action-hint {
-  font-size: 0.85rem;
-  color: #64748b;
-  font-weight: 500;
+.feat-card:focus, .feat-card.active {
+  border-color: #3b82f6;
+  background: #2563eb;
 }
 
 /* =====================================================================

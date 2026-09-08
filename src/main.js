@@ -326,7 +326,7 @@ class UltimateTV {
   }
 
   showHomeScreen() {
-    console.log('🏠 [UltimateTV] Abrindo Portal...');
+    console.log("🏠 [UltimateTV] Abrindo Portal...");
     this.inHomeScreen = true;
     this.player.stop();
     this.osd.hide();
@@ -335,100 +335,137 @@ class UltimateTV {
     this.menu.hide();
     this.homeEl.classList.remove('hidden');
     if (this.sysModalEl) this.sysModalEl.classList.add('hidden');
-
-    // Feature the current channel (or channel 0 on cold boot)
-    const targetIdx = (this.currentIndex !== null && this.currentIndex !== undefined) ? this.currentIndex : 0;
-    const ch = this.channels[targetIdx] || this.channels[0];
-    if (!ch) return;
-
-    this.api.updateChannelEPG(ch);
-
-    // Row 1: Logo + Number + Name
-    const logoImg = document.getElementById('hero-ch-logo');
-    if (logoImg) {
-      if (ch.logo) {
-        logoImg.src = ch.logo;
-        logoImg.style.display = 'block';
-      } else {
-        logoImg.style.display = 'none';
-      }
-    }
-    const numEl = document.getElementById('hero-ch-number');
-    if (numEl) numEl.textContent = ch.number || '--';
-    const nameEl = document.getElementById('hero-ch-name');
-    if (nameEl) nameEl.textContent = ch.name || 'Desconhecido';
-
-    // Row 2: Program Title
-    const titleEl = document.getElementById('hero-prog-title');
-    if (titleEl) titleEl.textContent = ch.currentProgram || 'Sem informações do programa';
-
-    // Row 3: Time range + duration + dynamic progress bar
-    const timeEl = document.getElementById('hero-prog-time');
-    const barEl = document.getElementById('hero-prog-bar');
-    const remEl = document.getElementById('hero-prog-remaining');
-    if (ch.start && ch.end && ch.start !== '--:--') {
-      let durationStr = '';
-      if (ch.startObj && ch.endObj) {
-        const durMins = Math.max(1, Math.round((ch.endObj - ch.startObj) / 1000 / 60));
-        durationStr = ` • ${durMins} min`;
-      }
-      if (timeEl) timeEl.textContent = `${ch.start} - ${ch.end}${durationStr}`;
-      if (barEl) barEl.style.width = `${ch.progress || 0}%`;
-      if (remEl) remEl.textContent = ch.remaining ? `• ${ch.remaining} min restantes` : '';
-    } else {
-      if (timeEl) timeEl.textContent = '--:-- - --:--';
-      if (barEl) barEl.style.width = '0%';
-      if (remEl) remEl.textContent = '';
-    }
-
-    // Row 4: Synopsis
-    const synEl = document.getElementById('hero-prog-synopsis');
-    if (synEl) synEl.textContent = ch.synopsis || 'Este canal não forneceu informações sobre o programa atual.';
-
-    // Build homeMatrix: [topNav row, [channel card]]
-    this.homeMatrix = [];
+    
+    const container = document.getElementById('home-categories-container');
+    if (!container) return;
+    
+    // Reconstruir matrix dinamicamente sem destruir o DOM se já renderizado
+    this.homeMatrix = []; 
     const topNavItems = Array.from(this.homeEl.querySelectorAll('.home-nav-item'));
+    this.homeMatrix.push(topNavItems); // ROW 0 = Top Nav (Horizontal)
+    
+    let currentRowIdx = 1;
 
-    // Wire top-nav click handlers
-    topNavItems.forEach(item => {
+    if (this.homeRendered) {
+      const sections = container.querySelectorAll('.dtv-row-section');
+      sections.forEach(sec => {
+        const cards = Array.from(sec.querySelectorAll('.feat-card'));
+        if (cards.length > 0) {
+          this.homeMatrix.push(cards);
+          currentRowIdx++;
+        }
+      });
+      this.homeSelectedRow = 0;
+      this.homeSelectedCol = 0;
+      this.updateHomeFocus();
+      return;
+    }
+
+    container.innerHTML = '';
+
+    // Função auxiliar para injetar uma estante
+    const renderShelf = (title, channelsArray) => {
+      if (channelsArray.length === 0) return;
+      
+      const section = document.createElement('div');
+      section.className = 'dtv-row-section';
+      section.innerHTML = `<h3>${title}</h3><div class="dtv-grid"></div>`;
+      const grid = section.querySelector('.dtv-grid');
+      
+      const rowElements = [];
+      const limited = channelsArray.slice(0, 15); // Limita em 15
+      
+      limited.forEach((ch) => {
+        const globalIdx = this.channels.indexOf(ch);
+        const card = document.createElement('div');
+        card.className = 'feat-card';
+        card.tabIndex = 0;
+        card.setAttribute('data-action', 'tune');
+        card.setAttribute('data-ch-idx', globalIdx);
+        const logoHtml = ch.logo ? `<img src="${ch.logo}" loading="lazy" class="feat-logo"/>` : `<div style="font-size:1.8rem;margin-bottom:8px;">📺</div>`;
+        card.innerHTML = `${logoHtml}<span class="feat-name">${ch.number} • ${ch.name}</span>`;
+        card.addEventListener('click', () => this.tuneChannel(globalIdx));
+        grid.appendChild(card);
+        rowElements.push(card);
+      });
+      
+      container.appendChild(section);
+      this.homeMatrix.push(rowElements);
+      currentRowIdx++;
+    };
+
+    // 1. Últimos Vistos
+    const recentChannels = this.historyIndices.map(idx => this.channels[idx]).filter(Boolean);
+    if (recentChannels.length > 0) {
+      renderShelf('🕒 Últimos Vistos', recentChannels);
+    }
+
+    // 2. Agrupar por Categorias Dinâmicas do M3U
+    const groups = {};
+    this.channels.forEach(ch => {
+      const g = ch.group || 'Outros';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(ch);
+    });
+
+    // 3. Renderizar cada Categoria
+    Object.keys(groups).sort().forEach(groupName => {
+      const shuffled = [...groups[groupName]].sort(() => 0.5 - Math.random());
+      renderShelf(groupName, shuffled);
+    });
+
+    // Adiciona evento de clique no Top Nav
+    topNavItems.forEach((item) => {
       item.onclick = () => {
         const action = item.getAttribute('data-action');
-        if (action === 'watch') this.exitHomeScreen(targetIdx);
-        else if (action === 'last') {
-          this.inHomeScreen = false;
-          this.homeEl.classList.add('hidden');
-          this.tuneChannel(this.previousIndex !== null ? this.previousIndex : targetIdx);
-        } else if (action === 'guide') this.openGuide();
-        else if (action === 'settings') window.location.href = 'settings.html';
+        if (action === 'watch') {
+          this.exitHomeScreen(0);
+        } else if (action === 'last') {
+          this.exitHomeScreen(localStorage.getItem('ultimatetv_last_channel') || 0);
+        } else if (action === 'guide') {
+          this.openGuide();
+        } else if (action === 'settings') {
+          window.location.href = 'settings.html';
+        }
       };
     });
 
-    this.homeMatrix.push(topNavItems);
-
-    // Wire card click
-    const card = document.getElementById('home-channel-card');
-    if (card) {
-      card.onclick = () => this.exitHomeScreen(targetIdx);
-      card.setAttribute('data-ch-idx', targetIdx);
-      this.homeMatrix.push([card]);
-    }
-
-    // Auto-focus the card (row 1, col 0)
-    this.homeSelectedRow = 1;
+    this.homeRendered = true;
+    this.homeSelectedRow = 0;
     this.homeSelectedCol = 0;
     this.updateHomeFocus();
   }
 
   updateHomeFocus() {
+    // Remove focus de todos
     this.homeMatrix.forEach(row => {
       row.forEach(el => el.classList.remove('active', 'focused'));
     });
-
+    
+    // Aplica no alvo
     const targetRow = this.homeMatrix[this.homeSelectedRow];
     if (targetRow && targetRow[this.homeSelectedCol]) {
       const el = targetRow[this.homeSelectedCol];
       el.focus({ preventScroll: true });
-      el.classList.add('active');
+      if (this.homeSelectedRow === 0) {
+        el.classList.add('active');
+      } else {
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        // Update Hero Dynamic Content
+        const chIdx = el.getAttribute('data-ch-idx');
+        if (chIdx !== null) {
+          const ch = this.channels[chIdx];
+          document.getElementById('hero-ch-number').textContent = ch.number || '--';
+          document.getElementById('hero-ch-name').textContent = ch.name || 'Desconhecido';
+          const logoEl = document.getElementById('hero-ch-logo');
+          if (ch.logo) { logoEl.src = ch.logo; logoEl.style.display = 'block'; } else { logoEl.style.display = 'none'; }
+          
+          this.api.updateChannelEPG(ch);
+          document.getElementById('hero-prog-title').textContent = ch.currentProgram || 'Sem Título';
+          document.getElementById('hero-prog-time').textContent = (ch.start && ch.end) ? `${ch.start} - ${ch.end}` : '--:--';
+          document.getElementById('hero-prog-synopsis').textContent = ch.synopsis || 'Sem informações disponíveis.';
+        }
+      }
     }
   }
 
