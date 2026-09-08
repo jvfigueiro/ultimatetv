@@ -257,6 +257,16 @@ body, html {
   letter-spacing: 0px;
   color: #fff;
   margin-bottom: 24px;
+  animation: logoFadeIn 0.8s ease-in forwards;
+}
+
+@keyframes logoFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .splash-logo span {
@@ -1461,11 +1471,22 @@ video::-webkit-media-controls-overlay-play-button {
 .hero-channel-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 10px;
   font-size: 1.2rem;
   font-weight: 700;
   color: #3b82f6;
+}
+.hero-tag {
+  background: #2563eb;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
 }
 #hero-ch-logo {
   height: 40px;

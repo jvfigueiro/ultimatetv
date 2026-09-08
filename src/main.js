@@ -336,6 +336,21 @@ class UltimateTV {
     this.homeEl.classList.remove('hidden');
     if (this.sysModalEl) this.sysModalEl.classList.add('hidden');
     
+    // Seleciona um canal aleatório com EPG válido para destaque inicial no Hero
+    if (this.channels && this.channels.length > 0) {
+      const candidates = this.channels.filter(c => {
+        this.api.updateChannelEPG(c);
+        return c.currentProgram && 
+               c.currentProgram !== "Sem informações do programa" && 
+               c.currentProgram !== "Programa Sem Título" &&
+               c.start && c.end;
+      });
+      const featured = candidates.length > 0
+        ? candidates[Math.floor(Math.random() * candidates.length)]
+        : this.channels[0];
+      this.updateHero(featured, true);
+    }
+
     const container = document.getElementById('home-categories-container');
     if (!container) return;
     
@@ -436,6 +451,48 @@ class UltimateTV {
     this.updateHomeFocus();
   }
 
+  updateHero(ch, isFeatured = false) {
+    if (!ch) return;
+    this.api.updateChannelEPG(ch);
+
+    const tagEl = document.getElementById('hero-tag');
+    if (tagEl) {
+      tagEl.textContent = isFeatured ? "Destaque do Guia" : (ch.group || "Destaque do Guia");
+    }
+
+    const numEl = document.getElementById('hero-ch-number');
+    if (numEl) numEl.textContent = ch.number || '--';
+
+    const nameEl = document.getElementById('hero-ch-name');
+    if (nameEl) nameEl.textContent = ch.name || 'Desconhecido';
+
+    const logoEl = document.getElementById('hero-ch-logo');
+    if (logoEl) {
+      if (ch.logo) {
+        logoEl.src = ch.logo;
+        logoEl.style.display = 'block';
+      } else {
+        logoEl.style.display = 'none';
+      }
+    }
+
+    const titleEl = document.getElementById('hero-prog-title');
+    if (titleEl) {
+      const hasProgram = ch.currentProgram && ch.currentProgram !== "Sem informações do programa" && ch.currentProgram !== "Programa Sem Título";
+      titleEl.textContent = hasProgram ? ch.currentProgram : (ch.name || 'UltimateTV');
+    }
+
+    const timeEl = document.getElementById('hero-prog-time');
+    if (timeEl) {
+      timeEl.textContent = (ch.start && ch.end) ? `${ch.start} - ${ch.end}` : '--:--';
+    }
+
+    const synEl = document.getElementById('hero-prog-synopsis');
+    if (synEl) {
+      synEl.textContent = ch.synopsis || 'Sem informações disponíveis.';
+    }
+  }
+
   updateHomeFocus() {
     // Remove focus de todos
     this.homeMatrix.forEach(row => {
@@ -455,15 +512,7 @@ class UltimateTV {
         const chIdx = el.getAttribute('data-ch-idx');
         if (chIdx !== null) {
           const ch = this.channels[chIdx];
-          document.getElementById('hero-ch-number').textContent = ch.number || '--';
-          document.getElementById('hero-ch-name').textContent = ch.name || 'Desconhecido';
-          const logoEl = document.getElementById('hero-ch-logo');
-          if (ch.logo) { logoEl.src = ch.logo; logoEl.style.display = 'block'; } else { logoEl.style.display = 'none'; }
-          
-          this.api.updateChannelEPG(ch);
-          document.getElementById('hero-prog-title').textContent = ch.currentProgram || 'Sem Título';
-          document.getElementById('hero-prog-time').textContent = (ch.start && ch.end) ? `${ch.start} - ${ch.end}` : '--:--';
-          document.getElementById('hero-prog-synopsis').textContent = ch.synopsis || 'Sem informações disponíveis.';
+          this.updateHero(ch, false);
         }
       }
     }
