@@ -11,6 +11,7 @@ export class OSD {
     this.barEl = document.getElementById('osd-progress');
     this.remainingEl = document.getElementById('osd-remaining');
     this.resEl = document.getElementById('osd-res');
+    this.categoryEl = document.getElementById('osd-category');
     
     this.synopsisEl = document.getElementById('osd-synopsis');
     this.nextTimeEl = document.getElementById('osd-next-time');
@@ -84,9 +85,14 @@ export class OSD {
 
     this.updateBadges(playerInstance);
 
-    // Se a resolução/audio demorou a subir na GPU, força uma releitura progressiva
     setTimeout(() => this.updateBadges(playerInstance), 500);
     setTimeout(() => this.updateBadges(playerInstance), 1500);
+    // Atualiza categoria do canal
+    const category = channelData.group || channelData.category || 'Geral';
+    if (this.categoryEl) {
+      this.categoryEl.textContent = category.toUpperCase();
+    }
+
     this.progEl.textContent = channelData.currentProgram || "Sem informações do programa";
     this.synopsisEl.textContent = channelData.synopsis || "Este canal não forneceu informações sobre o programa atual.";
     this.nextTimeEl.textContent = `${channelData.nextStart || "--:--"} - ${channelData.nextEnd || "--:--"}`;

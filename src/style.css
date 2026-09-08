@@ -531,7 +531,9 @@ video::-webkit-media-controls-play-button {
 
 .badges-wrapper {
   display: flex;
-  gap: 6px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
   margin-left: auto; /* Empurra as badges para o extremo direito */
 }
 
@@ -544,6 +546,21 @@ video::-webkit-media-controls-play-button {
   font-weight: 700;
   color: #e2e8f0;
   letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.osd-category-badge {
+  background: rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #60a5fa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 /* Linha 3: Sinopse com corte inteligente de 2 linhas */
