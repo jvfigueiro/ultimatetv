@@ -43,20 +43,25 @@
           </div>
         </div>
 
-        <!-- Área Hero (Metadados do Foco) -->
-        <div class="home-hero">
-          <div class="hero-channel-info">
-            <img id="hero-ch-logo" src="" alt="Logo" style="display:none;"/>
-            <span id="hero-ch-number">Powered by</span>
-            <span id="hero-ch-name">UltimateLab</span>
+        <!-- Canal em destaque (card principal focusável) -->
+        <div class="home-main">
+          <div id="home-channel-card" class="home-ch-card" tabindex="0" data-action="tune">
+            <div class="home-ch-logo-wrap">
+              <img id="hero-ch-logo" src="" alt="Logo" class="home-ch-logo" style="display:none;" />
+              <div id="hero-ch-logo-placeholder" class="home-ch-logo-placeholder">📺</div>
+            </div>
+            <div class="home-ch-info">
+              <div class="home-ch-meta">
+                <span id="hero-ch-number" class="home-ch-number">--</span>
+                <span id="hero-ch-name" class="home-ch-name">Carregando...</span>
+              </div>
+              <h2 id="hero-prog-title" class="home-prog-title">Sem informações do programa</h2>
+              <p id="hero-prog-time" class="home-prog-time">--:-- - --:--</p>
+              <p id="hero-prog-synopsis" class="home-prog-synopsis">Este canal não forneceu informações sobre o programa atual.</p>
+              <div class="home-ch-cta">Pressione OK para assistir</div>
+            </div>
           </div>
-          <h1 id="hero-prog-title">UltimateTV</h1>
-          <p class="hero-prog-time" id="hero-prog-time">Bem-vindo ao mosaico dinâmico</p>
-          <p class="hero-prog-synopsis" id="hero-prog-synopsis">Navegue pelos canais abaixo. A programação em tempo real será exibida aqui.</p>
         </div>
-
-        <!-- Prateleiras (Mosaico) -->
-        <div id="home-categories-container"></div>
       </div>
     </div>
 
@@ -89,7 +94,7 @@
               </div>
               <div class="dtv-info-row">
                 <strong>Versão</strong>
-                <div id="dtv-version" class="ua-string">1.0.S3</div>
+                <div id="dtv-version" class="ua-string">1.0.S4</div>
               </div>
               <div class="dtv-info-row">
                 <strong>Informação Adicional</strong>
@@ -178,10 +183,10 @@
     </div>
 
     <!-- Indicador de Versão do App -->
-    <div id="app-version" class="app-version">v1.0.S3</div>
+    <div id="app-version" class="app-version">v1.0.S4</div>
 
     <script>
-      window.APP_VERSION = "1.0.S3";
+      window.APP_VERSION = "1.0.S4";
     </script>
     <!-- MODAL DE PIN -->
     <div id="auth-modal" class="auth-modal hidden">

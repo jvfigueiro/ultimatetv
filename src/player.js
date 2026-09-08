@@ -57,7 +57,17 @@ export class TVPlayer {
         }
       });
       this.hls.attachMedia(this.video);
-      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+        // Cap ABR at 720p: find highest level ≤ 720px tall
+        const levels = data.levels || [];
+        let maxLevel720 = -1;
+        levels.forEach((level, idx) => {
+          if (level.height <= 720) maxLevel720 = idx;
+        });
+        if (maxLevel720 >= 0) {
+          this.hls.autoLevelCapping = maxLevel720;
+          console.log(`[Player] ABR cap 720p → level ${maxLevel720} (${levels[maxLevel720].height}p)`);
+        }
         this.video.play().catch(() => {});
         this.applySubtitleState();
       });

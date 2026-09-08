@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnUpdate   = document.getElementById('btn-update');
 
   // ── Load stored values ──────────────────────────────────────────
+  inputServer.value = localStorage.getItem('ultimatetv_server') || 'http://10.0.7.25:9191';
   inputServer.value = localStorage.getItem('ultimatetv_server') || 'http://10.0.7.26:9191';
   selectOsd.value   = localStorage.getItem('ultimatetv_osd_timeout') || '7000';
   const storedAuth  = localStorage.getItem('ultimatetv_access_control');
@@ -35,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Inject system info (read-only) ────────────────────────────
   const versionEl = document.getElementById('sysinfo-version');
   const uaEl      = document.getElementById('sysinfo-ua');
-  if (versionEl) versionEl.textContent = window.APP_VERSION || '1.0.S3';
+  if (versionEl) versionEl.textContent = window.APP_VERSION || '1.0.S4';
   if (uaEl)      uaEl.textContent      = navigator.userAgent;
 
   // Focus first field on boot
