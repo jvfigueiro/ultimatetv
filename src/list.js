@@ -1,8 +1,9 @@
 export class ChannelList {
-  constructor(onSelectCallback) {
+  constructor(onSelectCallback, onUpdateProgramCallback) {
     this.el = document.getElementById('channel-list-modal');
     this.container = document.getElementById('channel-list-items');
     this.onSelect = onSelectCallback;
+    this.onUpdateProgram = onUpdateProgramCallback;
     this.channels = [];
     this.selectedIndex = 0;
   }
@@ -13,6 +14,10 @@ export class ChannelList {
     this.container.innerHTML = '';
 
     this.channels.forEach((channel, idx) => {
+      if (this.onUpdateProgram) {
+        this.onUpdateProgram(channel);
+      }
+
       const item = document.createElement('div');
       item.className = `channel-item ${idx === this.selectedIndex ? 'active' : ''}`;
       item.tabIndex = 0; // Torna focável pelo D-Pad do controle remoto
@@ -35,7 +40,10 @@ export class ChannelList {
   }
 
   show(currentIndex) {
-    this.selectedIndex = currentIndex;
+    if (currentIndex !== undefined && currentIndex !== null) {
+      this.selectedIndex = currentIndex;
+    }
+    this.updatePrograms(this.channels);
     this.el.classList.remove('hidden');
     this.focusCurrent();
   }
@@ -45,9 +53,13 @@ export class ChannelList {
   }
 
   updatePrograms(channels) {
-    this.channels = channels;
+    if (channels) this.channels = channels;
+    if (!this.channels) return;
     const items = this.container.querySelectorAll('.channel-item');
     this.channels.forEach((channel, idx) => {
+      if (this.onUpdateProgram) {
+        this.onUpdateProgram(channel);
+      }
       if (items[idx]) {
         const progEl = items[idx].querySelector('.ch-prog');
         if (progEl && progEl.textContent !== channel.currentProgram) {

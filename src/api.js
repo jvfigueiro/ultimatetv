@@ -3,6 +3,7 @@ export class DispatcharrAPI {
     this.serverUrl = localStorage.getItem('ultimatetv_server') || 'http://10.0.7.26:9191';
     this.m3uUrl = localStorage.getItem('ultimatetv_m3u') || `${this.serverUrl}/output/m3u`;
     this.epgUrl = localStorage.getItem('ultimatetv_epg') || `${this.serverUrl}/output/epg`;
+    this.epgData = {};
   }
 
   async loadAllData() {
@@ -77,7 +78,36 @@ export class DispatcharrAPI {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(epgText, "text/xml");
     this.rawXmlDoc = xmlDoc;
-    const now = new Date();
+
+    // Indexa programas por channelId em memória para lookup O(1) de alta performance
+    this.epgData = {};
+    const programmeNodes = xmlDoc.querySelectorAll('programme');
+    for (let i = 0; i < programmeNodes.length; i++) {
+      const prog = programmeNodes[i];
+      const chId = prog.getAttribute('channel');
+      if (!chId) continue;
+
+      const startStr = prog.getAttribute('start');
+      const stopStr = prog.getAttribute('stop');
+      const titleEl = prog.querySelector('title');
+      const descEl = prog.querySelector('desc');
+
+      const startObj = this.parseXMLTVDate(startStr);
+      const stopObj = this.parseXMLTVDate(stopStr);
+
+      if (!this.epgData[chId]) {
+        this.epgData[chId] = [];
+      }
+
+      this.epgData[chId].push({
+        start: startObj,
+        stop: stopObj,
+        startStr,
+        stopStr,
+        title: titleEl ? titleEl.textContent : "Programa Sem Título",
+        desc: descEl ? descEl.textContent : "Sem descrição disponível para este programa."
+      });
+    }
 
     const xmlChannels = Array.from(xmlDoc.querySelectorAll('channel')).map(ch => {
       const id = ch.getAttribute('id') || '';
@@ -120,7 +150,7 @@ export class DispatcharrAPI {
       if (!matchedEpgId) return;
       matchCount++;
 
-      // A MÁGICA ACONTECE AQUI: Salva o ID correto do XMLTV no canal para o EPG usar depois!
+      // Salva o ID correto do XMLTV no canal para o EPG usar depois!
       channel.epgId = matchedEpgId;
 
       this.updateChannelEPG(channel);
@@ -129,69 +159,65 @@ export class DispatcharrAPI {
     console.log(`🎯 [UltimateTV EPG] Sincronização e Fuso Horário processados para ${matchCount} canais!`);
   }
 
-  updateChannelEPG(channel) {
-    if (!this.rawXmlDoc || !channel.epgId) return channel;
-    
+  getCurrentProgram(channelId) {
+    if (!channelId || !this.epgData) return null;
+    const channelEpg = this.epgData[channelId] || [];
+    if (channelEpg.length === 0) return null;
+
     const now = new Date();
-    const programmes = Array.from(this.rawXmlDoc.querySelectorAll(`programme[channel="${channel.epgId}"]`));
-    if (programmes.length === 0) return channel;
+    let currentIdx = channelEpg.findIndex(p => now >= p.start && now < p.stop);
 
-    let currentProg = null;
-    let nextProg = null;
-
-    for (let i = 0; i < programmes.length; i++) {
-      const start = this.parseXMLTVDate(programmes[i].getAttribute('start'));
-      const end = this.parseXMLTVDate(programmes[i].getAttribute('stop'));
-
-      if (now >= start && now < end) {
-        currentProg = programmes[i];
-        nextProg = programmes[i + 1] || null;
-        break;
-      }
-    }
-
-    if (!currentProg) {
-      for (let i = programmes.length - 1; i >= 0; i--) {
-        const start = this.parseXMLTVDate(programmes[i].getAttribute('start'));
-        if (start <= now) {
-          currentProg = programmes[i];
-          nextProg = programmes[i + 1] || null;
+    if (currentIdx === -1) {
+      for (let i = channelEpg.length - 1; i >= 0; i--) {
+        if (channelEpg[i].start <= now) {
+          currentIdx = i;
           break;
         }
       }
     }
 
-    if (currentProg) {
-      const start = this.parseXMLTVDate(currentProg.getAttribute('start'));
-      const end = this.parseXMLTVDate(currentProg.getAttribute('stop'));
-      const title = currentProg.querySelector('title');
-      const desc = currentProg.querySelector('desc');
-      
-      channel.currentProgram = title ? title.textContent : "Programa Sem Título";
-      channel.synopsis = desc ? desc.textContent : "Sem descrição disponível para este programa.";
-      channel.start = this.formatTime(start);
-      channel.end = this.formatTime(end);
-      
-      channel.startObj = start;
-      channel.endObj = end;
-      
-      const totalDuration = Math.max(1, (end - start) / 1000 / 60);
-      const elapsed = (now - start) / 1000 / 60;
-      channel.progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
-      channel.remaining = Math.max(0, Math.round(totalDuration - elapsed));
+    if (currentIdx === -1) return null;
 
-      if (nextProg) {
-        const nextTitle = nextProg.querySelector('title');
-        const nextStart = this.parseXMLTVDate(nextProg.getAttribute('start'));
-        const nextEnd = this.parseXMLTVDate(nextProg.getAttribute('stop'));
-        channel.nextProgram = nextTitle ? nextTitle.textContent : "Sem informação";
-        channel.nextStart = this.formatTime(nextStart);
-        channel.nextEnd = this.formatTime(nextEnd);
-      }
+    const currentProg = channelEpg[currentIdx];
+    const nextProg = channelEpg[currentIdx + 1] || null;
+
+    return {
+      ...currentProg,
+      next: nextProg
+    };
+  }
+
+  updateChannelEPG(channel) {
+    const epgId = channel.epgId || channel.id;
+    if (!epgId) return channel;
+
+    const prog = this.getCurrentProgram(epgId);
+    if (!prog) return channel;
+
+    const now = new Date();
+    const start = prog.start;
+    const end = prog.stop;
+
+    channel.currentProgram = prog.title || "Programa Sem Título";
+    channel.synopsis = prog.desc || "Sem descrição disponível para este programa.";
+    channel.start = this.formatTime(start);
+    channel.end = this.formatTime(end);
+
+    channel.startObj = start;
+    channel.endObj = end;
+
+    const totalDuration = Math.max(1, (end - start) / 1000 / 60);
+    const elapsed = (now - start) / 1000 / 60;
+    channel.progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+    channel.remaining = Math.max(0, Math.round(totalDuration - elapsed));
+
+    if (prog.next) {
+      channel.nextProgram = prog.next.title || "Sem informação";
+      channel.nextStart = this.formatTime(prog.next.start);
+      channel.nextEnd = this.formatTime(prog.next.stop);
     }
-    return channel;
 
-    console.log(`🎯 [UltimateTV EPG] Sincronização e Fuso Horário processados para ${matchCount} canais!`);
+    return channel;
   }
 
   parseXMLTVDate(dateStr) {

@@ -22,15 +22,18 @@ class UltimateTV {
         if (!this.osd.el.classList.contains('hidden')) {
           this.osd.show(updatedChannel, this.player);
         }
-        // Atualiza array e a renderização da lista
+        // Atualiza array e os textos da lista sem recriar o DOM
         this.channels[this.currentIndex] = updatedChannel;
-        this.list.render(this.channels, this.currentIndex);
+        this.list.updatePrograms(this.channels);
       }
     });
     this.api = new DispatcharrAPI();
     this.channels = [];
     
-    this.list = new ChannelList((idx) => this.tuneChannel(idx));
+    this.list = new ChannelList(
+      (idx) => this.tuneChannel(idx),
+      (channel) => this.api.updateChannelEPG(channel)
+    );
     this.guide = new EPGGuide((idx) => {
       this.tuneChannel(idx);
       this.guide.hide();
@@ -164,11 +167,6 @@ class UltimateTV {
       },
       onList: () => {
         if (this.inHomeScreen) { this.exitHomeScreen(this.currentIndex); return; }
-        const listHidden = document.getElementById('channel-list-modal').classList.contains('hidden');
-        if (listHidden) {
-          this.updateAllChannelsEPG();
-          this.list.updatePrograms(this.channels);
-        }
         this.list.toggle(this.currentIndex);
       },
       onGuide: () => {
@@ -624,6 +622,10 @@ class UltimateTV {
     this.aspectLabelEl.textContent = label;
     this.aspectToastEl.classList.remove('hidden');
     this.toastTimer = setTimeout(() => this.aspectToastEl.classList.add('hidden'), 3000);
+  }
+
+  getCurrentProgram(channelId) {
+    return this.api.getCurrentProgram(channelId);
   }
 
   getChannelEPGData(idx) {
