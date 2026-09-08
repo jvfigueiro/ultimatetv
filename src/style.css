@@ -820,45 +820,91 @@ video::-webkit-media-controls-play-button {
   display: none !important;
 }
 
-.guide-top-panel {
+.guide-top-panel, .epg-detail-container {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  background: linear-gradient(135deg, rgba(16, 22, 35, 0.9) 0%, rgba(10, 14, 22, 0.95) 100%);
+  background: linear-gradient(135deg, rgba(16, 22, 35, 0.95) 0%, rgba(10, 14, 22, 0.98) 100%);
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 12px;
-  padding: 16px 24px;
+  padding: 18px 24px;
   margin-bottom: 14px;
-  min-height: 110px;
+  min-height: 160px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .guide-synopsis-box {
   flex-grow: 1;
   padding-right: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.g-syn-title {
-  font-size: 1.25rem;
+.guide-channel-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.g-showcase-logo {
+  height: 34px;
+  max-width: 70px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.g-showcase-number {
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.g-showcase-name {
+  color: #fff;
+  font-weight: 700;
+}
+
+.guide-tag {
+  background: #2563eb;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.g-showcase-title {
+  font-size: 2rem;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 2px;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
 }
 
-.g-syn-meta {
-  font-size: 0.9rem;
+.g-showcase-time {
+  font-size: 1.05rem;
   font-weight: 600;
   color: #3b82f6;
-  margin-bottom: 8px;
+  margin: 0 0 6px 0;
 }
 
-.g-syn-desc {
-  font-size: 0.9rem;
-  color: #94a3b8;
+.g-showcase-desc {
+  font-size: 0.92rem;
+  color: #cbd5e1;
   line-height: 1.4;
+  max-width: 900px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin: 0;
 }
 
 .guide-brand-clock {
@@ -888,7 +934,8 @@ video::-webkit-media-controls-play-button {
 }
 
 .guide-matrix-container {
-  flex-grow: 1;
+  flex: 1 1 0;
+  min-height: 0;
   overflow: auto;
   background: rgba(5, 7, 12, 0.9);
   border-radius: 10px;
@@ -1415,10 +1462,13 @@ video::-webkit-media-controls-overlay-play-button {
   .sidebar-header { padding: 16px 14px; }
   .channel-item { padding: 8px 10px; }
   .ch-logo, .ch-logo-placeholder { width: 36px; height: 36px; }
-  .guide-modal { padding: 20px 30px; }
-  .guide-top-panel { padding: 16px 20px; min-height: 120px; margin-bottom: 12px; }
-  .g-syn-title { font-size: 1.3rem; }
-  .guide-clock { font-size: 1.5rem; }
+  .guide-modal { padding: 16px 24px; }
+  .guide-top-panel, .epg-detail-container { padding: 12px 18px; min-height: 135px; margin-bottom: 10px; }
+  .g-showcase-title { font-size: 1.6rem; margin: 0 0 3px 0; }
+  .g-showcase-time { font-size: 0.95rem; margin: 0 0 4px 0; }
+  .g-showcase-desc { font-size: 0.85rem; -webkit-line-clamp: 2; line-height: 1.35; }
+  .g-showcase-logo { height: 28px; }
+  .guide-clock { font-size: 1.3rem; }
   .guide-col-channel-header, .guide-cell-channel { width: 160px; padding: 8px 12px; }
   .guide-col-time-header, .guide-cell-prog { width: 140px; padding: 8px 10px; }
   .dtv-sidebar { width: 220px; }
@@ -1490,7 +1540,17 @@ video::-webkit-media-controls-overlay-play-button {
 }
 #hero-ch-logo {
   height: 40px;
+  max-width: 80px;
+  object-fit: contain;
   border-radius: 4px;
+}
+#hero-ch-number {
+  color: #3b82f6;
+  font-weight: 700;
+}
+#hero-ch-name {
+  color: #fff;
+  font-weight: 700;
 }
 #hero-prog-title {
   font-size: 2.5rem;

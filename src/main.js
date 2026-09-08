@@ -466,6 +466,7 @@ class UltimateTV {
 
     const logoEl = document.getElementById('hero-ch-logo');
     if (logoEl) {
+      logoEl.onerror = () => { logoEl.style.display = 'none'; };
       if (ch.logo) {
         logoEl.src = ch.logo;
         logoEl.style.display = 'block';

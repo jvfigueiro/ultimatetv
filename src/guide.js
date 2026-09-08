@@ -2,9 +2,22 @@ export class EPGGuide {
   constructor(onSelectCallback) {
     this.el = document.getElementById('guide-modal');
     this.container = document.getElementById('guide-content-matrix');
-    this.synopsisTitleEl = document.getElementById('guide-synopsis-title');
-    this.synopsisTimeEl = document.getElementById('guide-synopsis-time');
-    this.synopsisDescEl = document.getElementById('guide-synopsis-desc');
+    
+    // Top showcase card elements
+    this.logoEl = document.getElementById('guide-ch-logo');
+    this.numEl = document.getElementById('guide-ch-number');
+    this.nameEl = document.getElementById('guide-ch-name');
+    this.tagEl = document.getElementById('guide-ch-tag');
+    this.titleEl = document.getElementById('guide-prog-title');
+    this.timeEl = document.getElementById('guide-prog-time');
+    this.descEl = document.getElementById('guide-prog-synopsis');
+
+    // Fallback gracioso para erro de carregamento da logo
+    if (this.logoEl) {
+      this.logoEl.onerror = () => {
+        this.logoEl.style.display = 'none';
+      };
+    }
 
     this.onSelect = onSelectCallback;
     this.channels = [];
@@ -125,26 +138,53 @@ export class EPGGuide {
   }
 
   updateSynopsis() {
-    if (!this.synopsisTitleEl || !this.synopsisTimeEl || !this.synopsisDescEl) return;
-
-    let prog = null;
-    if (this.matrixData[this.selectedRow]) prog = this.matrixData[this.selectedRow][this.selectedCol];
     const channel = this.channels[this.selectedRow] || {};
+    let prog = null;
+    if (this.matrixData[this.selectedRow]) {
+      prog = this.matrixData[this.selectedRow][this.selectedCol];
+    }
+
+    // 1. Canal: Logo, Número, Nome e Categoria
+    if (this.logoEl) {
+      if (channel.logo) {
+        this.logoEl.src = channel.logo;
+        this.logoEl.style.display = 'block';
+      } else {
+        this.logoEl.style.display = 'none';
+      }
+    }
+    if (this.numEl) this.numEl.textContent = channel.number || '--';
+    if (this.nameEl) this.nameEl.textContent = channel.name || 'Canal';
+    if (this.tagEl) this.tagEl.textContent = channel.group || channel.category || 'TV';
+
+    // 2, 3, 4. Programa: Título, Horário e Sinopse
+    const fmt = (d) => `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 
     if (prog) {
-      const title = prog.querySelector('title')?.textContent || "Programa";
+      const title = prog.querySelector('title')?.textContent || "Programa Sem Título";
       const desc = prog.querySelector('desc')?.textContent || "Sem descrição disponível para este programa.";
       const start = this.parseXMLTVDate(prog.getAttribute('start'));
       const end = this.parseXMLTVDate(prog.getAttribute('stop'));
-      
-      const fmt = (d) => `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
-      this.synopsisTitleEl.textContent = `${channel.number || ''} • ${channel.name || ''}: ${title}`;
-      this.synopsisTimeEl.textContent = `${fmt(start)} - ${fmt(end)}`;
-      this.synopsisDescEl.textContent = desc;
+
+      if (this.titleEl) this.titleEl.textContent = title;
+      if (this.timeEl) this.timeEl.textContent = `${fmt(start)} - ${fmt(end)}`;
+      if (this.descEl) this.descEl.textContent = desc;
     } else {
-      this.synopsisTitleEl.textContent = `${channel.number || ''} • ${channel.name || ''}: ${channel.currentProgram || 'Sem Programação'}`;
-      this.synopsisTimeEl.textContent = `${channel.start || '--:--'} - ${channel.end || '--:--'}`;
-      this.synopsisDescEl.textContent = channel.synopsis || "Informações indisponíveis para este horário.";
+      if (this.selectedCol === 0 && channel.currentProgram && channel.currentProgram !== "Sem informações do programa") {
+        if (this.titleEl) this.titleEl.textContent = channel.currentProgram;
+        if (this.timeEl) this.timeEl.textContent = (channel.start && channel.end) ? `${channel.start} - ${channel.end}` : '--:--';
+        if (this.descEl) this.descEl.textContent = channel.synopsis || "Informações indisponíveis para este horário.";
+      } else if (this.timeSlots[this.selectedCol]) {
+        const slotStart = this.timeSlots[this.selectedCol];
+        const slotEnd = new Date(slotStart.getTime() + 30 * 60000);
+        if (this.titleEl) this.titleEl.textContent = "Sem Programação";
+        if (this.timeEl) this.timeEl.textContent = `${fmt(slotStart)} - ${fmt(slotEnd)}`;
+        if (this.descEl) this.descEl.textContent = "Não há informações de programação disponíveis para este horário.";
+      } else {
+        if (this.titleEl) this.titleEl.textContent = "Sem Programação";
+        if (this.timeEl) this.timeEl.textContent = "--:-- - --:--";
+        if (this.descEl) this.descEl.textContent = "Informações indisponíveis para este horário.";
+      }
     }
   }
 
