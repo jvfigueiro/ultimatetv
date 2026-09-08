@@ -30,6 +30,10 @@ export class TVPlayer {
     this.video.addEventListener('loadedmetadata', () => {
       if (this.onStreamReady) this.onStreamReady();
     });
+
+    this.video.addEventListener('resize', () => {
+      if (this.onStreamReady) this.onStreamReady();
+    });
   }
 
   loadChannel(streamUrl) {
@@ -58,18 +62,25 @@ export class TVPlayer {
       });
       this.hls.attachMedia(this.video);
       this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-        // Cap ABR at 720p: find highest level ≤ 720px tall
-        const levels = data.levels || [];
-        let maxLevel720 = -1;
-        levels.forEach((level, idx) => {
-          if (level.height <= 720) maxLevel720 = idx;
-        });
-        if (maxLevel720 >= 0) {
-          this.hls.autoLevelCapping = maxLevel720;
-          console.log(`[Player] ABR cap 720p → level ${maxLevel720} (${levels[maxLevel720].height}p)`);
+        if (data && data.levels && data.levels.length > 0) {
+          let max720Index = -1;
+          data.levels.forEach((lvl, idx) => {
+            if (lvl.height && lvl.height <= 720) {
+              max720Index = Math.max(max720Index, idx);
+            }
+          });
+          if (max720Index !== -1) {
+            this.hls.autoLevelCapping = max720Index;
+            console.log(`[Player] HLS 720p cap applied: level ${max720Index} (${data.levels[max720Index].height}p)`);
+          }
         }
+        if (this.onStreamReady) this.onStreamReady();
         this.video.play().catch(() => {});
         this.applySubtitleState();
+      });
+
+      this.hls.on(Hls.Events.LEVEL_SWITCHED, () => {
+        if (this.onStreamReady) this.onStreamReady();
       });
       this.hls.on(Hls.Events.ERROR, (e, data) => {
         if (data.fatal) {
@@ -125,11 +136,27 @@ export class TVPlayer {
   getDetectedResolution() {
     const w = this.video.videoWidth;
     const h = this.video.videoHeight;
-    if (!w || !h) return "--";
-    if (h >= 2160 || w >= 3840) return "4K";
-    if (h >= 1080 || w >= 1920) return "1080p";
-    if (h >= 720 || w >= 1280) return "720p";
-    return "SD";
+    let height = h;
+    let width = w;
+
+    if (!height && this.hls && this.hls.levels && this.hls.levels.length > 0) {
+      const cur = this.hls.currentLevel >= 0 
+        ? this.hls.currentLevel 
+        : (this.hls.autoLevelCapping >= 0 ? this.hls.autoLevelCapping : 0);
+      const lvl = this.hls.levels[cur];
+      if (lvl && lvl.height) {
+        height = lvl.height;
+        width = lvl.width;
+      }
+    }
+
+    if (!height) return "--";
+    if (height >= 2160 || width >= 3840) return "4K";
+    if (height >= 1080 || width >= 1920) return "1080p";
+    if (height >= 720 || width >= 1280) return "720p";
+    if (height >= 480 || width >= 854) return "480p";
+    if (height >= 360 || width >= 640) return "360p";
+    return `${height}p`;
   }
 
   getDetectedAudio() {

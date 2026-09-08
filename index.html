@@ -43,22 +43,37 @@
           </div>
         </div>
 
-        <!-- Canal em destaque (card principal focusável) -->
-        <div class="home-main">
-          <div id="home-channel-card" class="home-ch-card" tabindex="0" data-action="tune">
-            <div class="home-ch-logo-wrap">
-              <img id="hero-ch-logo" src="" alt="Logo" class="home-ch-logo" style="display:none;" />
-              <div id="hero-ch-logo-placeholder" class="home-ch-logo-placeholder">📺</div>
+        <!-- Showcase do Canal em Destaque (Padrão STB 10-Foot) -->
+        <div class="home-showcase-container">
+          <div id="home-channel-card" class="home-showcase-card" tabindex="0" data-action="tune">
+            <!-- Row 1: Channel Badge (LCN) + Logo + Channel Name -->
+            <div class="home-showcase-channel">
+              <span id="hero-ch-number" class="home-lcn-pill">--</span>
+              <img id="hero-ch-logo" src="" alt="Logo" class="home-showcase-logo" style="display:none;" />
+              <span id="hero-ch-name" class="home-showcase-ch-name">Carregando...</span>
             </div>
-            <div class="home-ch-info">
-              <div class="home-ch-meta">
-                <span id="hero-ch-number" class="home-ch-number">--</span>
-                <span id="hero-ch-name" class="home-ch-name">Carregando...</span>
+
+            <!-- Row 2 (Main Hero): Current Program Title (2.2rem - 2.6rem bold) -->
+            <h1 id="hero-prog-title" class="home-showcase-title">Sem informações do programa</h1>
+
+            <!-- Row 3: Time range + duration + dynamic progress bar -->
+            <div class="home-showcase-meta">
+              <span id="hero-prog-time" class="home-showcase-time">--:-- - --:--</span>
+              <div class="home-progress-track">
+                <div id="hero-prog-bar" class="home-progress-bar" style="width: 0%;"></div>
               </div>
-              <h2 id="hero-prog-title" class="home-prog-title">Sem informações do programa</h2>
-              <p id="hero-prog-time" class="home-prog-time">--:-- - --:--</p>
-              <p id="hero-prog-synopsis" class="home-prog-synopsis">Este canal não forneceu informações sobre o programa atual.</p>
-              <div class="home-ch-cta">Pressione OK para assistir</div>
+              <span id="hero-prog-remaining" class="home-showcase-remaining"></span>
+            </div>
+
+            <!-- Row 4: Program Synopsis / Description (3-4 lines with line-clamp) -->
+            <p id="hero-prog-synopsis" class="home-showcase-synopsis">Este canal não forneceu informações sobre o programa atual.</p>
+
+            <!-- Action Hint: A subtle highlight pill/button -->
+            <div class="home-showcase-action">
+              <div class="home-action-btn">
+                <span class="action-icon">▶</span> Assistir Canal
+              </div>
+              <span class="home-action-hint">Pressione OK para assistir</span>
             </div>
           </div>
         </div>

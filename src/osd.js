@@ -74,9 +74,18 @@ export class OSD {
     updateProgress();
     this.progressInterval = setInterval(updateProgress, 60000); // Atualiza a cada 1 minuto
     
+    const currentRes = playerInstance ? playerInstance.getDetectedResolution() : "--";
+    if (currentRes && currentRes !== "--") {
+      this.resEl.textContent = currentRes;
+      this.resEl.style.display = "";
+    } else {
+      this.resEl.style.display = "none";
+    }
+
     this.updateBadges(playerInstance);
 
     // Se a resolução/audio demorou a subir na GPU, força uma releitura progressiva
+    setTimeout(() => this.updateBadges(playerInstance), 500);
     setTimeout(() => this.updateBadges(playerInstance), 1500);
     this.progEl.textContent = channelData.currentProgram || "Sem informações do programa";
     this.synopsisEl.textContent = channelData.synopsis || "Este canal não forneceu informações sobre o programa atual.";
@@ -92,7 +101,11 @@ export class OSD {
 
   updateBadges(playerInstance) {
     if (playerInstance) {
-      this.resEl.textContent = playerInstance.getDetectedResolution();
+      const res = playerInstance.getDetectedResolution();
+      if (res && res !== "--") {
+        this.resEl.textContent = res;
+        this.resEl.style.display = "";
+      }
     } else {
       this.resEl.textContent = "--";
     }
