@@ -7,21 +7,20 @@ export class RemoteController {
   init() {
     window.addEventListener('keydown', (e) => {
       const code = e.code || '';
-      const keyCode = e.keyCode || 0;
       const key = e.key || '';
 
-      const isEnter = code === 'Enter' || code === 'NumpadEnter' || key === 'Enter' || keyCode === 13 || keyCode === 23 || keyCode === 66;
-      const isUp = code === 'ArrowUp' || code === 'Equal' || code === 'PageUp' || key === 'ArrowUp' || keyCode === 38 || keyCode === 19;
-      const isDown = code === 'ArrowDown' || code === 'Minus' || code === 'PageDown' || key === 'ArrowDown' || keyCode === 40 || keyCode === 20;
-      const isLeft = code === 'ArrowLeft' || key === 'ArrowLeft' || keyCode === 37 || keyCode === 21;
-      const isRight = code === 'ArrowRight' || key === 'ArrowRight' || keyCode === 39 || keyCode === 22;
-      const isBack = code === 'Escape' || code === 'Backspace' || key === 'Escape' || keyCode === 27 || keyCode === 8 || keyCode === 4;
-      const isInfo = code === 'KeyI' || keyCode === 73;
-      const isList = code === 'KeyL' || code === 'KeyC' || keyCode === 76 || keyCode === 67;
-      const isGuide = code === 'KeyG' || code === 'KeyE' || keyCode === 71 || keyCode === 69;
-      const isMenu = code === 'KeyM' || code === 'KeyO' || code === 'ContextMenu' || code === 'F10' || keyCode === 77 || keyCode === 79 || keyCode === 82;
+      const isEnter = code === 'Enter' || code === 'NumpadEnter' || key === 'Enter' || code === 'Space' || key === ' ';
+      const isUp = code === 'ArrowUp' || key === 'ArrowUp' || code === 'Equal' || code === 'PageUp' || key === 'PageUp';
+      const isDown = code === 'ArrowDown' || key === 'ArrowDown' || code === 'Minus' || code === 'PageDown' || key === 'PageDown';
+      const isLeft = code === 'ArrowLeft' || key === 'ArrowLeft';
+      const isRight = code === 'ArrowRight' || key === 'ArrowRight';
+      const isBack = code === 'Escape' || key === 'Escape' || code === 'Backspace' || key === 'Backspace' || key === 'GoBack';
+      const isInfo = code === 'KeyI' || key === 'i' || key === 'I' || key === 'Info';
+      const isList = code === 'KeyL' || key === 'l' || key === 'L' || code === 'KeyC' || key === 'c' || key === 'C' || key === 'ChannelList';
+      const isGuide = code === 'KeyG' || key === 'g' || key === 'G' || code === 'KeyE' || key === 'e' || key === 'E' || key === 'Guide';
+      const isMenu = code === 'KeyM' || key === 'm' || key === 'M' || code === 'KeyO' || key === 'o' || key === 'O' || code === 'ContextMenu' || key === 'ContextMenu' || code === 'F10' || key === 'F10';
 
-      if (isUp || isDown || isLeft || isRight || isEnter || code === 'Space' || keyCode === 32) {
+      if (isUp || isDown || isLeft || isRight || isEnter) {
         e.preventDefault();
       }
 
@@ -29,7 +28,7 @@ export class RemoteController {
       else if (isDown) this.callbacks.onDown && this.callbacks.onDown();
       else if (isLeft) this.callbacks.onLeft && this.callbacks.onLeft();
       else if (isRight) this.callbacks.onRight && this.callbacks.onRight();
-      else if (isEnter || code === 'Space' || keyCode === 32) this.callbacks.onEnter && this.callbacks.onEnter();
+      else if (isEnter) this.callbacks.onEnter && this.callbacks.onEnter();
       else if (isBack) this.callbacks.onBack && this.callbacks.onBack();
       else if (isInfo) this.callbacks.onInfo && this.callbacks.onInfo();
       else if (isList) this.callbacks.onList && this.callbacks.onList();

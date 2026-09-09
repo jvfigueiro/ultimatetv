@@ -29,96 +29,7 @@ body, html {
   z-index: 15;
 }
 
-/* Sidebar */
-.dtv-sidebar {
-  width: 320px;
-  background: rgba(12, 16, 24, 0.95);
-  border-right: 1px solid rgba(255,255,255,0.1);
-  display: flex;
-  flex-direction: column;
-  padding: 40px 0;
-}
-.dtv-brand {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #fff;
-  text-align: center;
-  margin-bottom: 50px;
-  letter-spacing: -1px;
-}
-.dtv-brand span {
-  color: #3b82f6;
-}
-.dtv-nav-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 0 20px;
-}
-.dtv-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 16px 20px;
-  border-radius: 10px;
-  color: #cbd5e1;
-  font-size: 1.1rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  outline: none;
-}
-.dtv-nav-item:focus {
-  background: #3b82f6;
-  color: #fff;
-  transform: translateX(10px);
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-}
-.dtv-nav-item .icon {
-  font-size: 1.3rem;
-}
-
-/* Área Principal */
-.dtv-content-area {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Hero Banner */
-.dtv-hero {
-  height: 200px;
-  background: linear-gradient(rgba(12, 16, 24, 0.3), rgba(8, 10, 16, 1)), url('https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&q=80&w=1920') center/cover;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 20px 50px;
-}
-.hero-top-bar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #fff;
-}
-.hero-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(0,0,0,0.7);
-  padding: 6px 12px;
-  border-radius: 20px;
-}
-.hero-status .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
-}
+/* Hero Clock */
 .hero-clock {
   display: flex;
   flex-direction: column;
@@ -133,20 +44,6 @@ body, html {
 .hero-clock .sys-date {
   font-size: 0.9rem;
   color: #94a3b8;
-}
-.dtv-hero-content {
-  margin-top: auto;
-}
-.dtv-hero-content h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 5px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-}
-.dtv-hero-desc {
-  font-size: 1.1rem;
-  color: #e2e8f0;
-  text-shadow: 0 2px 5px rgba(0,0,0,0.8);
 }
 
 /* Grid de Linhas */
@@ -286,12 +183,6 @@ body, html {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
-}
-
-.splash-status {
-  font-size: 1.1rem;
-  color: #94a3b8;
-  font-weight: 600;
 }
 
 /* =====================================================================
@@ -1274,63 +1165,7 @@ video::-webkit-media-controls-play-button {
   display: none !important;
 }
 
-/* Coluna Lateral de Navegação (Sidebar) */
-.dtv-sidebar {
-  width: 260px;
-  background: rgba(10, 14, 22, 0.95);
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  flex-direction: column;
-  padding: 30px 0;
-  flex-shrink: 0;
-}
 
-.dtv-brand {
-  padding: 0 24px;
-  margin-bottom: 40px;
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: #fff;
-}
-
-.dtv-brand span {
-  color: #3b82f6;
-}
-
-.dtv-nav-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 0 16px;
-}
-
-.dtv-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 18px;
-  border-radius: 8px;
-  color: #94a3b8;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.15s ease;
-}
-
-/* Estado Ativo e Foco D-Pad no Menu Lateral */
-.dtv-nav-item:hover, .dtv-nav-item:focus, .dtv-nav-item.active {
-  background: rgba(59, 130, 246, 0.18);
-  color: #fff;
-  border-color: #3b82f6;
-  outline: none;
-  transform: translateX(4px);
-}
-
-.dtv-nav-item .icon {
-  font-size: 1.3rem;
-}
 
 /* Área Principal de Catálogo (Vitrine e Destaques) */
 .dtv-main-content {
@@ -1475,7 +1310,6 @@ video::-webkit-media-controls-overlay-play-button {
   .guide-clock { font-size: 1.3rem; }
   .guide-col-channel-header, .guide-cell-channel { width: 160px; padding: 8px 12px; }
   .guide-col-time-header, .guide-cell-prog { width: 140px; padding: 8px 10px; }
-  .dtv-sidebar { width: 220px; }
 }
 
 /* ANDROID TV HOME SCREEN */

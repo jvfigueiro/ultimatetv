@@ -654,10 +654,6 @@ class UltimateTV {
     this.toastTimer = setTimeout(() => this.aspectToastEl.classList.add('hidden'), 3000);
   }
 
-  getCurrentProgram(channelId) {
-    return this.api.getCurrentProgram(channelId);
-  }
-
   getChannelEPGData(idx) {
     let channel = this.channels[idx];
     if (!channel) return {};
@@ -733,4 +729,4 @@ class UltimateTV {
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => { window.app = new UltimateTV(); });
+window.addEventListener('DOMContentLoaded', () => { new UltimateTV(); });
