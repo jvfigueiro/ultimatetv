@@ -12,23 +12,17 @@ export class TVPlayer {
     
     this.hls = null;
     this.tsPlayer = null;
+    this.fatalTimer = null;
+    this.slowTimer = null;
     this.subtitlesActive = false;
     this.onStreamReady = onStreamReadyCallback;
 
     this.video.addEventListener('playing', () => {
       console.log("[Player] Imagem gerada na GPU!");
+      this.clearAllTimers();
       this.noSignalEl.classList.add('hidden');
       this.slowScreenEl.classList.add('hidden');
       if (this.onStreamReady) this.onStreamReady();
-    });
-
-    this.video.addEventListener('waiting', () => {
-      if (!this.noSignalEl.classList.contains('hidden')) return;
-      this.slowScreenEl.classList.remove('hidden');
-    });
-
-    this.video.addEventListener('canplay', () => {
-      this.slowScreenEl.classList.add('hidden');
     });
 
     this.video.addEventListener('loadedmetadata', () => {
@@ -43,8 +37,7 @@ export class TVPlayer {
   loadChannel(streamUrl) {
     console.log(`[UltimateTV Player] Sintonizando Proxy: ${streamUrl}`);
     this.stop();
-    this.noSignalEl.classList.add('hidden');
-    this.slowScreenEl.classList.add('hidden');
+    this.startTimers(7000, 20000);
 
     this.detectedVideoCodec = '';
     this.detectedAudioCodec = '';
@@ -84,28 +77,13 @@ export class TVPlayer {
       this.hls.on(Hls.Events.LEVEL_SWITCHED, () => {
         if (this.onStreamReady) this.onStreamReady();
       });
-      this.hls.on(Hls.Events.ERROR, (event, data) => {
+      this.hls.on(Hls.Events.ERROR, (e, data) => {
         if (data.fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              console.warn('[Player] Recuperando de erro fatal de mídia (recoverMediaError)...');
-              this.hls.recoverMediaError();
-              break;
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              if (data.response && (data.response.code === 401 || data.response.code === 403)) {
-                this.triggerFatalError("Não autorizado pela programadora.");
-                if (this.hls) { this.hls.destroy(); this.hls = null; }
-                break;
-              }
-              console.warn('[Player] Recuperando de erro fatal de rede (startLoad)...');
-              this.hls.startLoad();
-              break;
-            default:
-              console.error('[Player] Erro fatal não recuperável:', data);
-              this.triggerFatalError("Falha na reprodução do stream.");
-              if (this.hls) { this.hls.destroy(); this.hls = null; }
-              break;
+          let reason = "Falha na reprodução do stream.";
+          if (data.response && (data.response.code === 401 || data.response.code === 403)) {
+            reason = "Não autorizado pela programadora.";
           }
+          this.triggerFatalError(reason);
         }
       });
     } else if (mpegts.getFeatureList().mseLivePlayback) {
@@ -230,8 +208,29 @@ export class TVPlayer {
     }
   }
 
+  startTimers(slowMs, fatalMs) {
+    this.clearAllTimers();
+    this.noSignalEl.classList.add('hidden');
+    this.slowScreenEl.classList.add('hidden');
+
+    this.slowTimer = setTimeout(() => {
+      console.warn("[Player] Stream lento detectado (>4s)... Exibindo tela cheia de espera.");
+      this.slowScreenEl.classList.remove('hidden');
+    }, slowMs);
+
+    this.fatalTimer = setTimeout(() => {
+      this.triggerFatalError("Tempo limite de conexão excedido.");
+    }, fatalMs);
+  }
+
+  clearAllTimers() {
+    if (this.slowTimer) { clearTimeout(this.slowTimer); this.slowTimer = null; }
+    if (this.fatalTimer) { clearTimeout(this.fatalTimer); this.fatalTimer = null; }
+  }
+
   triggerFatalError(msg) {
     console.warn(`[Player] Erro Fatal: ${msg}`);
+    this.clearAllTimers();
     this.slowScreenEl.classList.add('hidden');
     if (this.reasonEl) this.reasonEl.textContent = msg;
     if (this.uaEl) this.uaEl.textContent = navigator.userAgent;
@@ -239,8 +238,8 @@ export class TVPlayer {
   }
 
   stop() {
+    this.clearAllTimers();
     this.slowScreenEl.classList.add('hidden');
-    this.noSignalEl.classList.add('hidden');
     if (this.hls) { this.hls.destroy(); this.hls = null; }
     if (this.tsPlayer) { this.tsPlayer.destroy(); this.tsPlayer = null; }
     this.video.pause();
