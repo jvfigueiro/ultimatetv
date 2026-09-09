@@ -529,12 +529,14 @@ video::-webkit-media-controls-play-button {
   color: #94a3b8;
 }
 
-.badges-wrapper {
+.osd-meta-badges {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  margin-left: auto; /* Empurra as badges para o extremo direito */
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  min-height: 20px; /* prevents vertical jump when resolution badge is hidden */
 }
 
 .badge, .osd-resolution-badge, .osd-category-badge {
@@ -1238,11 +1240,12 @@ video::-webkit-media-controls-play-button {
   color: #fff;
 }
 
-/* Agrupamento do Topo Direito (Slot da Logo + Relógio) */
+/* Agrupamento do Topo Direito (Relógio + Badges) */
 .osd-top-right {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
   flex-shrink: 0;
 }
 
