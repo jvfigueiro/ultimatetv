@@ -22,9 +22,7 @@ export class TVPlayer {
       this.clearAllTimers();
       this.noSignalEl.classList.add('hidden');
       this.slowScreenEl.classList.add('hidden');
-      if (this.onStreamReady) {
-        setTimeout(() => this.onStreamReady(), 300);
-      }
+      if (this.onStreamReady) this.onStreamReady();
     });
 
     this.video.addEventListener('loadedmetadata', () => {
@@ -46,9 +44,6 @@ export class TVPlayer {
 
     if (streamUrl.includes('.m3u8') && Hls.isSupported()) {
       this.hls = new Hls({
-        maxBufferLength: 10,
-        maxMaxBufferLength: 20,
-        maxBufferSize: 30 * 1000 * 1000, // 30MB max RAM para o buffer HLS
         capLevelToPlayerSize: true, // Força carregar resolução compativel com a TV
         enableWorker: true
       });
@@ -98,8 +93,7 @@ export class TVPlayer {
         url: streamUrl
       }, {
         enableWorker: true,
-        lazyLoadMaxDuration: 3 * 60,
-        seekType: 'range'
+        lazyLoadMaxDuration: 3 * 60
       });
       
       this.tsPlayer.attachMediaElement(this.video);

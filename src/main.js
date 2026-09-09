@@ -59,6 +59,7 @@ class UltimateTV {
     this.aspectLabelEl = document.getElementById('aspect-mode-label');
     this.toastTimer = null;
     this.osdTimer = null;
+    this.globalSyncTimer = null;
     this.isNavigatingBack = false;
 
     this.inHomeScreen = true;
@@ -279,7 +280,11 @@ class UltimateTV {
   }
 
   startGlobalClock() {
-    setInterval(() => {
+    if (this.globalSyncTimer) {
+      clearInterval(this.globalSyncTimer);
+      this.globalSyncTimer = null;
+    }
+    this.globalSyncTimer = setInterval(() => {
       this.updateGlobalClock();
       this.updateAllChannelsEPG();
       
@@ -708,6 +713,24 @@ class UltimateTV {
 
   channelUp() { this.tuneChannel(this.currentIndex + 1); }
   channelDown() { this.tuneChannel(this.currentIndex - 1); }
+
+  destroy() {
+    if (this.globalSyncTimer) {
+      clearInterval(this.globalSyncTimer);
+      this.globalSyncTimer = null;
+    }
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+      this.toastTimer = null;
+    }
+    if (this.osdTimer) {
+      clearTimeout(this.osdTimer);
+      this.osdTimer = null;
+    }
+    if (this.player) {
+      this.player.stop();
+    }
+  }
 }
 
 window.addEventListener('DOMContentLoaded', () => { window.app = new UltimateTV(); });
