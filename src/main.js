@@ -37,7 +37,7 @@ class UltimateTV {
     this.guide = new EPGGuide((idx) => {
       this.tuneChannel(idx);
       this.guide.hide();
-    });
+    }, this.api);
     
     this.menu = new OptionsMenu({
       onOpenHome: () => this.showHomeScreen(),
@@ -59,6 +59,7 @@ class UltimateTV {
     this.aspectLabelEl = document.getElementById('aspect-mode-label');
     this.toastTimer = null;
     this.osdTimer = null;
+    this.isNavigatingBack = false;
 
     this.inHomeScreen = true;
     this.homeSelectedRow = 0; // 0 = sidebar, 1 = recent, 2..N = categorias
@@ -94,7 +95,7 @@ class UltimateTV {
     if (dtvVersion) dtvVersion.textContent = window.APP_VERSION;
 
     this.channels = await this.api.loadAllData();
-    this.guide.render(this.channels, this.api.rawXmlDoc);
+    this.guide.render(this.channels, this.api.epgData);
 
     if (this.channels.length === 0) {
       console.error("[UltimateTV] Erro: Servidor indisponível.");
@@ -287,13 +288,19 @@ class UltimateTV {
         this.list.updatePrograms(this.channels);
       }
       if (this.guide && this.guide.isOpen) {
-        this.guide.render(this.channels, this.api.rawXmlDoc);
+        this.guide.render(this.channels, this.api.epgData);
         this.guide.show(this.guide.selectedRow);
       }
     }, 60000);
   }
 
   handleBackAction() {
+    if (this.isNavigatingBack) return;
+    this.isNavigatingBack = true;
+    setTimeout(() => {
+      this.isNavigatingBack = false;
+    }, 300);
+
     const sysOpen = this.sysModalEl && !this.sysModalEl.classList.contains('hidden');
     if (sysOpen) { this.sysModalEl.classList.add('hidden'); return; }
 
@@ -395,8 +402,25 @@ class UltimateTV {
         card.tabIndex = 0;
         card.setAttribute('data-action', 'tune');
         card.setAttribute('data-ch-idx', globalIdx);
-        const logoHtml = ch.logo ? `<img src="${ch.logo}" loading="lazy" class="feat-logo"/>` : `<div style="font-size:1.8rem;margin-bottom:8px;">📺</div>`;
-        card.innerHTML = `${logoHtml}<span class="feat-name">${ch.number} • ${ch.name}</span>`;
+        if (ch.logo) {
+          const img = document.createElement('img');
+          img.src = ch.logo;
+          img.loading = 'lazy';
+          img.className = 'feat-logo';
+          img.alt = ch.name || '';
+          card.appendChild(img);
+        } else {
+          const placeholder = document.createElement('div');
+          placeholder.style.fontSize = '1.8rem';
+          placeholder.style.marginBottom = '8px';
+          placeholder.textContent = '📺';
+          card.appendChild(placeholder);
+        }
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'feat-name';
+        nameSpan.textContent = `${ch.number ?? '--'} • ${ch.name ?? 'Canal'}`;
+        card.appendChild(nameSpan);
         card.addEventListener('click', () => this.tuneChannel(globalIdx));
         grid.appendChild(card);
         rowElements.push(card);

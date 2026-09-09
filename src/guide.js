@@ -1,5 +1,5 @@
 export class EPGGuide {
-  constructor(onSelectCallback) {
+  constructor(onSelectCallback, api = null) {
     this.el = document.getElementById('guide-modal');
     this.container = document.getElementById('guide-content-matrix');
     
@@ -20,6 +20,8 @@ export class EPGGuide {
     }
 
     this.onSelect = onSelectCallback;
+    this.api = api;
+    this.epgData = api ? api.epgData : null;
     this.channels = [];
     this.xmlDoc = null;
     this.isOpen = false;
@@ -30,9 +32,19 @@ export class EPGGuide {
     this.matrixData = {};
   }
 
-  render(channels, xmlDoc) {
+  render(channels, epgSource) {
     this.channels = channels || [];
-    if (xmlDoc) this.xmlDoc = xmlDoc;
+    if (epgSource) {
+      if (epgSource.epgData) {
+        this.epgData = epgSource.epgData;
+      } else if (epgSource.querySelectorAll) {
+        this.xmlDoc = epgSource;
+      } else {
+        this.epgData = epgSource;
+      }
+    } else if (this.api && this.api.epgData) {
+      this.epgData = this.api.epgData;
+    }
     this.generateTimeSlots();
   }
 
@@ -78,7 +90,13 @@ export class EPGGuide {
       row.appendChild(chCol);
 
       const targetId = channel.epgId || channel.id || '';
-      const programmes = this.xmlDoc ? Array.from(this.xmlDoc.querySelectorAll(`programme[channel="${targetId}"]`)) : [];
+      const epgStore = this.epgData || (this.api && this.api.epgData) || null;
+      let programmes = [];
+      if (epgStore) {
+        programmes = epgStore[targetId] || (channel.epgId && epgStore[channel.epgId]) || (channel.id && epgStore[channel.id]) || [];
+      } else if (this.xmlDoc) {
+        programmes = Array.from(this.xmlDoc.querySelectorAll(`programme[channel="${targetId}"]`));
+      }
 
       this.timeSlots.forEach((slot, sIdx) => {
         const slotEnd = new Date(slot.getTime() + 30 * 60000);
@@ -86,9 +104,9 @@ export class EPGGuide {
 
         for (let p = 0; p < programmes.length; p++) {
           const prog = programmes[p];
-          const pStart = this.parseXMLTVDate(prog.getAttribute('start'));
-          const pEnd = this.parseXMLTVDate(prog.getAttribute('stop'));
-          if (pStart < slotEnd && pEnd > slot) {
+          const pStart = prog.start instanceof Date ? prog.start : (prog.getAttribute ? this.parseXMLTVDate(prog.getAttribute('start')) : null);
+          const pEnd = (prog.stop instanceof Date ? prog.stop : (prog.end instanceof Date ? prog.end : (prog.getAttribute ? this.parseXMLTVDate(prog.getAttribute('stop')) : null)));
+          if (pStart && pEnd && pStart < slotEnd && pEnd > slot) {
             matchedProg = prog;
             break;
           }
@@ -103,8 +121,8 @@ export class EPGGuide {
         cell.setAttribute('data-col', sIdx);
 
         if (matchedProg) {
-          const titleEl = matchedProg.querySelector('title');
-          cell.textContent = titleEl ? titleEl.textContent : "Sem Título";
+          const title = matchedProg.title || (matchedProg.querySelector ? matchedProg.querySelector('title')?.textContent : null);
+          cell.textContent = title || "Sem Título";
         } else {
           cell.textContent = sIdx === 0 ? (channel.currentProgram || "---") : "---";
         }
@@ -161,10 +179,10 @@ export class EPGGuide {
     const fmt = (d) => `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 
     if (prog) {
-      const title = prog.querySelector('title')?.textContent || "Programa Sem Título";
-      const desc = prog.querySelector('desc')?.textContent || "Sem descrição disponível para este programa.";
-      const start = this.parseXMLTVDate(prog.getAttribute('start'));
-      const end = this.parseXMLTVDate(prog.getAttribute('stop'));
+      const title = prog.title || (prog.querySelector ? prog.querySelector('title')?.textContent : null) || "Programa Sem Título";
+      const desc = prog.desc || (prog.querySelector ? prog.querySelector('desc')?.textContent : null) || "Sem descrição disponível para este programa.";
+      const start = prog.start instanceof Date ? prog.start : (prog.getAttribute ? this.parseXMLTVDate(prog.getAttribute('start')) : new Date());
+      const end = (prog.stop instanceof Date ? prog.stop : (prog.end instanceof Date ? prog.end : (prog.getAttribute ? this.parseXMLTVDate(prog.getAttribute('stop')) : new Date())));
 
       if (this.titleEl) this.titleEl.textContent = title;
       if (this.timeEl) this.timeEl.textContent = `${fmt(start)} - ${fmt(end)}`;
