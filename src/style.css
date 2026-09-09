@@ -410,7 +410,7 @@ video::-webkit-media-controls-play-button {
 .osd-layout {
   display: flex !important;
   flex-direction: row !important;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
 }
 
@@ -442,7 +442,7 @@ video::-webkit-media-controls-play-button {
 .osd-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 4px;
 }
 
@@ -454,6 +454,8 @@ video::-webkit-media-controls-play-button {
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 20px;
+  align-self: flex-start;
+  margin-top: 0;
 }
 
 .channel-number {
