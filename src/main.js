@@ -197,8 +197,9 @@ class UltimateTV {
   }
 
   checkAuthGate() {
-    const rawSetting = localStorage.getItem('ultimatetv_access_control');
-    const isProtected = rawSetting === null ? true : rawSetting === 'true';
+    // Treat PIN protection as disabled by default unless explicitly enabled ('true' or 'enabled')
+    const rawSetting = localStorage.getItem('ultimatetv_pin_enabled') ?? localStorage.getItem('ultimatetv_access_control');
+    const isProtected = rawSetting === 'true' || rawSetting === 'enabled';
     
     if (isProtected) {
       this.showAuthPrompt();

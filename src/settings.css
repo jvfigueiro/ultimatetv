@@ -2,12 +2,39 @@
    UltimateTV — Settings 10-Foot STB Interface
    ═══════════════════════════════════════════════════════ */
 
+/* =====================================================================
+   LOCAL FONT FACE — Open Sans (self-hosted, no CDN dependency)
+===================================================================== */
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/assets/fonts/OpenSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/assets/fonts/OpenSans-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/assets/fonts/OpenSans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   background: #0c1017;
   color: #e2e8f0;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
