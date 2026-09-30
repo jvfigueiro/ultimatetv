@@ -32,8 +32,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: #0c1017;
-  color: #e2e8f0;
+  background: linear-gradient(135deg, #091336 0%, #0B061A 100%);
+  color: #FFFFFF;
   font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
   width: 100vw;
   height: 100vh;
@@ -60,7 +60,7 @@ body {
 .stb-title {
   font-size: 2.4rem;
   font-weight: 700;
-  color: #fff;
+  color: #FFFFFF;
   letter-spacing: -0.01em;
   line-height: 1.1;
 }
@@ -68,22 +68,22 @@ body {
 .stb-subtitle {
   margin-top: 8px;
   font-size: 0.95rem;
-  color: #64748b;
+  color: #8E9BBF;
 }
 
 .stb-logo {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #fff;
+  color: #FFFFFF;
   white-space: nowrap;
   align-self: center;
 }
-.stb-logo span { color: #3b82f6; }
+.stb-logo span { color: #00B2FE; }
 
 /* ── Divider ── */
 .stb-divider {
   border: none;
-  border-top: 1px solid #1e293b;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 48px;
 }
 
@@ -112,14 +112,14 @@ body {
 
 /* Highlight the active row */
 .cfg-row.focused .cfg-label {
-  color: #fff;
+  color: #FFFFFF;
 }
 
 .cfg-label {
   padding: 0 24px 0 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: #8E9BBF;
   white-space: nowrap;
   vertical-align: middle;
   width: 42%;
@@ -129,7 +129,8 @@ body {
 .cfg-hint {
   font-weight: 400;
   font-size: 0.85rem;
-  color: #475569;
+  color: #8E9BBF;
+  opacity: 0.75;
 }
 
 .cfg-control {
@@ -140,9 +141,11 @@ body {
 .stb-input,
 .stb-select {
   width: 100%;
-  background: #131b27;
-  border: 2px solid #1e293b;
-  color: #e2e8f0;
+  background: rgba(13, 18, 38, 0.86);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
   padding: 14px 18px;
   border-radius: 8px;
   font-size: 1rem;
@@ -150,13 +153,14 @@ body {
   outline: none;
   appearance: none;
   -webkit-appearance: none;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 
 .stb-input:focus,
 .stb-select:focus {
-  border-color: #3b82f6;
-  background: #0f1e35;
+  border: 2px solid #00B2FE;
+  background: rgba(18, 25, 52, 0.96);
+  box-shadow: 0 0 16px rgba(0, 178, 254, 0.45);
 }
 
 .stb-input--pin {
@@ -177,47 +181,51 @@ body {
 .stb-btn {
   width: 100%;
   padding: 18px 24px;
-  border: 2px solid transparent;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
   font-size: 1.05rem;
   font-weight: 700;
   font-family: 'Open Sans', sans-serif;
   cursor: pointer;
   text-align: left;
   letter-spacing: 0.01em;
-  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s, transform 0.15s;
   outline: none;
 }
 
 .stb-btn:focus {
-  border-color: #3b82f6;
+  border: 2px solid #00B2FE;
+  box-shadow: 0 0 16px rgba(0, 178, 254, 0.45);
+  transform: scale(1.02);
 }
 
 .stb-btn--primary {
-  background: #1e3a5f;
-  color: #93c5fd;
+  background: rgba(0, 178, 254, 0.16);
+  color: #4AD3FF;
 }
 .stb-btn--primary:focus {
-  background: #2563eb;
-  color: #fff;
+  background: rgba(0, 178, 254, 0.28);
+  color: #FFFFFF;
 }
 
 .stb-btn--secondary {
-  background: #1a2232;
-  color: #94a3b8;
+  background: rgba(13, 18, 38, 0.86);
+  color: #8E9BBF;
 }
 .stb-btn--secondary:focus {
-  background: #334155;
-  color: #fff;
+  background: rgba(18, 25, 52, 0.96);
+  color: #FFFFFF;
 }
 
 .stb-btn--warning {
-  background: #2d2006;
+  background: rgba(45, 32, 6, 0.82);
   color: #fbbf24;
 }
 .stb-btn--warning:focus {
-  background: #92400e;
-  color: #fff;
+  background: rgba(146, 64, 14, 0.88);
+  color: #FFFFFF;
 }
 
 /* ── System Info (read-only diagnostic block) ── */
@@ -227,7 +235,7 @@ body {
   flex-direction: column;
   gap: 10px;
   padding-top: 20px;
-  border-top: 1px solid #1e293b;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   pointer-events: none;
   user-select: none;
 }
@@ -243,12 +251,13 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #475569;
+  color: #9AA5CE;
+  opacity: 0.8;
 }
 
 .sys-info-value {
   font-size: 0.88rem;
-  color: #64748b;
+  color: #9AA5CE;
 }
 
 .sys-info-ua {

@@ -1,0 +1,18 @@
+{
+  "name": "UltimateTV",
+  "short_name": "UltimateTV",
+  "description": "IPTV Player & Portal para Android TV e Web",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#080a10",
+  "theme_color": "#080a10",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192 512x512 1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

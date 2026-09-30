@@ -389,6 +389,18 @@ class UltimateTV {
 
     container.innerHTML = '';
 
+    const createModernTvIcon = () => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'feat-tv-placeholder';
+      wrapper.innerHTML = `<svg width="48" height="42" viewBox="0 0 48 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="3" width="44" height="28" rx="4.5" fill="rgba(0, 178, 254, 0.12)" stroke="#9AA5CE" stroke-width="2"/>
+        <path d="M20.5 11.5L30.5 17L20.5 22.5V11.5Z" fill="#00B2FE"/>
+        <path d="M16 38H32" stroke="#9AA5CE" stroke-width="2" stroke-linecap="round"/>
+        <path d="M24 31V38" stroke="#9AA5CE" stroke-width="2" stroke-linecap="round"/>
+      </svg>`;
+      return wrapper;
+    };
+
     // Função auxiliar para injetar uma estante
     const renderShelf = (title, channelsArray) => {
       if (channelsArray.length === 0) return;
@@ -414,13 +426,12 @@ class UltimateTV {
           img.loading = 'lazy';
           img.className = 'feat-logo';
           img.alt = ch.name || '';
+          img.onerror = () => {
+            img.replaceWith(createModernTvIcon());
+          };
           card.appendChild(img);
         } else {
-          const placeholder = document.createElement('div');
-          placeholder.style.fontSize = '1.8rem';
-          placeholder.style.marginBottom = '8px';
-          placeholder.textContent = '📺';
-          card.appendChild(placeholder);
+          card.appendChild(createModernTvIcon());
         }
 
         const nameSpan = document.createElement('span');
@@ -440,7 +451,7 @@ class UltimateTV {
     // 1. Últimos Vistos
     const recentChannels = this.historyIndices.map(idx => this.channels[idx]).filter(Boolean);
     if (recentChannels.length > 0) {
-      renderShelf('🕒 Últimos Vistos', recentChannels);
+      renderShelf('Últimos Vistos', recentChannels);
     }
 
     // 2. Agrupar por Categorias Dinâmicas do M3U
